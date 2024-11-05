@@ -3,7 +3,7 @@ import Sidebar from './components/Sidebar/Sidebar';
 import Header from './components/Header/Header';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Dashboard from './pages/Dashboard/Dashboard';
-import Expenses from './pages/Expenses';
+import Expenses from './pages/Expenses/Expenses';
 import Incomes from './pages/Incomes';
 import './App.css';
 

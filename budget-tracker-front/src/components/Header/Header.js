@@ -1,9 +1,19 @@
-// src/components/Header.js
-
-import React from 'react';
+import React, { useState } from 'react';
 import './Header.css';
+import ExpenseModal from '../ExpenseModal/ExpenseModal';
 
 const Header = () => {
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <header className="header">
       <div className="header-left">
@@ -11,7 +21,7 @@ const Header = () => {
       </div>
       <div className="header-right">
         <div className="header-buttons">
-            <button className="expense">+ expense</button>
+            <button className="expense" onClick={openModal}>+ expense</button>
             <button className="income">+ income</button>
             <button className="transfer">+ transfer</button>
         </div>
@@ -22,6 +32,8 @@ const Header = () => {
             <img src="favicon.ico" alt="User Avatar" className="avatar" />
         </div>
       </div>
+
+      <ExpenseModal isOpen={isModalOpen} onClose={closeModal} />
     </header>
   );
 };

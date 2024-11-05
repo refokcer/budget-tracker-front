@@ -1,0 +1,47 @@
+/* src/components/ExpensesTable/ExpensesTable.css */
+
+.expenses-table-container {
+    overflow-x: auto;
+    margin: 20px 0;
+    width: 95%;
+  }
+  
+  .expenses-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #ddd;
+    background-color: #333;
+  }
+  
+  .expenses-table th, .expenses-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #444;
+  }
+  
+  .expenses-table th {
+    background-color: #222;
+    font-weight: bold;
+  }
+  
+  .expenses-table tr:nth-child(even) {
+    background-color: #3a3a3a;
+  }
+  
+  .category-tag, .type-tag {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #fff;
+  }
+  
+  .category-tag.presents { background-color: #b5651d; }
+  .category-tag.household { background-color: #964b00; }
+  .category-tag.food { background-color: #d2691e; }
+  .category-tag.snack { background-color: #800080; }
+  .category-tag.fastfood { background-color: #a52a2a; }
+  
+  .type-tag.card { background-color: #2e8b57; }
+  .type-tag.cash { background-color: #8b4513; }
+  

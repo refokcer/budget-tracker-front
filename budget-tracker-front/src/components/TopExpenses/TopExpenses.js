@@ -6,7 +6,7 @@ const TopExpenses = () => {
   const [expenses, setExpenses] = useState([]);
 
   useEffect(() => {
-    setExpenses(data.expenses);
+    setExpenses(data.expensesCategory);
   }, []);
 
   const topExpenses = expenses

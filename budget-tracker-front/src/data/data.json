@@ -1,5 +1,5 @@
 {
-    "expenses": [
+    "expensesCategory": [
       { "category": "Food", "amount": 150, "percentage": 20 },
       { "category": "Transport", "amount": 100, "percentage": 15 },
       { "category": "Entertainment", "amount": 80, "percentage": 10 },
@@ -10,6 +10,15 @@
       { "name": "Cash", "amount": 2000.0 },
       { "name": "Card private", "amount": 2000.0 },
       { "name": "Card mono", "amount": 2000.0 }
-    ]
+    ],
+    "expenses": [
+    { "description": "Chocolate for Friend", "amount": 19.00, "category": "Presents", "additional": "Gift", "date": "November 1, 2024", "type": "Card" },
+    { "description": "Wet Wipes", "amount": 100.00, "category": "Household", "additional": "", "date": "November 1, 2024", "type": "Card" },
+    { "description": "Bread", "amount": 30.00, "category": "Food", "additional": "", "date": "November 1, 2024", "type": "Card" },
+    { "description": "Dessert", "amount": 44.00, "category": "Snack", "additional": "", "date": "November 1, 2024", "type": "Card" },
+    { "description": "Haircut", "amount": 250.00, "category": "Household", "additional": "", "date": "November 1, 2024", "type": "Card" },
+    { "description": "Water", "amount": 32.00, "category": "Food", "additional": "", "date": "November 1, 2024", "type": "Card" },
+    { "description": "Shawarma", "amount": 100.00, "category": "FastFood", "additional": "", "date": "November 1, 2024", "type": "Cash" }
+   ]
   }
   
