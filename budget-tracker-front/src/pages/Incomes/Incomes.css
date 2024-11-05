@@ -1,0 +1,14 @@
+/* src/pages/Incomes.css */
+
+.incomes-page {
+    padding: 20px;
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .highlight {
+    color: red;
+    font-size: 1.2em; /* Увеличиваем размер шрифта на 1.2 раза */
+    font-weight: bold;
+  }
+  

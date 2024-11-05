@@ -19,6 +19,13 @@
     { "description": "Haircut", "amount": 250.00, "category": "Household", "additional": "", "date": "November 1, 2024", "type": "Card" },
     { "description": "Water", "amount": 32.00, "category": "Food", "additional": "", "date": "November 1, 2024", "type": "Card" },
     { "description": "Shawarma", "amount": 100.00, "category": "FastFood", "additional": "", "date": "November 1, 2024", "type": "Cash" }
-   ]
+   ],
+   "products": [
+    { "name": "Product A", "isNew": true },
+    { "name": "Product B", "isNew": false },
+    { "name": "Product C", "isNew": true },
+    { "name": "Product D", "isNew": false },
+    { "name": "Product E", "isNew": true }
+  ]
   }
   
