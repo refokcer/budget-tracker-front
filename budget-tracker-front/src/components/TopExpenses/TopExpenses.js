@@ -3,7 +3,13 @@ import data from '../../data/data.json';
 import './TopExpenses.css';
 
 const TopExpenses = () => {
-  const topExpenses = data
+  const [expenses, setExpenses] = useState([]);
+
+  useEffect(() => {
+    setExpenses(data.expenses);
+  }, []);
+
+  const topExpenses = expenses
     .sort((a, b) => b.amount - a.amount)
     .slice(0, 3);
 
@@ -14,7 +20,7 @@ const TopExpenses = () => {
         {topExpenses.map((expense, index) => (
           <li key={index} className="expense-item">
             <span className="expense-category">● {expense.category}</span>
-            <span className="expense-amount">${expense.amount}</span>
+            <span className="expense-amount">${expense.amount.toFixed(2)}</span>
             <span className="expense-percentage">{expense.percentage}%</span>
           </li>
         ))}

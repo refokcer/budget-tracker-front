@@ -1,8 +1,9 @@
 .container{
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: start;
     flex-direction: column;
+    width: 100%;
 }
 
 .container h1{
@@ -10,3 +11,9 @@
     margin: 1rem 0;
 }
 
+.content{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+}

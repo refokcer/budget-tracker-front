@@ -1,0 +1,37 @@
+.accounts-summary {
+    background-color: #ccc;
+    padding: 15px;
+    border-radius: 8px;
+    width: 250px;
+  }
+  
+  .accounts-summary h3 {
+    margin: 0;
+    text-align: left;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .accounts-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .account-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+    font-size: 0.9rem;
+  }
+  
+  .balance {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #999;
+    padding-top: 10px;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  

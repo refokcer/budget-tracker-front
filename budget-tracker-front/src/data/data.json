@@ -1,8 +1,15 @@
-[
-    { "category": "Food", "amount": 150, "percentage": 20 },
-    { "category": "Transport", "amount": 100, "percentage": 15 },
-    { "category": "Entertainment", "amount": 80, "percentage": 10 },
-    { "category": "Utilities", "amount": 60, "percentage": 8 },
-    { "category": "Shopping", "amount": 50, "percentage": 5 }
-]
+{
+    "expenses": [
+      { "category": "Food", "amount": 150, "percentage": 20 },
+      { "category": "Transport", "amount": 100, "percentage": 15 },
+      { "category": "Entertainment", "amount": 80, "percentage": 10 },
+      { "category": "Utilities", "amount": 60, "percentage": 8 },
+      { "category": "Shopping", "amount": 50, "percentage": 5 }
+    ],
+    "accounts": [
+      { "name": "Cash", "amount": 2000.0 },
+      { "name": "Card private", "amount": 2000.0 },
+      { "name": "Card mono", "amount": 2000.0 }
+    ]
+  }
   
