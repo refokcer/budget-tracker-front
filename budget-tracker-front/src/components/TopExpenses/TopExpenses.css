@@ -1,0 +1,36 @@
+.top-expenses {
+    background-color: #ccc;
+    padding: 15px;
+    border-radius: 8px;
+    width: 300px;
+  }
+  
+  .top-expenses h3 {
+    margin: 0;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .expense-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+    font-size: 0.9rem;
+  }
+  
+  .expense-category {
+    flex: 2;
+  }
+  
+  .expense-amount {
+    flex: 1;
+    text-align: right;
+  }
+  
+  .expense-percentage {
+    flex: 1;
+    text-align: right;
+  }
+  

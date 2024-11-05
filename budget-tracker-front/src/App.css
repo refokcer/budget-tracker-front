@@ -1,9 +1,16 @@
 .app {
   display: flex;
+  flex-direction: column;
   height: 100vh;
 }
 
+.main-content {
+  display: flex;
+  flex: 1;
+}
+
 .content {
-  flex: 1; /* Контент занимает оставшееся пространство */
+  flex: 1;
   padding-left: 20px;
+  overflow-y: auto;
 }

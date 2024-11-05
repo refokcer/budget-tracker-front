@@ -1,0 +1,12 @@
+.container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.container h1{
+    font-size: 2rem;
+    margin: 1rem 0;
+}
+
