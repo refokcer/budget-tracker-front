@@ -4,7 +4,15 @@
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
+    <script>
+      (function() {
+        var themeColor = '#000000';
+        var meta = document.createElement('meta');
+        meta.name = 'theme-color';
+        meta.content = themeColor;
+        document.getElementsByTagName('head')[0].appendChild(meta);
+      })();
+    </script>
     <meta
       name="description"
       content="Web site created using create-react-app"
