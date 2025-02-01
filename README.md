@@ -22,5 +22,9 @@ npm run build
 
 npm test
 
-5. (Опционально) Eject (выброс конфигурации)
+
+
+(Опционально) Eject (выброс конфигурации)
+
+
 npm run eject
