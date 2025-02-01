@@ -7,8 +7,14 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
 npm install
+
+
 npm start
+
+
 npm run build
+
+
 npm test
 
 5. (Опционально) Eject (выброс конфигурации)
