@@ -20,12 +20,12 @@ const Header = () => {
         <h2>My App</h2>
       </div>
       <div className="header-right">
-        <div className="header-buttons">
+        <div className="header-right-buttons">
             <button className="expense" onClick={openModal}>+ expense</button>
             <button className="income">+ income</button>
             <button className="transfer">+ transfer</button>
         </div>
-        <div className="header-right-bell-icon">
+        <div className="header-right-icons">
             <i className="bell-icon">🔔</i>
         </div>
         <div className="header-right-avatar">

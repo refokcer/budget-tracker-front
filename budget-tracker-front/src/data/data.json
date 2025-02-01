@@ -8,7 +8,7 @@
     ],
     "accounts": [
       { "name": "Cash", "amount": 2000.0 },
-      { "name": "Card private", "amount": 2000.0 },
+      { "name": "Card private", "amount": 2000.0 },{ "name": "Card private", "amount": 2000.0 },
       { "name": "Card mono", "amount": 2000.0 }
     ],
     "expenses": [
