@@ -6,7 +6,7 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 2. Изменить политику для текущего пользователя (постоянный способ)
 Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
-npm install
+npm install \n
 npm start
 npm run build
 npm test
