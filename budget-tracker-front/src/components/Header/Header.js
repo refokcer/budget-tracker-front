@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import './Header.css';
 import ExpenseModal from '../ExpenseModal/ExpenseModal';
+import IncomeModal from '../IncomeModal/IncomeModal';
 
 const Header = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isIncomeModalOpen, setIsIncomeModalOpen] = useState(false);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -22,7 +24,7 @@ const Header = () => {
       <div className="header-right">
         <div className="header-right-buttons">
             <button className="expense" onClick={openModal}>+ expense</button>
-            <button className="income">+ income</button>
+            <button className="income" onClick={() => setIsIncomeModalOpen(true)}>+ income</button>
             <button className="transfer">+ transfer</button>
         </div>
         <div className="header-right-icons">
@@ -33,6 +35,7 @@ const Header = () => {
         </div>
       </div>
 
+      <IncomeModal isOpen={isIncomeModalOpen} onClose={() => setIsIncomeModalOpen(false)} />
       <ExpenseModal isOpen={isModalOpen} onClose={closeModal} />
     </header>
   );

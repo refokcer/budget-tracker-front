@@ -1,6 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import './AccountsSummary.css';
 
+import {
+  ClientSideRowModelModule,
+  ModuleRegistry,
+  NumberEditorModule,
+  NumberFilterModule,
+  TextEditorModule,
+  TextFilterModule,
+  ValidationModule,
+  colorSchemeDarkBlue,
+  themeQuartz,
+  PinnedRowModule
+} from "ag-grid-community";
+import { AgGridReact } from "ag-grid-react";
+
+ModuleRegistry.registerModules([
+  TextEditorModule,
+  TextFilterModule,
+  NumberFilterModule,
+  NumberEditorModule,
+  ClientSideRowModelModule,
+  PinnedRowModule,
+  ValidationModule /* Development Only */,
+]);
+
+const themeDarkBlue = themeQuartz.withPart(colorSchemeDarkBlue);
+
 const AccountsSummary = () => {
   const [accounts, setAccounts] = useState([]);
   const [currencies, setCurrencies] = useState({});
@@ -53,27 +79,44 @@ const AccountsSummary = () => {
 
   const totalBalance = accounts.reduce((sum, account) => sum + account.amount, 0);
 
+  const columnDefs = [
+    { headerName: 'Account', field: 'title', flex: 1 },
+    { 
+      headerName: 'Amount', 
+      field: 'amount', 
+      flex: 1,
+      cellRenderer: (params) => {
+        const symbol = currencies[params.data.currencyId] || '';
+        return `${symbol} ${params.value.toFixed(2)}`;
+      }
+    }
+  ];
+
+  const pinnedBottomRowData = [
+    { title: 'Total Balance', amount: totalBalance, currencyId: accounts[0]?.currencyId }
+  ];
+
+  // Пример возвращаемого JSX
   return (
-    <div className="accounts-summary">
-      <h3>Accounts</h3>
-      <ul className="accounts-list">
-        {accounts.map((account) => (
-          <li key={account.id} className="account-item">
-            <span className="account-name">● {account.title}</span>
-            <span className="account-amount">
-              {currencies[account.currencyId] || ''} {account.amount.toFixed(2)}
-            </span>
-          </li>
-        ))}
-      </ul>
-      <div className="balance">
-        <span className="balance-label">Balance</span>
-        <span className="balance-amount">
-          {currencies[accounts[0]?.currencyId] || ''} {totalBalance.toFixed(2)}
-        </span>
-      </div>
+    <div style={{ height: "400px", width: '600px', display: "flex", flexDirection: "column" }}>
+        {
+          <AgGridReact
+            theme={themeDarkBlue}
+            columnDefs={columnDefs}
+            rowData={accounts}
+            pinnedBottomRowData={pinnedBottomRowData}
+            defaultColDef={defaultColDef}
+          />
+        }
     </div>
   );
+};
+
+const defaultColDef = {
+  editable: true,
+  flex: 1,
+  minWidth: 100,
+  filter: true,
 };
 
 export default AccountsSummary;

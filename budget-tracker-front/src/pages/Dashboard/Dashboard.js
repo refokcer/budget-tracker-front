@@ -8,8 +8,8 @@ const Dashboard = () => {
     <div class = "container">
       <h1>Dashboard</h1>
       <div class = "content">
-        <TopExpenses class = "table" />
         <AccountsSummary />
+        <TopExpenses class = "table" />
       </div>
     </div>
   );
