@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import './Header.css';
 import notificationsIcon from '../../data/notifications.svg'; // Подключаем иконку
-import ExpenseModal from '../ExpenseModal/ExpenseModal';
-import IncomeModal from '../IncomeModal/IncomeModal';
+import ExpenseModal from '../Modals/ExpenseModal/ExpenseModal';
+import IncomeModal from '../Modals/IncomeModal/IncomeModal';
 
 const Header = () => {
 

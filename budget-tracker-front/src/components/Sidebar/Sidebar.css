@@ -1,7 +1,7 @@
 .sidebar {
     width: 160px;
     background-color: var(--color-gray-dark);
-    color: #fff;
+    color: var(--color-light);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -11,7 +11,7 @@
   .sidebar-title {
     font-size: 1.5rem;
     margin-bottom: 1rem;
-    color: #fff;
+    color: var(--color-light);
   }
   
   .sidebar-menu {
@@ -23,7 +23,7 @@
     display: flex;
     align-items: center;
     padding: 10px 20px;
-    color: #fff;
+    color: var(--color-light);
     text-decoration: none;
     font-size: 17px;
     transition: background-color 0.3s ease;
