@@ -1,12 +1,15 @@
-import React from 'react';
-import ExpensesTable from './../../components/ExpensesTable/ExpensesTable'; // Ensure this path is correct
-import './Expenses.css';
+// src/pages/Expenses.js
+
+import React from "react";
+import ExpensesTable from "../../components/ExpensesTable/ExpensesTable";
+import "./Expenses.css";
 
 const Expenses = () => {
   return (
-    <div class = "container">
-      <div class = "content">
-        <ExpensesTable class = "table" />
+    <div className="container">
+      <div className="content">
+        <h1>Транзакции</h1>
+        <ExpensesTable />
       </div>
     </div>
   );
