@@ -5,7 +5,6 @@ import './Expenses.css';
 const Expenses = () => {
   return (
     <div class = "container">
-      <h1>Expenses</h1>
       <div class = "content">
         <ExpensesTable class = "table" />
       </div>

@@ -7,4 +7,13 @@
 .main-content {
   display: flex;
   flex: 1;
+  background-color: var(--secondary-color);
+  padding: auto;
+}
+
+.content{
+  display: flex;
+  flex: 1;
+  background-color: var(--secondary-color);
+  padding: var(--spacing-medium);
 }

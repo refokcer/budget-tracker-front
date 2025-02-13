@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Header.css';
+import notificationsIcon from '../../data/notifications.svg'; // Подключаем иконку
 import ExpenseModal from '../ExpenseModal/ExpenseModal';
 import IncomeModal from '../IncomeModal/IncomeModal';
 
@@ -28,7 +29,7 @@ const Header = () => {
             <button className="transfer">+ transfer</button>
         </div>
         <div className="header-right-icons">
-            <i className="bell-icon">🔔</i>
+          <img src={notificationsIcon} alt="Notifications" className="bell-icon" />
         </div>
         <div className="header-right-avatar">
             <img src="favicon.ico" alt="User Avatar" className="avatar" />
