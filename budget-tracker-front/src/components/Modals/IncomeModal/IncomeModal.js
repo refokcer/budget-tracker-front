@@ -1,6 +1,6 @@
 // src/components/IncomeModal/IncomeModal.js
-
 import React, { useState, useEffect } from 'react';
+import API_ENDPOINTS from '../../../config/apiConfig';
 import './IncomeModal.css';
 
 const IncomeModal = ({ isOpen, onClose }) => {
@@ -16,7 +16,6 @@ const IncomeModal = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Получение данных с API при открытии окна
   useEffect(() => {
     if (!isOpen) return;
 
@@ -36,7 +35,7 @@ const IncomeModal = ({ isOpen, onClose }) => {
         const categoriesData = await categoriesRes.json();
         const accountsData = await accountsRes.json();
 
-        // Фильтруем категории с Type = 1 (Income)
+        // Фильтруем категории только типа Income
         const filteredCategories = categoriesData.filter(cat => cat.type === 1);
 
         setCurrencies(currenciesData);
@@ -50,7 +49,6 @@ const IncomeModal = ({ isOpen, onClose }) => {
     fetchData();
   }, [isOpen]);
 
-  // Обработчик отправки данных
   const handleSubmit = async () => {
     if (!title || !amount || !currencyId || !categoryId || !accountTo) {
       alert('Заполните все поля!');
@@ -62,20 +60,20 @@ const IncomeModal = ({ isOpen, onClose }) => {
 
     const newTransaction = {
       title,
-      eventId: Number(2), // Временно захардкожено
+      eventId: 2, // пример
       amount: parseFloat(amount),
       currencyId: parseInt(currencyId),
       categoryId: parseInt(categoryId),
-      date: new Date().toISOString(), // Текущая дата
+      date: new Date().toISOString(),
       accountTo: parseInt(accountTo),
-      type: 1, // Тип всегда Income
+      type: 1, // Income
       description
     };
 
     try {
         console.log(JSON.stringify(newTransaction, null, 2));
 
-      const response = await fetch('https://localhost:7281/api/Transactions', {
+        const response = await fetch('https://localhost:7281/api/Transactions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newTransaction)
@@ -100,7 +98,6 @@ const IncomeModal = ({ isOpen, onClose }) => {
     <div className="modal-overlay">
       <div className="modal-content">
         <h3>Добавить доход</h3>
-
         {error && <p className="error">{error}</p>}
 
         <input
@@ -119,27 +116,27 @@ const IncomeModal = ({ isOpen, onClose }) => {
 
         <select value={currencyId} onChange={(e) => setCurrencyId(e.target.value)}>
           <option value="">Выберите валюту</option>
-          {currencies.map((currency) => (
-            <option key={currency.id} value={currency.id}>
-              {currency.symbol} ({currency.name})
+          {currencies.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.symbol} ({c.name})
             </option>
           ))}
         </select>
 
         <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
           <option value="">Выберите категорию</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.title}
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.title}
             </option>
           ))}
         </select>
 
         <select value={accountTo} onChange={(e) => setAccountTo(e.target.value)}>
-          <option value="">Выберите счет</option>
-          {accounts.map((account) => (
-            <option key={account.id} value={account.id}>
-              {account.title}
+          <option value="">Выберите счёт</option>
+          {accounts.map((acc) => (
+            <option key={acc.id} value={acc.id}>
+              {acc.title}
             </option>
           ))}
         </select>
@@ -150,10 +147,16 @@ const IncomeModal = ({ isOpen, onClose }) => {
           onChange={(e) => setDescription(e.target.value)}
         />
 
-        <button onClick={handleSubmit} disabled={loading}>
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className="submit-button"
+        >
           {loading ? 'Создание...' : 'Создать транзакцию'}
         </button>
-        <button onClick={onClose} className="close-button">Отмена</button>
+        <button onClick={onClose} className="close-button">
+          Отмена
+        </button>
       </div>
     </div>
   );
