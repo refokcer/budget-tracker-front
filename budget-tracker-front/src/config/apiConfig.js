@@ -11,7 +11,7 @@ export const API_ENDPOINTS = {
   deleteTransaction: (id) => `${API_BASE_URL}/Transactions/${id}`,
   createExpense: `${API_BASE_URL}/Expenses`,
   createIncome: `${API_BASE_URL}/Income`,
-  createTransfer: `${API_BASE_URL}/Transactions/transfer`,
+  createTransfer: `${API_BASE_URL}/Transfers`,
   expenses: `${API_BASE_URL}/Transactions/expense`,
   expensesByDate: (start, end) => `${API_BASE_URL}/Transactions/expense/filter?start=${start}&end=${end}`,
   transactionsByEvent: (eventId) => `${API_BASE_URL}/Transactions/byEvent/${eventId}`,

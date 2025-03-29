@@ -1,12 +1,15 @@
 import React from 'react';
 import './Incomes.css';
-import Catalog from '../../components/Catalog/Catalog';
+import IncomesTable from '../../components/IncomesTable/IncomesTable';
 
 const Incomes = () => {
   return (
-    <div className="incomes-page">
-      <Catalog />
+    <div className="container">
+    <div className="content">
+      <h1>Транзакции</h1>
+      <IncomesTable />
     </div>
+  </div>
   );
 };
 

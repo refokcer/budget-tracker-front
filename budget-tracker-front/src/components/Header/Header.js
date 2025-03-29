@@ -3,11 +3,13 @@ import './Header.css';
 import notificationsIcon from '../../data/notifications.svg'; // Подключаем иконку
 import ExpenseModal from '../Modals/ExpenseModal/ExpenseModal';
 import IncomeModal from '../Modals/IncomeModal/IncomeModal';
+import TransferModal from '../Modals/TransferModal/TransferModal';
 
 const Header = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isIncomeModalOpen, setIsIncomeModalOpen] = useState(false);
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -26,7 +28,7 @@ const Header = () => {
         <div className="header-right-buttons">
             <button className="expense" onClick={openModal}>+ expense</button>
             <button className="income" onClick={() => setIsIncomeModalOpen(true)}>+ income</button>
-            <button className="transfer">+ transfer</button>
+            <button className="transfer" onClick={() => setIsTransferModalOpen(true)}>+ transfer</button>
         </div>
         <div className="header-right-icons">
           <img src={notificationsIcon} alt="Notifications" className="bell-icon" />
@@ -38,6 +40,7 @@ const Header = () => {
 
       <IncomeModal isOpen={isIncomeModalOpen} onClose={() => setIsIncomeModalOpen(false)} />
       <ExpenseModal isOpen={isModalOpen} onClose={closeModal} />
+      <TransferModal isOpen={isTransferModalOpen} onClose={() => setIsTransferModalOpen(false)} />
     </header>
   );
 };

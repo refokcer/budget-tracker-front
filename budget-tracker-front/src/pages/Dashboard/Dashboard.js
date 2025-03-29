@@ -1,7 +1,7 @@
 import React from 'react';
 import TopExpenses from '../../components/TopExpenses/TopExpenses';
 import './Dashboard.css';
-import AccountsSummary from '../../components/AccountsSummary/AccountsSummary';
+import AccountsSummary from '../../components/widgets/AccountsSummary/AccountsSummary';
 
 const Dashboard = () => {
   return (

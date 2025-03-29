@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './ExpensesTable.css';
+import './IncomesTable.css';
 
-const ExpensesTable = () => {
+const IncomesTable = () => {
   const [transactions, setTransactions] = useState([]);
   const [currencies, setCurrencies] = useState({});
   const [categories, setCategories] = useState({});
@@ -14,7 +14,7 @@ const ExpensesTable = () => {
     const fetchData = async () => {
       try {
         const [transactionsRes, currenciesRes, categoriesRes, accountsRes] = await Promise.all([
-          fetch('https://localhost:7281/api/Expenses'),
+          fetch('https://localhost:7281/api/Income'),
           fetch('https://localhost:7281/api/Currencies'),
           fetch('https://localhost:7281/api/Categories'),
           fetch('https://localhost:7281/api/Accounts')
@@ -83,14 +83,14 @@ const ExpensesTable = () => {
   if (error) return <p className="error">Ошибка: {error}</p>;
 
   return (
-    <div className="expenses-table-container">
-      <table className="expenses-table">
+    <div className="incomes-table-container">
+      <table className="incomes-table">
         <thead>
           <tr>
             <th onClick={() => handleSort('title')}>Название {sortConfig.key === 'title' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}</th>
             <th onClick={() => handleSort('amount')}>Сумма {sortConfig.key === 'amount' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}</th>
             <th onClick={() => handleSort('categoryId')}>Категория {sortConfig.key === 'categoryId' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}</th>
-            <th onClick={() => handleSort('accountFrom')}>Счет (Откуда) {sortConfig.key === 'accountFrom' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}</th>
+            <th onClick={() => handleSort('accountTo')}>Счет (Куда) {sortConfig.key === 'accountTo' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}</th>
             <th onClick={() => handleSort('date')}>Дата {sortConfig.key === 'date' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}</th>
             <th onClick={() => handleSort('type')}>Тип {sortConfig.key === 'type' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}</th>
             <th>Описание</th>
@@ -104,7 +104,7 @@ const ExpensesTable = () => {
                 {currencies[transaction.currencyId] || ''} {transaction.amount.toFixed(2)}
               </td>
               <td>{categories[transaction.categoryId] || 'Неизвестно'}</td>
-              <td>{accounts[transaction.accountFrom] || '-'}</td>
+              <td>{accounts[transaction.accountTo] || '-'}</td>
               <td>{new Date(transaction.date).toLocaleDateString()}</td>
               <td>{transaction.type === 1 ? 'Income' : transaction.type === 2 ? 'Expense' : 'Transaction'}</td>
               <td style={{ maxWidth: '200px', wordWrap: 'break-word', wordBreak: 'break-word', whiteSpace: 'normal' }}>
@@ -118,4 +118,4 @@ const ExpensesTable = () => {
   );
 };
 
-export default ExpensesTable;
+export default IncomesTable;
