@@ -11,10 +11,10 @@
     margin: 1rem 0;
 }
 
-.content{
+.dashboard-content{
     display: flex;
-    flex-direction: row !important;
-    justify-content: space-around !important;
+    flex-direction: row;
+    justify-content: space-around;
     align-self: start;
-    width: 100%;
+    width: 90%;
 }

@@ -62,13 +62,23 @@
 }
 
 .modal-content input,
-.modal-content select,
-.modal-content textarea {
+.modal-content textarea{
+  width: 93%;
   padding: 10px;
   margin: 8px 0;
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 0.95rem;
+}
+
+.modal-content select
+ {
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  width: 100%;
 }
 
 .modal-content textarea {
