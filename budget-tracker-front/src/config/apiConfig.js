@@ -22,6 +22,8 @@ export const API_ENDPOINTS = {
   expensesByEvent: (eventId) => `${API_BASE_URL}/Expenses/event/${eventId}`,
   createExpenseSeparate: `${API_BASE_URL}/Expenses`,
 
+  incomesAll: `${API_BASE_URL}/Income`,
+
   // Budget Plan Items
   budgetPlanItems: `${API_BASE_URL}/BudgetPlanItems`,
   budgetPlanItemById: (id) => `${API_BASE_URL}/BudgetPlanItems/${id}`,
