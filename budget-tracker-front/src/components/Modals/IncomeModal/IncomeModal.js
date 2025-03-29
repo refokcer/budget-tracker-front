@@ -22,9 +22,9 @@ const IncomeModal = ({ isOpen, onClose }) => {
     const fetchData = async () => {
       try {
         const [currenciesRes, categoriesRes, accountsRes] = await Promise.all([
-          fetch('https://localhost:7281/api/Currencies'),
-          fetch('https://localhost:7281/api/Categories'),
-          fetch('https://localhost:7281/api/Accounts')
+          fetch(API_ENDPOINTS.currencies),
+          fetch(API_ENDPOINTS.categories),
+          fetch(API_ENDPOINTS.accounts)
         ]);
 
         if (!currenciesRes.ok || !categoriesRes.ok || !accountsRes.ok) {
@@ -73,7 +73,7 @@ const IncomeModal = ({ isOpen, onClose }) => {
     try {
         console.log(JSON.stringify(newTransaction, null, 2));
 
-        const response = await fetch('https://localhost:7281/api/Transactions', {
+        const response = await fetch(API_ENDPOINTS.createIncome, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newTransaction)
