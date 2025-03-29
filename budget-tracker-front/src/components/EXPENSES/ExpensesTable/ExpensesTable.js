@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_ENDPOINTS } from '../../../config/apiConfig';
 import './ExpensesTable.css';
 
 const ExpensesTable = () => {
@@ -14,10 +15,10 @@ const ExpensesTable = () => {
     const fetchData = async () => {
       try {
         const [transactionsRes, currenciesRes, categoriesRes, accountsRes] = await Promise.all([
-          fetch('https://localhost:7281/api/Expenses'),
-          fetch('https://localhost:7281/api/Currencies'),
-          fetch('https://localhost:7281/api/Categories'),
-          fetch('https://localhost:7281/api/Accounts')
+          fetch(API_ENDPOINTS.expensesAll),
+          fetch(API_ENDPOINTS.currencies),
+          fetch(API_ENDPOINTS.categories),
+          fetch(API_ENDPOINTS.accounts),
         ]);
 
         if (!transactionsRes.ok || !currenciesRes.ok || !categoriesRes.ok || !accountsRes.ok) {
