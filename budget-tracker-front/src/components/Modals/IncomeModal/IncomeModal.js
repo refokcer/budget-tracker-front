@@ -19,6 +19,13 @@ const IncomeModal = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (!isOpen) return;
 
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    }
+
+
     const fetchData = async () => {
       try {
         const [currenciesRes, categoriesRes, accountsRes] = await Promise.all([
@@ -47,7 +54,14 @@ const IncomeModal = ({ isOpen, onClose }) => {
     };
 
     fetchData();
-  }, [isOpen]);
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    // Удаляем обработчик при размонтировании/закрытии
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   const handleSubmit = async () => {
     if (!title || !amount || !currencyId || !categoryId || !accountTo) {

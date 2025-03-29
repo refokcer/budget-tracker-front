@@ -46,6 +46,12 @@ const ExpenseModal = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (!isOpen) return;
 
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    }
+
     const loadData = async () => {
       try {
         // Загружаем списки валют, категорий и счетов параллельно
@@ -68,7 +74,14 @@ const ExpenseModal = ({ isOpen, onClose }) => {
     };
 
     loadData();
-  }, [isOpen]);
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    // Удаляем обработчик при размонтировании/закрытии
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   // Отправка формы на создание новой транзакции (расхода)
   const handleSubmit = async () => {
