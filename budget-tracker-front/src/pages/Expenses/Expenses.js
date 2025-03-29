@@ -1,7 +1,7 @@
 // src/pages/Expenses.js
 
 import React from "react";
-import ExpensesTable from "../../components/ExpensesTable/ExpensesTable";
+import ExpensesTable from "../../components/EXPENSES/ExpensesTable/ExpensesTable";
 import "./Expenses.css";
 
 const Expenses = () => {

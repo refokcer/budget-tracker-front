@@ -1,6 +1,6 @@
 import React from 'react';
 import './Incomes.css';
-import IncomesTable from '../../components/IncomesTable/IncomesTable';
+import IncomesTable from '../../components/INCOMES/IncomesTable/IncomesTable';
 
 const Incomes = () => {
   return (
