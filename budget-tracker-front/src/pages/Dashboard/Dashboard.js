@@ -1,5 +1,5 @@
 import React from 'react';
-import TopExpenses from '../../components/TopExpenses/TopExpenses';
+import TopExpenses from '../../components/DASHBOARD/TopExpenses/TopExpenses';
 import './Dashboard.css';
 import AccountsSummary from '../../components/DASHBOARD/AccountsSummary/AccountsSummary';
 

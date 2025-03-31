@@ -15,7 +15,7 @@ const ExpensesTable = () => {
     const fetchData = async () => {
       try {
         const [transactionsRes, currenciesRes, categoriesRes, accountsRes] = await Promise.all([
-          fetch(API_ENDPOINTS.expensesAll),
+          fetch(API_ENDPOINTS.expenses),
           fetch(API_ENDPOINTS.currencies),
           fetch(API_ENDPOINTS.categories),
           fetch(API_ENDPOINTS.accounts),

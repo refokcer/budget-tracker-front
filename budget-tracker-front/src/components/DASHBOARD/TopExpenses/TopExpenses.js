@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import data from '../../data/data.json';
+import data from '../../../data/data.json';
 import './TopExpenses.css';
 
 const TopExpenses = () => {
