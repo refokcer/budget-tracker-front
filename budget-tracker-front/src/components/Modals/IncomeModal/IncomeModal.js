@@ -30,7 +30,7 @@ const IncomeModal = ({ isOpen, onClose }) => {
       try {
         const [currenciesRes, categoriesRes, accountsRes] = await Promise.all([
           fetch(API_ENDPOINTS.currencies),
-          fetch(API_ENDPOINTS.categories),
+          fetch(API_ENDPOINTS.categoriesIncomes),
           fetch(API_ENDPOINTS.accounts)
         ]);
 
@@ -42,11 +42,8 @@ const IncomeModal = ({ isOpen, onClose }) => {
         const categoriesData = await categoriesRes.json();
         const accountsData = await accountsRes.json();
 
-        // Фильтруем категории только типа Income
-        const filteredCategories = categoriesData.filter(cat => cat.type === 1);
-
         setCurrencies(currenciesData);
-        setCategories(filteredCategories);
+        setCategories(categoriesData);
         setAccounts(accountsData);
       } catch (error) {
         setError(error.message);

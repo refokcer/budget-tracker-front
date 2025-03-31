@@ -5,7 +5,7 @@ import './ExpenseModal.css'; // Подключаем стили для мода�
 
 // Жёстко прописанные эндпоинты (без отдельного файла конфигурации)
 const CURRENCIES_ENDPOINT   = API_ENDPOINTS.currencies;
-const CATEGORIES_ENDPOINT   = API_ENDPOINTS.categories;
+const CATEGORIES_ENDPOINT   = API_ENDPOINTS.categoriesExpenses;
 const ACCOUNTS_ENDPOINT     = API_ENDPOINTS.accounts;
 const Expense_ENDPOINT = API_ENDPOINTS.createExpense;
 
@@ -61,12 +61,9 @@ const ExpenseModal = ({ isOpen, onClose }) => {
           fetchJson(ACCOUNTS_ENDPOINT),
         ]);
 
-        // Фильтруем категории, если нужно, например, для «расхода» type === 2
-        const filteredCategories = categoriesData.filter(cat => cat.type === 2);
-
         // Запоминаем полученные данные в состояниях
         setCurrencies(currenciesData);
-        setCategories(filteredCategories);
+        setCategories(categoriesData);
         setAccounts(accountsData);
       } catch (err) {
         setError(err.message);
