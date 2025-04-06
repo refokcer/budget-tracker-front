@@ -54,8 +54,6 @@ const BudgetPlanPage = () => {
 
   return (
     <div className="budget-plan-page">
-      <h2>План Бюджета</h2>
-
       {!planIdFromQuery && (
         <p>Выберите план из выпадающего списка в шапке...</p>
       )}
