@@ -8,7 +8,6 @@ const Expenses = () => {
   return (
     <div className="container">
       <div className="content">
-        <h1>Транзакции</h1>
         <ExpensesTable />
       </div>
     </div>

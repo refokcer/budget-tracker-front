@@ -6,7 +6,6 @@ const Incomes = () => {
   return (
     <div className="container">
     <div className="content">
-      <h1>Транзакции</h1>
       <IncomesTable />
     </div>
   </div>

@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Expenses from './pages/Expenses/Expenses';
 import Incomes from './pages/Incomes/Incomes';
-import BudgetPlanPage from './pages/BudgetPlan/BudgetPlanPage';
+import BudgetPlanPage from './pages/BudgetPlan/BudgetPlanPage/BudgetPlanPage';
 import './App.css';
 
 const App = () => {

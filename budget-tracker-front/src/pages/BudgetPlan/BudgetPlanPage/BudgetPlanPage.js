@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import API_ENDPOINTS from '../../config/apiConfig';
+import API_ENDPOINTS from '../../../config/apiConfig';
 
-import PlanDetail from './PlanDetail';
-import PlanItemsTable from './PlanItemsTable';
+import PlanDetails from '../PlanDetails/PlanDetails';
+import PlanItemsTable from '../PlanItemsTable/PlanItemsTable';
 
 import './BudgetPlanPage.css';
 
@@ -99,7 +99,7 @@ const BudgetPlanPage = () => {
       {selectedPlan && (
         <div className="plan-details-wrapper">
           {/* Отдельный компонент для основной информации плана */}
-          <PlanDetail plan={selectedPlan} />
+          <PlanDetails plan={selectedPlan} />
 
           {/* Таблица с позициями плана */}
           <PlanItemsTable
