@@ -4,60 +4,39 @@ import React, { useState, useEffect } from 'react';
 import API_ENDPOINTS from '../../config/apiConfig';
 import CreateBudgetPlanModal from '../../components/Modals/CreateBudgetPlanModal/CreateBudgetPlanModal';
 import './BudgetPlanPage.css';
+import { useSearchParams } from 'react-router-dom';
+
 
 const BudgetPlanPage = () => {
-  const [plans, setPlans] = useState([]);         // Список планов
-  const [selectedPlanId, setSelectedPlanId] = useState(''); 
-  const [selectedPlanDetails, setSelectedPlanDetails] = useState(null); // Детали плана
-  const [planItems, setPlanItems] = useState([]); // Позиции (BudgetPlanItems) выбранного плана
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchParams] = useSearchParams();
+  const planIdFromQuery = searchParams.get('planId'); // Считываем planId
 
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [planItems, setPlanItems] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  // 1) Загрузка списка всех планов
+  // При изменении planId, перезапрашиваем детали
   useEffect(() => {
-    const fetchPlans = async () => {
-      try {
-        const response = await fetch(API_ENDPOINTS.budgetPlans);
-        if (!response.ok) {
-          throw new Error('Ошибка при загрузке списка планов');
-        }
-        const data = await response.json();
-        setPlans(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPlans();
-  }, []);
-
-  // 2) Загрузка деталей выбранного плана и его Items
-  useEffect(() => {
-    if (!selectedPlanId) {
-      setSelectedPlanDetails(null);
+    if (!planIdFromQuery) {
+      setSelectedPlan(null);
       setPlanItems([]);
       return;
     }
 
-    const fetchPlanDetails = async () => {
+    const fetchPlanData = async () => {
       setLoading(true);
       setError(null);
-
       try {
-        // Загружаем сам план
-        const planRes = await fetch(API_ENDPOINTS.budgetPlanById(selectedPlanId));
-        if (!planRes.ok) throw new Error('Ошибка при загрузке данных плана');
-
+        // 1) Загружаем сам план
+        const planRes = await fetch(API_ENDPOINTS.budgetPlanById(planIdFromQuery));
+        if (!planRes.ok) throw new Error('Ошибка при загрузке плана');
         const planData = await planRes.json();
-        setSelectedPlanDetails(planData);
+        setSelectedPlan(planData);
 
-        // Загружаем Items для плана
-        const itemsRes = await fetch(API_ENDPOINTS.budgetPlanItemsByPlan(selectedPlanId));
-        if (!itemsRes.ok) throw new Error('Ошибка при загрузке позиций плана');
-
+        // 2) Загружаем Items
+        const itemsRes = await fetch(API_ENDPOINTS.budgetPlanItemsByPlan(planIdFromQuery));
+        if (!itemsRes.ok) throw new Error('Ошибка при загрузке пунктов плана');
         const itemsData = await itemsRes.json();
         setPlanItems(itemsData);
       } catch (err) {
@@ -67,79 +46,33 @@ const BudgetPlanPage = () => {
       }
     };
 
-    fetchPlanDetails();
-  }, [selectedPlanId]);
+    fetchPlanData();
+  }, [planIdFromQuery]);
 
-  const handleSelectChange = (e) => {
-    setSelectedPlanId(e.target.value);
-  };
-
-  const openCreateModal = () => setIsModalOpen(true);
-  const closeCreateModal = () => setIsModalOpen(false);
-
-  // После создания нового плана – обновим список планов
-  const onPlanCreated = async () => {
-    closeCreateModal();
-    try {
-      setLoading(true);
-      const response = await fetch(API_ENDPOINTS.budgetPlans);
-      if (!response.ok) {
-        throw new Error('Ошибка при обновлении списка планов');
-      }
-      const data = await response.json();
-      setPlans(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading && !selectedPlanDetails && !plans.length && !error) {
-    return <p className="loading">Загрузка...</p>;
-  }
+  if (loading) return <p>Загрузка...</p>;
+  if (error) return <p className="error">{error}</p>;
 
   return (
     <div className="budget-plan-page">
       <h2>План Бюджета</h2>
-      {error && <p className="error">{error}</p>}
 
-      {/* Селект для выбора плана */}
-      <div className="plan-selector">
-        <label htmlFor="planSelect">Выберите план: </label>
-        <select id="planSelect" value={selectedPlanId} onChange={handleSelectChange}>
-          <option value="">-- Не выбрано --</option>
-          {plans.map((plan) => (
-            <option key={plan.id} value={plan.id}>
-              {plan.title}
-            </option>
-          ))}
-        </select>
-        <button onClick={openCreateModal} className="create-button">
-          Создать план
-        </button>
-      </div>
+      {!planIdFromQuery && (
+        <p>Выберите план из выпадающего списка в шапке...</p>
+      )}
 
-      {/* Если план выбран, покажем детали */}
-      {selectedPlanDetails && (
+      {selectedPlan && (
         <div className="plan-details">
-          <h3>{selectedPlanDetails.Title}</h3>
+          <h3>{selectedPlan.title}</h3>
           <p>
-            <strong>Период:</strong>{' '}
-            {new Date(selectedPlanDetails.startDate).toLocaleDateString()} -{' '}
-            {new Date(selectedPlanDetails.endDate).toLocaleDateString()}
+            Период: {new Date(selectedPlan.startDate).toLocaleDateString()} -{' '}
+            {new Date(selectedPlan.endDate).toLocaleDateString()}
           </p>
-          <p>
-            <strong>Тип плана:</strong> {selectedPlanDetails.type}
-          </p>
-          <p>
-            <strong>Описание:</strong>{' '}
-            {selectedPlanDetails.description || 'Нет описания'}
-          </p>
+          <p>Тип: {selectedPlan.type}</p>
+          <p>Описание: {selectedPlan.description || '—'}</p>
 
-          <h4>Позиции плана (Items):</h4>
+          <h4>Позиции плана (items):</h4>
           {planItems.length === 0 ? (
-            <p>Нет позиций в этом плане.</p>
+            <p>Нет позиций.</p>
           ) : (
             <table className="plan-items-table">
               <thead>
@@ -156,7 +89,7 @@ const BudgetPlanPage = () => {
                     <td>{item.categoryId}</td>
                     <td>{item.amount}</td>
                     <td>{item.currencyId}</td>
-                    <td>{item.description || '-'}</td>
+                    <td>{item.description || '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -164,13 +97,6 @@ const BudgetPlanPage = () => {
           )}
         </div>
       )}
-
-      {/* Модальное окно для создания нового плана */}
-      <CreateBudgetPlanModal
-        isOpen={isModalOpen}
-        onClose={closeCreateModal}
-        onPlanCreated={onPlanCreated}
-      />
     </div>
   );
 };
