@@ -4,7 +4,7 @@ import Header from './components/Header/Header';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Expenses from './pages/Expenses/ExpensesPage/Expenses';
-import Incomes from './pages/Incomes/Incomes';
+import Incomes from './pages/Incomes/IncomesPage/Incomes';
 import BudgetPlanPage from './pages/BudgetPlan/BudgetPlanPage/BudgetPlanPage';
 import './App.css';
 
