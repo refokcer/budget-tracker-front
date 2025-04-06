@@ -1,58 +1,68 @@
 /* src/pages/BudgetPlanPage/BudgetPlanPage.css */
 
 .budget-plan-page {
-    padding: 20px;
-    color: #333;
-  }
-  
-  .plan-selector {
-    margin-bottom: 20px;
-  }
-  
-  .plan-selector select {
-    margin-left: 10px;
-    padding: 5px 10px;
-  }
-  
-  .create-button {
-    margin-left: 20px;
-    background-color: #4caf50;
-    color: #fff;
-    padding: 6px 12px;
-    border-radius: 4px;
-    border: none;
-    cursor: pointer;
-  }
-  .create-button:hover {
-    background-color: #43a047;
-  }
-  
-  .plan-details {
-    margin-top: 20px;
-    background-color: #f8f8f8;
-    padding: 15px;
-    border-radius: 8px;
-  }
-  
-  .plan-items-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-  }
-  
-  .plan-items-table th,
-  .plan-items-table td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: left;
-  }
-  
-  .error {
-    color: red;
-    margin: 10px 0;
-  }
-  
-  .loading {
-    color: #777;
-  }
-  
+  padding: 20px;
+  /* Оставляем фоновый цвет, если нужно:
+     background-color: #595168; 
+     Или вообще убираем, если фон задаётся где-то выше */
+  min-height: calc(100vh - 60px);
+}
+
+.no-plan-text, .loading, .error {
+  color: #eee;
+  font-size: 1rem;
+}
+
+/* Убираем тёмно-серую подложку
+   и делаем обычный текстовый блок */
+.plan-details-wrapper {
+  /* Больше не делаем фон и тени */
+  padding: 0;
+  margin: 0 auto; 
+  width: 100%;
+}
+
+/* Инфа о плане */
+.plan-info {
+  color: #fff; /* или другой, если фон остаётся темным */
+  margin-bottom: 20px;
+}
+
+.plan-title {
+  margin: 0 0 10px;
+  font-size: 1.3rem;
+  color: #fff;
+}
+
+.plan-period, .plan-type, .plan-description {
+  margin: 5px 0;
+}
+
+/* Таблица */
+.plan-items-table-container {
+  /* если нужно ограничить ширину */
+  margin-top: 10px;
+}
+
+.plan-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #ddd; 
+  background-color: #333; /* Можно оставить тёмную таблицу */
+  font-size: 0.95rem;
+}
+
+.plan-items-table th, .plan-items-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #444;
+}
+
+.plan-items-table th {
+  background-color: #222;
+  font-weight: bold;
+}
+
+.plan-items-table tr:nth-child(even) {
+  background-color: #3a3a3a;
+}

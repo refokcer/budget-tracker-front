@@ -1,0 +1,31 @@
+/* Допустим, в файле PlanDetails.css или BudgetPlanPage.css */
+
+/* Контейнер, где всё в одну строку */
+.plan-details-inline {
+    display: flex;
+    gap: 80px;           /* Отступы между элементами */
+    align-items: baseline; 
+    flex-wrap: wrap;     /* Если окно станет узким, пойдёт перенос, но аккуратно */
+    margin-bottom: 15px; /* Отступ перед таблицей */
+  }
+  
+  /* Название – чуть больше шрифтом, выделим */
+  .plan-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #fff;         /* если фон тёмный */
+    margin-right: 10px;
+  }
+  
+  .plan-period,
+  .plan-type,
+  .plan-description {
+    color: #ddd;         /* Чтобы смотрелось не так ярко, но читабельно */
+    font-size: 1rem;
+  }
+  .plan-period strong,
+  .plan-type strong,
+  .plan-description strong {
+    color: #fff;         /* Подпись "Период:", "Тип:", "Описание:" чуть ярче */
+  }
+  

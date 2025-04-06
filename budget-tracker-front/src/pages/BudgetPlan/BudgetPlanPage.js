@@ -1,22 +1,27 @@
 // src/pages/BudgetPlanPage/BudgetPlanPage.js
 
 import React, { useState, useEffect } from 'react';
-import API_ENDPOINTS from '../../config/apiConfig';
-import CreateBudgetPlanModal from '../../components/Modals/CreateBudgetPlanModal/CreateBudgetPlanModal';
-import './BudgetPlanPage.css';
 import { useSearchParams } from 'react-router-dom';
+import API_ENDPOINTS from '../../config/apiConfig';
 
+import PlanDetail from './PlanDetail';
+import PlanItemsTable from './PlanItemsTable';
+
+import './BudgetPlanPage.css';
 
 const BudgetPlanPage = () => {
   const [searchParams] = useSearchParams();
-  const planIdFromQuery = searchParams.get('planId'); // Считываем planId
+  const planIdFromQuery = searchParams.get('planId'); // считываем ?planId=...
 
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [planItems, setPlanItems] = useState([]);
+  const [categoryMap, setCategoryMap] = useState({});
+  const [currencyMap, setCurrencyMap] = useState({});
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // При изменении planId, перезапрашиваем детали
+  // Загружаем данные, когда меняется planId
   useEffect(() => {
     if (!planIdFromQuery) {
       setSelectedPlan(null);
@@ -24,20 +29,49 @@ const BudgetPlanPage = () => {
       return;
     }
 
-    const fetchPlanData = async () => {
+    const fetchData = async () => {
       setLoading(true);
       setError(null);
+
       try {
-        // 1) Загружаем сам план
+        // 1) Загрузить сам план
         const planRes = await fetch(API_ENDPOINTS.budgetPlanById(planIdFromQuery));
         if (!planRes.ok) throw new Error('Ошибка при загрузке плана');
         const planData = await planRes.json();
         setSelectedPlan(planData);
 
-        // 2) Загружаем Items
+        // 2) Загрузить Items
         const itemsRes = await fetch(API_ENDPOINTS.budgetPlanItemsByPlan(planIdFromQuery));
-        if (!itemsRes.ok) throw new Error('Ошибка при загрузке пунктов плана');
+        if (!itemsRes.ok) throw new Error('Ошибка при загрузке позиций плана');
         const itemsData = await itemsRes.json();
+
+        // 3) Загрузить категории и валюты
+        const [catRes, curRes] = await Promise.all([
+          fetch(API_ENDPOINTS.categories),
+          fetch(API_ENDPOINTS.currencies),
+        ]);
+
+        if (!catRes.ok || !curRes.ok) {
+          throw new Error('Ошибка при загрузке категорий/валют');
+        }
+
+        const catData = await catRes.json();
+        const curData = await curRes.json();
+
+        // Создаём словари { id: title } и { id: symbol }
+        const catMap = {};
+        catData.forEach((c) => {
+          catMap[c.id] = c.title;
+        });
+
+        const curMap = {};
+        curData.forEach((c) => {
+          curMap[c.id] = c.symbol;
+        });
+
+        setCategoryMap(catMap);
+        setCurrencyMap(curMap);
+
         setPlanItems(itemsData);
       } catch (err) {
         setError(err.message);
@@ -46,53 +80,33 @@ const BudgetPlanPage = () => {
       }
     };
 
-    fetchPlanData();
+    fetchData();
   }, [planIdFromQuery]);
 
-  if (loading) return <p>Загрузка...</p>;
+  // -- РЕНДЕР --
+
+  if (loading) return <p className="loading">Загрузка...</p>;
   if (error) return <p className="error">{error}</p>;
 
   return (
     <div className="budget-plan-page">
       {!planIdFromQuery && (
-        <p>Выберите план из выпадающего списка в шапке...</p>
+        <p className="no-plan-text">
+          Выберите план в шапке...
+        </p>
       )}
 
       {selectedPlan && (
-        <div className="plan-details">
-          <h3>{selectedPlan.title}</h3>
-          <p>
-            Период: {new Date(selectedPlan.startDate).toLocaleDateString()} -{' '}
-            {new Date(selectedPlan.endDate).toLocaleDateString()}
-          </p>
-          <p>Тип: {selectedPlan.type}</p>
-          <p>Описание: {selectedPlan.description || '—'}</p>
+        <div className="plan-details-wrapper">
+          {/* Отдельный компонент для основной информации плана */}
+          <PlanDetail plan={selectedPlan} />
 
-          <h4>Позиции плана (items):</h4>
-          {planItems.length === 0 ? (
-            <p>Нет позиций.</p>
-          ) : (
-            <table className="plan-items-table">
-              <thead>
-                <tr>
-                  <th>Категория</th>
-                  <th>Сумма</th>
-                  <th>Валюта</th>
-                  <th>Описание</th>
-                </tr>
-              </thead>
-              <tbody>
-                {planItems.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.categoryId}</td>
-                    <td>{item.amount}</td>
-                    <td>{item.currencyId}</td>
-                    <td>{item.description || '—'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+          {/* Таблица с позициями плана */}
+          <PlanItemsTable
+            items={planItems}
+            categoryMap={categoryMap}
+            currencyMap={currencyMap}
+          />
         </div>
       )}
     </div>
