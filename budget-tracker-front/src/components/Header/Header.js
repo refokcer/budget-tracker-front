@@ -23,19 +23,19 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Определяем название страницы по pathname
+  const currentPageTitle = pageTitles[location.pathname] || 'My App';
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isIncomeModalOpen, setIsIncomeModalOpen] = useState(false);
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
-  // Список планов
+  // --- ЛОГИКА для Budget Plans (если хотим dropdown на /budget-plans):
   const [plans, setPlans] = useState([]);
   const [plansError, setPlansError] = useState(null);
-
-  // Выбранный план
   const [selectedPlanId, setSelectedPlanId] = useState('');
 
-  // Загрузим список планов (для выпадающего списка), 
-  // но только если мы находимся в /budget-plans, чтобы не грузить зря
+  // Загружаем список планов только для /budget-plans
   useEffect(() => {
     if (location.pathname === '/budget-plans') {
       const fetchPlans = async () => {
@@ -53,25 +53,27 @@ const Header = () => {
       fetchPlans();
     }
   }, [location.pathname]);
-  
-  // При выборе плана меняем query-параметр ?planId=...
+
+  // При выборе плана - меняем query-параметр ?planId=...
   const handlePlanChange = (e) => {
     setSelectedPlanId(e.target.value);
-    // Добавляем в URL: /budget-plans?planId=123
     navigate(`/budget-plans?planId=${e.target.value}`);
   };
-  
-  // Открыть/закрыть модалки (expense, income, transfer)
+
+  // --- Модалки Expense, Income, Transfer
   const openExpenseModal = () => setIsModalOpen(true);
   const closeExpenseModal = () => setIsModalOpen(false);
-  
+
   return (
     <header className="header">
+      {/* Левая часть: бренд и название страницы */}
       <div className="header-left">
-        <h2>My App</h2>
+        <h2 className="brand-title">My App</h2>
       </div>
 
-      {/* --- Выпадающий список планов --- */}
+      
+      
+      {/* Выпадающий список планов – только если текущая страница /budget-plans */}
       {location.pathname === '/budget-plans' && (
         <div className="plans-dropdown">
           {plansError && <p className="error">{plansError}</p>}
@@ -91,20 +93,20 @@ const Header = () => {
         </div>
       )}
 
+      <div className="header-left">
+        <h2 className="page-title">{currentPageTitle}</h2>
+      </div>
+
+      {/* Правая часть: кнопки +Expense, +Income, +Transfer, иконки и аватар */}
       <div className="header-right">
-        {/* Кнопки добавления транзакций */}
         <div className="header-right-buttons">
           <button className="expense" onClick={openExpenseModal}>+ expense</button>
           <button className="income" onClick={() => setIsIncomeModalOpen(true)}>+ income</button>
           <button className="transfer" onClick={() => setIsTransferModalOpen(true)}>+ transfer</button>
         </div>
-
-        {/* Иконка уведомлений */}
         <div className="header-right-icons">
           <img src={notificationsIcon} alt="Notifications" className="bell-icon" />
         </div>
-
-        {/* Аватар */}
         <div className="header-right-avatar">
           <img src="favicon.ico" alt="User Avatar" className="avatar" />
         </div>
