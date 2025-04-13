@@ -73,26 +73,33 @@ const Header = () => {
 
       
       
-      {/* Выпадающий список планов – только если текущая страница /budget-plans */}
+      {/* -------- выпадающий список планов ---- */}
       {location.pathname === '/budget-plans' && (
         <div className="plans-dropdown">
           {plansError && <p className="error">{plansError}</p>}
-          <label htmlFor="planSelect">Выберите план: </label>
-          <select
-            id="planSelect"
-            value={selectedPlanId}
-            onChange={handlePlanChange}
-          >
-            <option value="">-- Не выбрано --</option>
-            {plans.map((plan) => (
-              <option key={plan.id} value={plan.id}>
-                {plan.title}
-              </option>
-            ))}
-          </select>
+
+          <label htmlFor="planSelect">План:</label>
+
+          {/* кастомный select */}
+          <div className="custom-select-wrapper">
+            <select
+              id="planSelect"
+              value={selectedPlanId}
+              onChange={handlePlanChange}
+              className="custom-select"
+            >
+              {plans.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.title}
+                </option>
+              ))}
+            </select>
+            {/* стрелочка */}
+            <span className="custom-arrow" />
+          </div>
         </div>
       )}
-
+      
       <div className="header-left">
         <h2 className="page-title">{currentPageTitle}</h2>
       </div>
