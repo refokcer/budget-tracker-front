@@ -1,146 +1,156 @@
 // src/pages/BudgetPlanPage/BudgetPlanPage.js
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import API_ENDPOINTS from '../../../config/apiConfig';
 
-import PlanDetails from '../PlanDetails/PlanDetails';
+import PlanDetails    from '../PlanDetails/PlanDetails';
 import PlanItemsTable from '../PlanItemsTable/PlanItemsTable';
 
 import './BudgetPlanPage.css';
 
 const BudgetPlanPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const planIdFromQuery = searchParams.get('planId'); // считываем ?planId=...
+  const planIdFromQuery = searchParams.get('planId');
 
-  const [plans, setPlans] = useState([]);
+  /* данные */
+  const [plans,        setPlans]        = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [planItems, setPlanItems] = useState([]);
-  const [categoryMap, setCategoryMap] = useState({});
-  const [currencyMap, setCurrencyMap] = useState({});
+  const [planItems,    setPlanItems]    = useState([]);
+  const [transactions, setTransactions] = useState([]);
 
+  /* справочники */
+  const [categoryMap,  setCategoryMap]  = useState({});
+  const [currencyMap,  setCurrencyMap]  = useState({});
+
+  /* ui */
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error,   setError]   = useState(null);
 
-  // 1) При первом рендере грузим ВСЕ планы, чтобы понять, что выбрать
+  /* ---------- 1. список планов ---------- */
   useEffect(() => {
-    const fetchAllPlans = async () => {
+    const fetchPlans = async () => {
       try {
-        setLoading(true);
-        const response = await fetch(API_ENDPOINTS.budgetPlans);
-        if (!response.ok) {
-          throw new Error('Ошибка при загрузке списка планов');
-        }
-        const data = await response.json();
+        const res = await fetch(API_ENDPOINTS.budgetPlans);
+        if (!res.ok) throw new Error('Ошибка при загрузке планов');
+        const data = await res.json();
         setPlans(data);
 
-        // Если в query ещё НЕ указан planId и есть планы
-        if (!planIdFromQuery && data.length > 0) {
-          // Ставим в query-параметр первый план
+        if (!planIdFromQuery && data.length) {
           setSearchParams({ planId: data[0].id });
         }
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+      } catch (e) {
+        setError(e.message);
       }
     };
-
-    fetchAllPlans();
+    fetchPlans();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); 
-  // Пустой массив зависимостей => эта логика выполняется один раз при загрузке страницы
+  }, []);
 
-  // 2) Когда меняется planId (или мы только что его выставили) — грузим детали конкретного плана
+  /* ---------- 2. всё по выбранному planId ---------- */
   useEffect(() => {
-    // Если planId ещё не определился (например, нет планов вообще)
     if (!planIdFromQuery) {
       setSelectedPlan(null);
       setPlanItems([]);
+      setTransactions([]);
       return;
     }
 
-    const fetchDataForSelectedPlan = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // 2.1) Загрузить сам план
-        const planRes = await fetch(API_ENDPOINTS.budgetPlanById(planIdFromQuery));
-        if (!planRes.ok) throw new Error('Ошибка при загрузке плана');
-        const planData = await planRes.json();
-        setSelectedPlan(planData);
-
-        // 2.2) Загрузить Items (пункты плана)
-        const itemsRes = await fetch(API_ENDPOINTS.budgetPlanItemsByPlan(planIdFromQuery));
-        if (!itemsRes.ok) throw new Error('Ошибка при загрузке позиций плана');
+        /* план + items */
+        const [planRes, itemsRes] = await Promise.all([
+          fetch(API_ENDPOINTS.budgetPlanById(planIdFromQuery)),
+          fetch(API_ENDPOINTS.budgetPlanItemsByPlan(planIdFromQuery)),
+        ]);
+        if (!planRes.ok || !itemsRes.ok) throw new Error('Ошибка при загрузке плана');
+        const planData  = await planRes.json();
         const itemsData = await itemsRes.json();
+        setSelectedPlan(planData);
+        setPlanItems(itemsData);
 
-        // 2.3) Загрузить категории и валюты (для отображения названий вместо Id)
+        /* все транзакции по плану */
+        const trxRes = await fetch(API_ENDPOINTS.transactionsByPlan(planIdFromQuery));
+        if (!trxRes.ok) throw new Error('Ошибка при загрузке транзакций');
+        setTransactions(await trxRes.json());
+
+        /* справочники */
         const [catRes, curRes] = await Promise.all([
           fetch(API_ENDPOINTS.categories),
           fetch(API_ENDPOINTS.currencies),
         ]);
-        if (!catRes.ok || !curRes.ok) {
-          throw new Error('Ошибка при загрузке категорий/валют');
-        }
-
+        if (!catRes.ok || !curRes.ok) throw new Error('Ошибка при загрузке справочников');
         const catData = await catRes.json();
         const curData = await curRes.json();
 
-        // Создаём словари { id: title } и { id: symbol }
         const catMap = {};
-        catData.forEach((c) => {
-          catMap[c.id] = c.title;
-        });
-        const curMap = {};
-        curData.forEach((c) => {
-          curMap[c.id] = c.symbol;
-        });
-
+        catData.forEach((c) => (catMap[c.id] = c.title));
         setCategoryMap(catMap);
+
+        const curMap = {};
+        curData.forEach((c) => (curMap[c.id] = c.symbol));
         setCurrencyMap(curMap);
-        setPlanItems(itemsData);
-      } catch (err) {
-        setError(err.message);
+      } catch (e) {
+        setError(e.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchDataForSelectedPlan();
+    fetchData();
   }, [planIdFromQuery]);
 
-  // --- РЕНДЕР ---
+  /* ---------- 3. готовим данные таблицы ---------- */
+  const expenseTrx = transactions.filter((t) => t.type === 2); // 2 = Expense
+  const spentMap   = expenseTrx.reduce((acc, t) => {
+    acc[t.categoryId] = (acc[t.categoryId] || 0) + t.amount;
+    return acc;
+  }, {});
 
-  // Если идёт загрузка — покажем индикатор
-  if (loading) return <p className="loading">Загрузка...</p>;
-  // Если произошла ошибка — покажем ошибку
-  if (error) return <p className="error">{error}</p>;
+  /* itemsExtended с полями spent / remaining */
+  const itemsExtended = planItems.map((it) => ({
+    ...it,
+    spent:     spentMap[it.categoryId] || 0,
+    remaining: it.amount - (spentMap[it.categoryId] || 0),
+  }));
 
-  // Если нет планов вообще
-  if (plans.length === 0) {
-    return (
-      <div className="budget-plan-page">
-        <p className="no-plan-text">Пока нет ни одного плана бюджета...</p>
-      </div>
-    );
+  /* сумма расходов по категориям, которых нет в плане */
+  const categoriesInPlan = new Set(planItems.map((i) => i.categoryId));
+  const spentOther = expenseTrx
+    .filter((t) => !categoriesInPlan.has(t.categoryId))
+    .reduce((s, t) => s + t.amount, 0);
+
+  if (spentOther > 0) {
+    itemsExtended.push({
+      id: 'other-row',
+      categoryId: 'other',
+      amount: '-',
+      currencyId: planItems[0]?.currencyId || 1, // берём любую валюту плана
+      spent: spentOther,
+      remaining: '-',
+      description: 'не вошедшие категории',
+    });
+    categoryMap.other = 'Остальное';
   }
+
+  /* ---------- 4. рендер ---------- */
+  if (loading) return <p className="loading">Загрузка...</p>;
+  if (error)   return <p className="error">{error}</p>;
+
+  if (!plans.length)
+    return <p className="no-plan-text">Планов пока нет…</p>;
 
   return (
     <div className="budget-plan-page">
-      {/* Если planId ещё не выставлен (хотя планы есть) — ждём, 
-          пока setSearchParams поставит первый план в query */}
-      {!planIdFromQuery && (
-        <p className="no-plan-text">Подбираем первый план...</p>
-      )}
+      {!planIdFromQuery && <p className="no-plan-text">Выберите план…</p>}
 
-      {/* Если уже выбрали planId и загрузили план */}
       {selectedPlan && (
         <div className="plan-details-wrapper">
           <PlanDetails plan={selectedPlan} />
           <PlanItemsTable
-            items={planItems}
+            items={itemsExtended}
             categoryMap={categoryMap}
             currencyMap={currencyMap}
           />

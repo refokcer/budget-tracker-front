@@ -2,10 +2,6 @@
 
 .budget-plan-page {
   padding: 20px;
-  /* Оставляем фоновый цвет, если нужно:
-     background-color: #595168; 
-     Или вообще убираем, если фон задаётся где-то выше */
-  min-height: calc(100vh - 60px);
 }
 
 .no-plan-text, .loading, .error {

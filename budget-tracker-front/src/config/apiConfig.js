@@ -69,6 +69,7 @@ export const API_ENDPOINTS = {
   transactionById: (id) => `${API_BASE_URL}/Transactions/${id}`,
   deleteTransaction: (id) => `${API_BASE_URL}/Transactions/${id}`,
   transactiosnByEvent: (eventId) => `${API_BASE_URL}/Transactions/byEvent/${eventId}`,
+  transactionsByPlan: (planId) => `${API_BASE_URL}/Transactions/byPlan/${planId}`,
 
   // Transfers
   transfers: `${API_BASE_URL}/Transfers`,

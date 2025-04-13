@@ -1,5 +1,4 @@
 // src/pages/BudgetPlanPage/PlanItemsTable.js
-
 import React from 'react';
 import './PlanItemsTable.css';
 
@@ -8,22 +7,29 @@ const PlanItemsTable = ({ items, categoryMap, currencyMap }) => {
     return <p>Нет позиций в этом плане.</p>;
   }
 
+  const renderAmount = (val, curId) =>
+    val === '-' ? '-' : `${currencyMap[curId] || ''}${val}`;
+
   return (
     <div className="plan-items-table-container">
       <table className="plan-items-table">
         <thead>
           <tr>
             <th>Категория</th>
-            <th>Сумма</th>
+            <th>Выделено</th>
+            <th>Потрачено</th>
+            <th>Осталось</th>
             <th>Описание</th>
           </tr>
         </thead>
         <tbody>
-          {items.map(item => (
-            <tr key={item.id}>
-              <td>{categoryMap[item.categoryId] || item.categoryId}</td>
-              <td>{currencyMap[item.currencyId] || item.currencyId}{item.amount}</td>
-              <td>{item.description || '—'}</td>
+          {items.map((it) => (
+            <tr key={it.id}>
+              <td>{categoryMap[it.categoryId] || it.categoryId}</td>
+              <td>{renderAmount(it.amount, it.currencyId)}</td>
+              <td>{renderAmount(it.spent,  it.currencyId)}</td>
+              <td>{renderAmount(it.remaining, it.currencyId)}</td>
+              <td>{it.description || '—'}</td>
             </tr>
           ))}
         </tbody>
