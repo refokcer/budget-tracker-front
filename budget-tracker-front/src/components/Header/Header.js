@@ -1,11 +1,10 @@
-// src/components/Header/Header.js
-
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom'; 
+import { useLocation, useNavigate } from 'react-router-dom';
 import './Header.css';
+
 import notificationsIcon from '../../data/notifications.svg';
-import ExpenseModal from '../Modals/ExpenseModal/ExpenseModal';
-import IncomeModal from '../Modals/IncomeModal/IncomeModal';
+import ExpenseModal  from '../Modals/ExpenseModal/ExpenseModal';
+import IncomeModal   from '../Modals/IncomeModal/IncomeModal';
 import TransferModal from '../Modals/TransferModal/TransferModal';
 import API_ENDPOINTS from '../../config/apiConfig';
 
@@ -16,71 +15,53 @@ const pageTitles = {
   '/expenses': 'Expenses',
   '/incomes': 'Incomes',
   '/settings': 'Settings',
-  // Добавьте другие пути по необходимости
 };
 
 const Header = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-
-  // Определяем название страницы по pathname
+  const navigate  = useNavigate();
   const currentPageTitle = pageTitles[location.pathname] || 'My App';
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isIncomeModalOpen, setIsIncomeModalOpen] = useState(false);
-  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [isModalOpen,        setIsModalOpen]        = useState(false);
+  const [isIncomeModalOpen,  setIsIncomeModalOpen]  = useState(false);
+  const [isTransferModalOpen,setIsTransferModalOpen]= useState(false);
 
-  // --- ЛОГИКА для Budget Plans (если хотим dropdown на /budget-plans):
-  const [plans, setPlans] = useState([]);
-  const [plansError, setPlansError] = useState(null);
-  const [selectedPlanId, setSelectedPlanId] = useState('');
+  /* — планы — */
+  const [plans,        setPlans]        = useState([]);
+  const [plansError,   setPlansError]   = useState(null);
+  const [selectedPlanId,setSelectedPlanId]= useState('');
 
-  // Загружаем список планов только для /budget-plans
   useEffect(() => {
-    if (location.pathname === '/budget-plans') {
-      const fetchPlans = async () => {
-        try {
-          const response = await fetch(API_ENDPOINTS.budgetPlans);
-          if (!response.ok) {
-            throw new Error('Ошибка при загрузке планов');
-          }
-          const data = await response.json();
-          setPlans(data);
-        } catch (err) {
-          setPlansError(err.message);
-        }
-      };
-      fetchPlans();
-    }
+    if (location.pathname !== '/budget-plans') return;
+    (async () => {
+      try {
+        const r = await fetch(API_ENDPOINTS.budgetPlans);
+        if (!r.ok) throw new Error('Ошибка при загрузке планов');
+        setPlans(await r.json());
+      } catch (e) { setPlansError(e.message); }
+    })();
   }, [location.pathname]);
 
-  // При выборе плана - меняем query-параметр ?planId=...
   const handlePlanChange = (e) => {
     setSelectedPlanId(e.target.value);
     navigate(`/budget-plans?planId=${e.target.value}`);
   };
 
-  // --- Модалки Expense, Income, Transfer
-  const openExpenseModal = () => setIsModalOpen(true);
-  const closeExpenseModal = () => setIsModalOpen(false);
-
   return (
     <header className="header">
-      {/* Левая часть: бренд и название страницы */}
+      {/* бренд слева */}
       <div className="header-left">
         <h2 className="brand-title">My App</h2>
       </div>
 
-      
-      
-      {/* -------- выпадающий список планов ---- */}
+      {/* ЗАГОЛОВОК ЧЁТКО ПО ЦЕНТРУ ЭКРАНА */}
+      <h2 className="page-title">{currentPageTitle}</h2>
+
+      {/* выпадающий список планов только на /budget-plans */}
       {location.pathname === '/budget-plans' && (
         <div className="plans-dropdown">
           {plansError && <p className="error">{plansError}</p>}
-
           <label htmlFor="planSelect">План:</label>
-
-          {/* кастомный select */}
           <div className="custom-select-wrapper">
             <select
               id="planSelect"
@@ -89,27 +70,20 @@ const Header = () => {
               className="custom-select"
             >
               {plans.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.title}
-                </option>
+                <option key={p.id} value={p.id}>{p.title}</option>
               ))}
             </select>
-            {/* стрелочка */}
             <span className="custom-arrow" />
           </div>
         </div>
       )}
-      
-      <div className="header-left">
-        <h2 className="page-title">{currentPageTitle}</h2>
-      </div>
 
-      {/* Правая часть: кнопки +Expense, +Income, +Transfer, иконки и аватар */}
+      {/* правая часть */}
       <div className="header-right">
         <div className="header-right-buttons">
-          <button className="expense" onClick={openExpenseModal}>+ expense</button>
-          <button className="income" onClick={() => setIsIncomeModalOpen(true)}>+ income</button>
-          <button className="transfer" onClick={() => setIsTransferModalOpen(true)}>+ transfer</button>
+          <button className="expense"  onClick={()=>setIsModalOpen(true)}>+ expense</button>
+          <button className="income"   onClick={()=>setIsIncomeModalOpen(true)}>+ income</button>
+          <button className="transfer" onClick={()=>setIsTransferModalOpen(true)}>+ transfer</button>
         </div>
         <div className="header-right-icons">
           <img src={notificationsIcon} alt="Notifications" className="bell-icon" />
@@ -119,11 +93,10 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Модалки */}
-      <IncomeModal isOpen={isIncomeModalOpen} onClose={() => setIsIncomeModalOpen(false)} />
-      <ExpenseModal isOpen={isModalOpen} onClose={closeExpenseModal} />
-      <TransferModal isOpen={isTransferModalOpen} onClose={() => setIsTransferModalOpen(false)} />
-
+      {/* модалки */}
+      <IncomeModal  isOpen={isIncomeModalOpen}   onClose={()=>setIsIncomeModalOpen(false)}/>
+      <ExpenseModal isOpen={isModalOpen}         onClose={()=>setIsModalOpen(false)}/>
+      <TransferModal isOpen={isTransferModalOpen} onClose={()=>setIsTransferModalOpen(false)}/>
     </header>
   );
 };

@@ -1,11 +1,11 @@
-// src/pages/BudgetPlanPage/BudgetPlanPage.js
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import API_ENDPOINTS from '../../../config/apiConfig';
 
-import PlanDetails    from '../PlanDetails/PlanDetails';
-import PlanItemsTable from '../PlanItemsTable/PlanItemsTable';
-
+import PlanDetails     from '../PlanDetails/PlanDetails';
+import PlanItemsTable  from '../PlanItemsTable/PlanItemsTable';
+import CreatePlanModal from '../CreatePlanModal/CreatePlanModal';
+import EditPlanModal from '../EditPlanModal/EditPlanModal'; 
 import './BudgetPlanPage.css';
 
 const BudgetPlanPage = () => {
@@ -23,8 +23,12 @@ const BudgetPlanPage = () => {
   const [currencyMap,  setCurrencyMap]  = useState({});
 
   /* ui */
-  const [loading, setLoading] = useState(false);
-  const [error,   setError]   = useState(null);
+  const [loading, setLoading]           = useState(false);
+  const [error,   setError]             = useState(null);
+  const [modalOpen, setModalOpen]       = useState(false);   // ← кнопка «Создать план»
+
+  const [editOpen,   setEditOpen]   = useState(false);
+
 
   /* ---------- 1. список планов ---------- */
   useEffect(() => {
@@ -66,10 +70,8 @@ const BudgetPlanPage = () => {
           fetch(API_ENDPOINTS.budgetPlanItemsByPlan(planIdFromQuery)),
         ]);
         if (!planRes.ok || !itemsRes.ok) throw new Error('Ошибка при загрузке плана');
-        const planData  = await planRes.json();
-        const itemsData = await itemsRes.json();
-        setSelectedPlan(planData);
-        setPlanItems(itemsData);
+        setSelectedPlan(await planRes.json());
+        setPlanItems(await itemsRes.json());
 
         /* все транзакции по плану */
         const trxRes = await fetch(API_ENDPOINTS.transactionsByPlan(planIdFromQuery));
@@ -103,20 +105,18 @@ const BudgetPlanPage = () => {
   }, [planIdFromQuery]);
 
   /* ---------- 3. готовим данные таблицы ---------- */
-  const expenseTrx = transactions.filter((t) => t.type === 2); // 2 = Expense
+  const expenseTrx = transactions.filter((t) => t.type === 2);
   const spentMap   = expenseTrx.reduce((acc, t) => {
     acc[t.categoryId] = (acc[t.categoryId] || 0) + t.amount;
     return acc;
   }, {});
 
-  /* itemsExtended с полями spent / remaining */
   const itemsExtended = planItems.map((it) => ({
     ...it,
     spent:     spentMap[it.categoryId] || 0,
     remaining: it.amount - (spentMap[it.categoryId] || 0),
   }));
 
-  /* сумма расходов по категориям, которых нет в плане */
   const categoriesInPlan = new Set(planItems.map((i) => i.categoryId));
   const spentOther = expenseTrx
     .filter((t) => !categoriesInPlan.has(t.categoryId))
@@ -127,7 +127,7 @@ const BudgetPlanPage = () => {
       id: 'other-row',
       categoryId: 'other',
       amount: '-',
-      currencyId: planItems[0]?.currencyId || 1, // берём любую валюту плана
+      currencyId: planItems[0]?.currencyId || 1,
       spent: spentOther,
       remaining: '-',
       description: 'не вошедшие категории',
@@ -140,10 +140,25 @@ const BudgetPlanPage = () => {
   if (error)   return <p className="error">{error}</p>;
 
   if (!plans.length)
-    return <p className="no-plan-text">Планов пока нет…</p>;
+    return (
+      <div className="budget-plan-page">
+        <button className="create-btn" onClick={()=>setModalOpen(true)}>+ новый план</button>
+        <p className="no-plan-text">Планов пока нет…</p>
+        <CreatePlanModal
+          isOpen={modalOpen}
+          onClose={()=>setModalOpen(false)}
+          onCreated={()=>window.location.reload()} />
+      </div>
+    );
 
   return (
     <div className="budget-plan-page">
+      <button className="create-btn" onClick={()=>setModalOpen(true)}>+ новый план</button>
+      {/* кнопка редактирования показывается, если план выбран */}
+      {selectedPlan && (
+        <button className="edit-btn" onClick={()=>setEditOpen(true)}>✎ редактировать план</button>
+      )}
+
       {!planIdFromQuery && <p className="no-plan-text">Выберите план…</p>}
 
       {selectedPlan && (
@@ -156,6 +171,24 @@ const BudgetPlanPage = () => {
           />
         </div>
       )}
+
+      <CreatePlanModal
+        isOpen={modalOpen}
+        onClose={()=>setModalOpen(false)}
+        onCreated={()=>{
+          setModalOpen(false);
+          window.location.reload();
+        }} />
+
+      <EditPlanModal                       
+        isOpen={editOpen}
+        onClose={()=>setEditOpen(false)}
+        plan={selectedPlan}
+        items={planItems}
+        categories={categoryMap}
+        currencies={currencyMap}
+        onSaved={()=>window.location.reload()}
+      />
     </div>
   );
 };

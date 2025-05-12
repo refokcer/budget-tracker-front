@@ -9,6 +9,12 @@
   font-size: 1rem;
 }
 
+.edit-btn{
+  background:#1e88e5; color:#fff; border:none; border-radius:4px;
+  padding:6px 12px; font-size:.9rem; cursor:pointer; margin-left:8px;
+}
+.edit-btn:hover{ opacity:.85; }
+
 /* Убираем тёмно-серую подложку
    и делаем обычный текстовый блок */
 .plan-details-wrapper {
