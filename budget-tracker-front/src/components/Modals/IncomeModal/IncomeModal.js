@@ -31,7 +31,7 @@ const IncomeModal = ({ isOpen, onClose }) => {
         const [currenciesRes, categoriesRes, accountsRes] = await Promise.all([
           fetch(API_ENDPOINTS.currencies),
           fetch(API_ENDPOINTS.categoriesIncomes),
-          fetch(API_ENDPOINTS.accounts)
+          fetch(API_ENDPOINTS.accounts),
         ]);
 
         if (!currenciesRes.ok || !categoriesRes.ok || !accountsRes.ok) {

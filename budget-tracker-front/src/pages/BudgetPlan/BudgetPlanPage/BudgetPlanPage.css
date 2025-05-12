@@ -4,6 +4,28 @@
   padding: 20px;
 }
 
+.plan-actions{
+  margin-top:16px;
+  display:flex;
+  justify-content:flex-end;   /* кнопки прижаты вправо */
+  gap:12px;
+}
+
+/* кнопки уже существуют: .create-btn и .edit-btn */
+/* при необходимости можно подправить одинаковую высоту */
+.create-btn, .edit-btn{
+  padding:6px 14px;
+  border:none;
+  border-radius:4px;
+  font-size:.9rem;
+  cursor:pointer;
+}
+
+.create-btn{
+  background:#1ea522; 
+  color:#fff;
+}
+
 .no-plan-text, .loading, .error {
   color: #eee;
   font-size: 1rem;

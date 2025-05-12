@@ -33,7 +33,7 @@ export const API_ENDPOINTS = {
   deleteCategory: (id) => `${API_BASE_URL}/Categories/${id}`,
 
   categoriesExpenses: `${API_BASE_URL}/Categories/expenses`,
-  categoriesIncomes: `${API_BASE_URL}/Categories/incomes`,
+  categoriesIncomes: `${API_BASE_URL}/Categories/income`,
   categoriesTransfers: `${API_BASE_URL}/Categories/transfers`,
 
   // Currencies
