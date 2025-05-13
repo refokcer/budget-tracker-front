@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { API_ENDPOINTS } from '../../../config/apiConfig';
 import './ExpensesTable.css';
 
-const ExpensesTable = () => {
+const ExpensesTable = ({ startDate, endDate }) => {
   const [transactions, setTransactions] = useState([]);
   const [currencies, setCurrencies] = useState({});
   const [categories, setCategories] = useState({});
@@ -11,11 +11,14 @@ const ExpensesTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  /* загрузка данных при изменении выбранного месяца */
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true); setError(null);
       try {
+        const trxUrl = API_ENDPOINTS.expensesByDate(startDate, endDate);
         const [transactionsRes, currenciesRes, categoriesRes, accountsRes] = await Promise.all([
-          fetch(API_ENDPOINTS.expenses),
+          fetch(trxUrl),
           fetch(API_ENDPOINTS.currencies),
           fetch(API_ENDPOINTS.categories),
           fetch(API_ENDPOINTS.accounts),
@@ -26,53 +29,46 @@ const ExpensesTable = () => {
         }
 
         const transactionsData = await transactionsRes.json();
-        const currenciesData = await currenciesRes.json();
-        const categoriesData = await categoriesRes.json();
-        const accountsData = await accountsRes.json();
+        const currenciesData   = await currenciesRes.json();
+        const categoriesData   = await categoriesRes.json();
+        const accountsData     = await accountsRes.json();
 
         const currencyMap = Object.fromEntries(currenciesData.map(c => [c.id, c.symbol]));
         const categoryMap = Object.fromEntries(categoriesData.map(c => [c.id, c.title]));
-        const accountMap = Object.fromEntries(accountsData.map(a => [a.id, a.title]));
+        const accountMap  = Object.fromEntries(accountsData.map(a => [a.id, a.title]));
 
         setTransactions(transactionsData);
         setCurrencies(currencyMap);
         setCategories(categoryMap);
         setAccounts(accountMap);
-      } catch (error) {
-        setError(error.message);
+      } catch (err) {
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [startDate, endDate]);
 
-  // Функция сортировки
+  /* сортировка (как было) */
   const handleSort = (key) => {
     let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
-    }
+    if (sortConfig.key === key && sortConfig.direction === 'asc') direction = 'desc';
     setSortConfig({ key, direction });
   };
 
-  // Применяем сортировку к данным
   const sortedTransactions = [...transactions].sort((a, b) => {
     if (!sortConfig.key) return 0;
-
     let valueA = a[sortConfig.key];
     let valueB = b[sortConfig.key];
 
     if (sortConfig.key === 'date') {
-      valueA = new Date(valueA);
-      valueB = new Date(valueB);
+      valueA = new Date(valueA); valueB = new Date(valueB);
     } else if (sortConfig.key === 'amount') {
-      valueA = parseFloat(valueA);
-      valueB = parseFloat(valueB);
+      valueA = parseFloat(valueA); valueB = parseFloat(valueB);
     } else if (sortConfig.key === 'title') {
-      valueA = valueA.toLowerCase();
-      valueB = valueB.toLowerCase();
+      valueA = valueA.toLowerCase(); valueB = valueB.toLowerCase();
     }
 
     if (valueA < valueB) return sortConfig.direction === 'asc' ? -1 : 1;
@@ -81,7 +77,7 @@ const ExpensesTable = () => {
   });
 
   if (loading) return <p>Загрузка...</p>;
-  if (error) return <p className="error">Ошибка: {error}</p>;
+  if (error)   return <p className="error">Ошибка: {error}</p>;
 
   return (
     <div className="expenses-table-container">
@@ -98,19 +94,15 @@ const ExpensesTable = () => {
           </tr>
         </thead>
         <tbody>
-          {sortedTransactions.map((transaction) => (
-            <tr key={transaction.id}>
-              <td>{transaction.title}</td>
-              <td>
-                {currencies[transaction.currencyId] || ''} {transaction.amount.toFixed(2)}
-              </td>
-              <td>{categories[transaction.categoryId] || 'Неизвестно'}</td>
-              <td>{accounts[transaction.accountFrom] || '-'}</td>
-              <td>{new Date(transaction.date).toLocaleDateString()}</td>
-              <td>{transaction.type === 1 ? 'Income' : transaction.type === 2 ? 'Expense' : 'Transaction'}</td>
-              <td style={{ maxWidth: '200px', wordWrap: 'break-word', wordBreak: 'break-word', whiteSpace: 'normal' }}>
-                {transaction.description || '-'}
-              </td>
+          {sortedTransactions.map((t) => (
+            <tr key={t.id}>
+              <td>{t.title}</td>
+              <td>{currencies[t.currencyId] || ''} {t.amount.toFixed(2)}</td>
+              <td>{categories[t.categoryId] || '—'}</td>
+              <td>{accounts[t.accountFrom] || '-'}</td>
+              <td>{new Date(t.date).toLocaleDateString()}</td>
+              <td>{t.type === 1 ? 'Income' : t.type === 2 ? 'Expense' : 'Transfer'}</td>
+              <td style={{maxWidth:'200px',wordWrap:'break-word'}}>{t.description || '-'}</td>
             </tr>
           ))}
         </tbody>

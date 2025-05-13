@@ -26,3 +26,29 @@
 ExpensesTable{
     width: 85%;
 }
+
+/* селектор месяца теперь «приклеен» под заголовком в шапке */
+.month-selector{
+  position:absolute;          /* опираемся на <header position:relative> */
+  top:80px;                   /* сразу под шапкой (60 px, если у вас другая высота — поправьте) */
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:1rem;
+  color:#fff;
+  z-index:900;                /* поверх контента страницы */
+  font-size: 1.3rem;
+}
+
+/* стрелки: без фона, только символ */
+.month-selector button{
+  background:transparent;     /* ← без заливки */
+  border:none;
+  color:#fff;
+  font-size:1.5rem;
+  cursor:pointer;
+  padding:0px 28px;
+}
+.month-selector button:hover{ opacity:.75; }

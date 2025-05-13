@@ -126,32 +126,34 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, categories, currencies, o
         <textarea placeholder="Описание" value={description} onChange={e=>setDesc(e.target.value)} />
 
         {/* таблица строк */}
-        <table className="edit-table">
-          <thead>
-            <tr><th>Категория</th><th>Сумма</th><th>Валюта</th><th>Описание</th><th></th></tr>
-          </thead>
-          <tbody>
-            {rows.filter(r=>r._status!=='skip').map((r,idx)=>(
-              <tr key={r.id}>
-                <td>
-                  <select value={r.categoryId} onChange={e=>updateRow(idx,'categoryId',e.target.value)}>
-                    <option value="">-</option>
-                    {allCats.map(c=><option key={c.id} value={c.id}>{c.title}</option>)}
-                  </select>
-                </td>
-                <td><input type="number" value={r.amount} onChange={e=>updateRow(idx,'amount',e.target.value)}/></td>
-                <td>
-                  <select value={r.currencyId} onChange={e=>updateRow(idx,'currencyId',e.target.value)}>
-                    <option value="">-</option>
-                    {allCur.map(c=><option key={c.id} value={c.id}>{c.symbol}</option>)}
-                  </select>
-                </td>
-                <td><input value={r.description} onChange={e=>updateRow(idx,'description',e.target.value)}/></td>
-                <td><button className="del-row" onClick={()=>deleteRow(idx)}>✕</button></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="table-scroll">
+          <table className="edit-table">
+            <thead>
+              <tr><th>Категория</th><th>Сумма</th><th>Валюта</th><th>Описание</th><th></th></tr>
+            </thead>
+            <tbody>
+              {rows.filter(r=>r._status!=='skip').map((r,idx)=>(
+                <tr key={r.id}>
+                  <td>
+                    <select value={r.categoryId} onChange={e=>updateRow(idx,'categoryId',e.target.value)}>
+                      <option value="">-</option>
+                      {allCats.map(c=><option key={c.id} value={c.id}>{c.title}</option>)}
+                    </select>
+                  </td>
+                  <td><input type="number" value={r.amount} onChange={e=>updateRow(idx,'amount',e.target.value)}/></td>
+                  <td>
+                    <select value={r.currencyId} onChange={e=>updateRow(idx,'currencyId',e.target.value)}>
+                      <option value="">-</option>
+                      {allCur.map(c=><option key={c.id} value={c.id}>{c.symbol}</option>)}
+                    </select>
+                  </td>
+                  <td><input value={r.description} onChange={e=>updateRow(idx,'description',e.target.value)}/></td>
+                  <td><button className="del-row" onClick={()=>deleteRow(idx)}>✕</button></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         <button className="add-row" onClick={addRow}>+ строка</button>
 
         <button onClick={handleSave}  disabled={loading} className="submit-button">
