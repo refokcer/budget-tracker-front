@@ -1,8 +1,7 @@
 /* overlay */
 .modal-overlay{
-  position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
-  z-index:1000;
-  animation:fadeBg .25s forwards;
+  position:fixed; inset:0; display:flex; align-items:center; justify-content:center;z-index:1000;
+  animation:fadeBg .25s forwards; 
 }
 @keyframes fadeBg{ to{ background:rgba(0,0,0,.5); } }
 
@@ -30,9 +29,9 @@
 .cat-table-wrapper{ max-height:300px; overflow-y:auto; margin-bottom:12px; }
 .cat-table{ width:100%; border-collapse:collapse; }
 .cat-table th, .cat-table td{
-  padding:8px 10px; border-bottom:1px solid; text-align:left;
+  padding:8px 10px; border-bottom:1px solid #444; text-align:left;
 }
-.cat-table thead{ position:-webkit-sticky; position:sticky; top:0; background:#3a3a4d; }
+.cat-table thead{ position:-webkit-sticky; position:sticky; top:0; }
 
 /* delete button */
 .del-btn{
