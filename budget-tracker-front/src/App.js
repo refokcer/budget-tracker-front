@@ -8,6 +8,7 @@ import Incomes from './pages/Incomes/IncomesPage/Incomes';
 import BudgetPlanPage from './pages/BudgetPlan/BudgetPlanPage/BudgetPlanPage';
 import './App.css';
 import TransfersPage from './pages/Transfers/TransfersPage/TransfersPage';
+import SettingsPage from './pages/Settings/SettingsPage/SettingsPage';
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
               <Route path="/incomes" element={<Incomes />} />
               <Route path="/budget-plans" element={<BudgetPlanPage />} />
               <Route path="/transfers" element={<TransfersPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
               {/* Добавьте маршруты для других страниц */}
             </Routes>
           </main>
