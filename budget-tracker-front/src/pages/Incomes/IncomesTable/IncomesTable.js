@@ -2,114 +2,98 @@ import React, { useState, useEffect } from 'react';
 import API_ENDPOINTS from '../../../config/apiConfig';
 import './IncomesTable.css';
 
-const IncomesTable = () => {
+const IncomesTable = ({ startDate, endDate }) => {
   const [transactions, setTransactions] = useState([]);
-  const [currencies, setCurrencies] = useState({});
-  const [categories, setCategories] = useState({});
-  const [accounts, setAccounts] = useState({});
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [currencies,   setCurrencies]   = useState({});
+  const [categories,   setCategories]   = useState({});
+  const [accounts,     setAccounts]     = useState({});
+  const [sortConfig,   setSortConfig]   = useState({ key:null, direction:'asc' });
+  const [loading,      setLoading]      = useState(true);
+  const [error,        setError]        = useState(null);
+  const [busyId,       setBusyId]       = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [transactionsRes, currenciesRes, categoriesRes, accountsRes] = await Promise.all([
-          fetch(API_ENDPOINTS.incomes),
+  /* загрузка при смене месяца */
+  useEffect(()=>{
+    const fetchData = async ()=>{
+      setLoading(true); setError(null);
+      try{
+        const url = API_ENDPOINTS.incomesByDate(startDate, endDate);
+        const [tr,curr,cat,acc] = await Promise.all([
+          fetch(url),
           fetch(API_ENDPOINTS.currencies),
           fetch(API_ENDPOINTS.categories),
-          fetch(API_ENDPOINTS.accounts),
+          fetch(API_ENDPOINTS.accounts)
         ]);
-
-        if (!transactionsRes.ok || !currenciesRes.ok || !categoriesRes.ok || !accountsRes.ok) {
-          throw new Error('Ошибка загрузки данных');
-        }
-
-        const transactionsData = await transactionsRes.json();
-        const currenciesData = await currenciesRes.json();
-        const categoriesData = await categoriesRes.json();
-        const accountsData = await accountsRes.json();
-
-        const currencyMap = Object.fromEntries(currenciesData.map(c => [c.id, c.symbol]));
-        const categoryMap = Object.fromEntries(categoriesData.map(c => [c.id, c.title]));
-        const accountMap = Object.fromEntries(accountsData.map(a => [a.id, a.title]));
-
-        setTransactions(transactionsData);
-        setCurrencies(currencyMap);
-        setCategories(categoryMap);
-        setAccounts(accountMap);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
+        if(!tr.ok||!curr.ok||!cat.ok||!acc.ok) throw new Error('Ошибка загрузки');
+        const currencyMap = Object.fromEntries((await curr.json()).map(c=>[c.id,c.symbol]));
+        const categoryMap = Object.fromEntries((await cat.json()).map(c=>[c.id,c.title]));
+        const accountMap  = Object.fromEntries((await acc.json()).map(a=>[a.id,a.title]));
+        setTransactions(await tr.json());
+        setCurrencies(currencyMap); setCategories(categoryMap); setAccounts(accountMap);
+      }catch(e){ setError(e.message); }
+      finally{ setLoading(false); }
     };
-
     fetchData();
-  }, []);
+  },[startDate,endDate]);
 
-  // Функция сортировки
-  const handleSort = (key) => {
-    let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
-    }
-    setSortConfig({ key, direction });
+  /* сортировка */
+  const handleSort = (k)=>{
+    setSortConfig(s=>({ key:k, direction: s.key===k && s.direction==='asc' ? 'desc':'asc' }));
   };
 
-  // Применяем сортировку к данным
-  const sortedTransactions = [...transactions].sort((a, b) => {
-    if (!sortConfig.key) return 0;
-
-    let valueA = a[sortConfig.key];
-    let valueB = b[sortConfig.key];
-
-    if (sortConfig.key === 'date') {
-      valueA = new Date(valueA);
-      valueB = new Date(valueB);
-    } else if (sortConfig.key === 'amount') {
-      valueA = parseFloat(valueA);
-      valueB = parseFloat(valueB);
-    } else if (sortConfig.key === 'title') {
-      valueA = valueA.toLowerCase();
-      valueB = valueB.toLowerCase();
-    }
-
-    if (valueA < valueB) return sortConfig.direction === 'asc' ? -1 : 1;
-    if (valueA > valueB) return sortConfig.direction === 'asc' ? 1 : -1;
-    return 0;
+  const rows=[...transactions].sort((a,b)=>{
+    if(!sortConfig.key) return 0;
+    let A=a[sortConfig.key], B=b[sortConfig.key];
+    if(sortConfig.key==='date'){A=new Date(A);B=new Date(B);}
+    if(sortConfig.key==='amount'){A=+A;B=+B;}
+    if(sortConfig.key==='title'){A=A.toLowerCase();B=B.toLowerCase();}
+    return A<B ? (sortConfig.direction==='asc'?-1:1) : A>B ? (sortConfig.direction==='asc'?1:-1) : 0;
   });
 
-  if (loading) return <p>Загрузка...</p>;
-  if (error) return <p className="error">Ошибка: {error}</p>;
+  /* удаление */
+  const del = async (id)=>{
+    if(!window.confirm('Удалить транзакцию?')) return;
+    try{
+      setBusyId(id);
+      const r=await fetch(API_ENDPOINTS.deleteTransaction(id),{method:'DELETE'});
+      if(!r.ok) throw new Error('Ошибка удаления');
+      setTransactions(p=>p.filter(t=>t.id!==id));
+    }catch(e){ alert(e.message); }
+    finally{ setBusyId(null); }
+  };
 
-  return (
+  if(loading) return <p>Загрузка...</p>;
+  if(error)   return <p className="error">Ошибка: {error}</p>;
+
+  return(
     <div className="incomes-table-container">
       <table className="incomes-table">
         <thead>
           <tr>
-            <th onClick={() => handleSort('title')}>Название {sortConfig.key === 'title' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}</th>
-            <th onClick={() => handleSort('amount')}>Сумма {sortConfig.key === 'amount' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}</th>
-            <th onClick={() => handleSort('categoryId')}>Категория {sortConfig.key === 'categoryId' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}</th>
-            <th onClick={() => handleSort('accountTo')}>Счет (Куда) {sortConfig.key === 'accountTo' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}</th>
-            <th onClick={() => handleSort('date')}>Дата {sortConfig.key === 'date' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}</th>
-            <th onClick={() => handleSort('type')}>Тип {sortConfig.key === 'type' ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''}</th>
+            <th onClick={()=>handleSort('title')}>Название {sortConfig.key==='title'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
+            <th onClick={()=>handleSort('amount')}>Сумма {sortConfig.key==='amount'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
+            <th onClick={()=>handleSort('categoryId')}>Категория {sortConfig.key==='categoryId'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
+            <th onClick={()=>handleSort('accountTo')}>Счёт (Куда) {sortConfig.key==='accountTo'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
+            <th onClick={()=>handleSort('date')}>Дата {sortConfig.key==='date'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
+            <th onClick={()=>handleSort('type')}>Тип {sortConfig.key==='type'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
             <th>Описание</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          {sortedTransactions.map((transaction) => (
-            <tr key={transaction.id}>
-              <td>{transaction.title}</td>
+          {rows.map(t=>(
+            <tr key={t.id}>
+              <td>{t.title}</td>
+              <td>{currencies[t.currencyId]||''} {t.amount.toFixed(2)}</td>
+              <td>{categories[t.categoryId]||'—'}</td>
+              <td>{accounts[t.accountTo]||'-'}</td>
+              <td>{new Date(t.date).toLocaleDateString()}</td>
+              <td>{t.type===1?'Income':t.type===2?'Expense':'Transfer'}</td>
+              <td style={{maxWidth:'200px',wordWrap:'break-word'}}>{t.description||'-'}</td>
               <td>
-                {currencies[transaction.currencyId] || ''} {transaction.amount.toFixed(2)}
-              </td>
-              <td>{categories[transaction.categoryId] || 'Неизвестно'}</td>
-              <td>{accounts[transaction.accountTo] || '-'}</td>
-              <td>{new Date(transaction.date).toLocaleDateString()}</td>
-              <td>{transaction.type === 1 ? 'Income' : transaction.type === 2 ? 'Expense' : 'Transaction'}</td>
-              <td style={{ maxWidth: '200px', wordWrap: 'break-word', wordBreak: 'break-word', whiteSpace: 'normal' }}>
-                {transaction.description || '-'}
+                <button className="del-btn" disabled={busyId===t.id} onClick={()=>del(t.id)}>
+                  {busyId===t.id?'…':'✕'}
+                </button>
               </td>
             </tr>
           ))}

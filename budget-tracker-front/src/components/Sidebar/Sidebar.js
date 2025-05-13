@@ -20,6 +20,10 @@ const Sidebar = () => {
           <img src={starIcon} alt="icon" className="sidebar-icon" />
           Incomes
         </Link>
+        <Link to="/transfers" className="sidebar-item">
+          <img src={starIcon} alt="icon" className="sidebar-icon" />
+          Transfers 
+        </Link>
         <Link to="/budget-plans" className="sidebar-item">
           <img src={starIcon} alt="icon" className="sidebar-icon" />
           Budget Plans

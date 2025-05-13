@@ -63,3 +63,10 @@
 .category-tag.expense { background-color: #a52a2a; }
 .category-tag.income { background-color: #2e8b57; }
 .type-tag.transaction { background-color: #888; }
+
+/* кнопка удаления */
+.del-btn{
+  background:#e53935; color:#fff; border:none; border-radius:4px;
+  padding:2px 8px 4px 8px; cursor:pointer;
+}
+.del-btn:disabled{ opacity:.6; cursor:default; }

@@ -1,0 +1,23 @@
+@import '../../Expenses/ExpensesPage/Expenses.css';   /* переиспользуем контейнер и month-selector */
+
+.transfers-table-container{ overflow-x:auto; margin:20px 0; width:100%; }
+.transfers-table{
+  width:100%; border-collapse:collapse; color:#ddd; background:#333;
+}
+.transfers-table th, .transfers-table td{ padding:10px; border-bottom:1px solid #444; }
+.transfers-table th{ 
+    background:#222; 
+    font-weight:bold; 
+    cursor:pointer; 
+    -webkit-user-select:none;
+    user-select:none; 
+}
+.transfers-table th:hover{ background:rgba(255,255,255,0.1); }
+.transfers-table tr:nth-child(even){ background:#3a3a3a; }
+.transfers-table tr:hover{ background:#444; }
+
+.del-btn{
+  background:#e53935; color:#fff; border:none; border-radius:4px; padding:2px 8px;
+  cursor:pointer;
+}
+.del-btn:disabled{ opacity:.6; cursor:default; }
