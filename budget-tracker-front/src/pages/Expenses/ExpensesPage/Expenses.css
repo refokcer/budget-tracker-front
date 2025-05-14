@@ -31,7 +31,7 @@ ExpensesTable{
 .month-selector{
   position:absolute;
   top:80px;             /* как было */
-  left:50%;
+  left:54.5%;
   transform:translateX(-50%);
   display:flex;
   align-items:center;
