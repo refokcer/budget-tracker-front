@@ -71,7 +71,6 @@ const IncomeModal = ({ isOpen, onClose }) => {
 
     const newTransaction = {
       title,
-      eventId: 2, // пример
       amount: parseFloat(amount),
       currencyId: parseInt(currencyId),
       categoryId: parseInt(categoryId),

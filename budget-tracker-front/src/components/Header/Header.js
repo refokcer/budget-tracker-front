@@ -14,6 +14,7 @@ const pageTitles = {
   '/budget-plans': 'Budget Plans',
   '/expenses': 'Expenses',
   '/incomes': 'Incomes',
+  '/transfers': 'Transfers',
   '/settings': 'Settings',
 };
 

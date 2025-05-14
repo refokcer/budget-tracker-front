@@ -26,6 +26,7 @@ const BudgetPlanPage = () => {
 
   const [createOpen, setCreateOpen] = useState(false);
   const [editOpen,   setEditOpen]   = useState(false);
+  const [busyDel,    setBusyDel]    = useState(false);
 
   /* 1. список планов */
   useEffect(() => {
@@ -92,6 +93,22 @@ const BudgetPlanPage = () => {
     categoryMap.other='Остальное';
   }
 
+  const deletePlan = async () => {
+    if(!selectedPlan) return;
+    if(!window.confirm('Удалить этот план?')) return;
+    try{
+      setBusyDel(true);
+      const r = await fetch(API_ENDPOINTS.deleteBudgetPlan(selectedPlan.id), { method:'DELETE' });
+      if(!r.ok) throw new Error('Ошибка удаления плана');
+      // убираем из списка и сбрасываем выбор
+      setPlans(p=>p.filter(pl=>pl.id!==selectedPlan.id));
+      setSelectedPlan(null);
+      setPlanItems([]);
+      setSearchParams({});
+    }catch(e){ alert(e.message); }
+    finally{ setBusyDel(false); }
+  };
+
   /* 4. рендер */
   if(loading) return <p className="loading">Загрузка...</p>;
   if(error)   return <p className="error">{error}</p>;
@@ -108,12 +125,19 @@ const BudgetPlanPage = () => {
       {selectedPlan && (
         <div className="plan-details-wrapper">
           <PlanDetails plan={selectedPlan}/>
-          <PlanItemsTable items={itemsExt} categoryMap={categoryMap} currencyMap={currencyMap}/>
+          <PlanItemsTable
+            items={itemsExt}
+            categoryMap={categoryMap}
+            currencyMap={currencyMap}
+          />
 
-          {/* ——— кнопки под таблицей, справа ——— */}
+          {/* ——— действия над планом ——— */}
           <div className="plan-actions">
-            <button className="edit-btn"   onClick={()=>setEditOpen(true)}>✎ редактировать план</button>
-            <button className="create-btn" onClick={()=>setCreateOpen(true)}>+ новый план</button>
+            <button className="edit-btn"    onClick={()=>setEditOpen(true)}>✎ редактировать</button>
+            <button className="delete-btn"  onClick={deletePlan} disabled={busyDel}>
+              {busyDel?'…':'✕ удалить'}
+            </button>
+            <button className="create-btn"  onClick={()=>setCreateOpen(true)}>+ новый</button>
           </div>
         </div>
       )}

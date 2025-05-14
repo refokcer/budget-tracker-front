@@ -11,6 +11,17 @@
   gap:12px;
 }
 
+.plan-actions{
+  display:flex; gap:8px; justify-content:flex-end; margin-top:12px;
+}
+
+.delete-btn{
+  background:#e53935; color:#fff; border:none; border-radius:4px;
+  padding:6px 10px; cursor:pointer;
+}
+.delete-btn:disabled{ opacity:.6; cursor:default; }
+
+
 /* кнопки уже существуют: .create-btn и .edit-btn */
 /* при необходимости можно подправить одинаковую высоту */
 .create-btn, .edit-btn{
