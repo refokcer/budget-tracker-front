@@ -3,13 +3,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './Sidebar.css';
 import starIcon from '../../data/Star.svg'; // Подключаем иконку
+import dasbordIcon from '../../data/dashboards.png'; // Подключаем иконку
 
 const Sidebar = () => {
   return (
     <div className="sidebar">
       <nav className="sidebar-menu">
         <Link to="/dashboard" className="sidebar-item">
-          <img src={starIcon} alt="icon" className="sidebar-icon" />
+          <img src={dasbordIcon} alt="icon" className="sidebar-icon" />
           Dashboard
         </Link>
         <Link to="/expenses" className="sidebar-item">

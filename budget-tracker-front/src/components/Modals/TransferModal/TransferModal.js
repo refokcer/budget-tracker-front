@@ -31,7 +31,7 @@ const TransferModal = ({ isOpen, onClose }) => {
                 const [currenciesRes, accountsRes, categoriesRes] = await Promise.all([
                     fetch(API_ENDPOINTS.currencies),
                     fetch(API_ENDPOINTS.accounts),
-                    fetch(API_ENDPOINTS.categories),
+                    fetch(API_ENDPOINTS.categoriesTransfers),
                 ]);
 
                 if (!currenciesRes.ok || !accountsRes.ok || !categoriesRes.ok) {

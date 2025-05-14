@@ -34,7 +34,7 @@ export const API_ENDPOINTS = {
 
   categoriesExpenses: `${API_BASE_URL}/Categories/expenses`,
   categoriesIncomes: `${API_BASE_URL}/Categories/income`,
-  categoriesTransfers: `${API_BASE_URL}/Categories/transfers`,
+  categoriesTransfers: `${API_BASE_URL}/Categories/Transfers`,
 
   // Currencies
   currencies: `${API_BASE_URL}/Currencies`,
