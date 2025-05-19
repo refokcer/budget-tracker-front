@@ -16,6 +16,7 @@ const pageTitles = {
   '/incomes': 'Incomes',
   '/transfers': 'Transfers',
   '/settings': 'Settings',
+  '/report': 'Monthly Report',
 };
 
 const Header = () => {

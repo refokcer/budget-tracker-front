@@ -29,6 +29,10 @@ const Sidebar = () => {
           <img src={starIcon} alt="icon" className="sidebar-icon" />
           Budget Plans
         </Link>
+        <Link to="/report" className="sidebar-item">
+          <img src={starIcon} alt="icon" className="sidebar-icon" />
+          Monthly Report
+        </Link>
         {/* Добавьте остальные ссылки */}
       </nav>
       <div className="sidebar-settings">
@@ -37,6 +41,7 @@ const Sidebar = () => {
           Settings
         </Link>
       </div>
+
     </div>
   );
 };

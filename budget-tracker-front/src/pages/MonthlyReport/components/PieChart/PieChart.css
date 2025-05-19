@@ -1,0 +1,21 @@
+.pie-card{
+  background:#2e2e3d; border-radius:8px; padding:16px;
+  box-shadow:0 4px 12px rgba(0,0,0,.3); color:#fff;
+}
+.pie-card h4{ margin:0 0 10px 0; font-size:1rem; }
+.pie-chart{ width:100%; height:auto; }
+.slice{ stroke:#2e2e3d; stroke-width:1; }
+.slice.c0{ fill:#ff7043; }
+.slice.c1{ fill:#ffee58; }
+.slice.c2{ fill:#66bb6a; }
+.slice.c3{ fill:#42a5f5; }
+.slice.c4{ fill:#ab47bc; }
+.legend{ list-style:none; padding:0; margin-top:8px; font-size:0.85rem; }
+.legend li{ margin-bottom:4px; }
+.dot{ display:inline-block; width:12px; height:12px; margin-right:6px; vertical-align:middle; }
+.dot.c0{ background:#ff7043; }
+.dot.c1{ background:#ffee58; }
+.dot.c2{ background:#66bb6a; }
+.dot.c3{ background:#42a5f5; }
+.dot.c4{ background:#ab47bc; }
+.empty{ text-align:center; color:#bbb; }

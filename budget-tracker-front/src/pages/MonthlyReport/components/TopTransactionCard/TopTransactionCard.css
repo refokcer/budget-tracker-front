@@ -1,0 +1,6 @@
+.card{
+  background:#2e2e3d; border-radius:8px; padding:16px;
+  box-shadow:0 4px 12px rgba(0,0,0,.3); color:#fff;
+}
+.top-transaction h4{ margin-top:0; font-size:1rem; }
+.top-transaction .title{ font-size:1.2rem; font-weight:600; margin:6px 0; }

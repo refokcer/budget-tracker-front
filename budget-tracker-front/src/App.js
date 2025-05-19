@@ -9,6 +9,7 @@ import BudgetPlanPage from './pages/BudgetPlan/BudgetPlanPage/BudgetPlanPage';
 import './App.css';
 import TransfersPage from './pages/Transfers/TransfersPage/TransfersPage';
 import SettingsPage from './pages/Settings/SettingsPage/SettingsPage';
+import MonthlyReport from './pages/MonthlyReport/MonthlyReport'; // Adjust the path if needed
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
               <Route path="/budget-plans" element={<BudgetPlanPage />} />
               <Route path="/transfers" element={<TransfersPage />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/report" element={<MonthlyReport />} />
               {/* Добавьте маршруты для других страниц */}
             </Routes>
           </main>
