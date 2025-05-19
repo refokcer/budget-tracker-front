@@ -1,18 +1,51 @@
-.summary-cards{
-  display:flex; gap:20px; justify-content:center;
-  flex-wrap:wrap;
+/* ───────────── контейнер ───────────── */
+.sc-wrapper {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
-.summary-card{
-  flex:1 1 200px;
-  min-width:200px;
-  background:#2e2e3d;
-  border-radius:8px;
-  padding:16px;
-  text-align:center;
-  box-shadow:0 4px 12px rgba(0,0,0,.3);
+
+/* ───────────── картка ───────────── */
+.sc-card {
+  flex: 1 1 220px;           /* мінімум 220 px, далі росте */
+  min-width: 220px;
+  background: #2e2e3d;
+  border-radius: 10px;
+  padding: 18px 22px;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
 }
-.summary-card .label{ font-size:0.9rem; color:#bbb; }
-.summary-card .value{ font-size:1.4rem; font-weight:600; }
-.red { border-top:4px solid #e53935; }
-.green{ border-top:4px solid #43a047; }
-.blue { border-top:4px solid #1e88e5; }
+
+/* кольорова акцент-смуга зверху */
+.sc-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 6px;
+  width: 100%;
+}
+
+/* ───────────── акцентні кольори ───────────── */
+.sc-red::before   { background: linear-gradient(90deg, #d32f2f, #ef5350); }
+.sc-green::before { background: linear-gradient(90deg, #2e7d32, #66bb6a); }
+.sc-blue::before  { background: linear-gradient(90deg, #1565c0, #42a5f5); }
+
+/* ───────────── текст ───────────── */
+.sc-label {
+  font-size: 1.1rem;
+  color: #bbbbbb;
+  letter-spacing: 0.4px;
+}
+
+.sc-value {
+  font-size: 1.45rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
