@@ -25,7 +25,6 @@ const IncomeModal = ({ isOpen, onClose }) => {
       }
     }
 
-
     const fetchData = async () => {
       try {
         const [currenciesRes, categoriesRes, accountsRes] = await Promise.all([
@@ -35,7 +34,7 @@ const IncomeModal = ({ isOpen, onClose }) => {
         ]);
 
         if (!currenciesRes.ok || !categoriesRes.ok || !accountsRes.ok) {
-          throw new Error('Ошибка загрузки данных');
+          throw new Error('Помилка завантаження даних');
         }
 
         const currenciesData = await currenciesRes.json();
@@ -54,7 +53,7 @@ const IncomeModal = ({ isOpen, onClose }) => {
 
     document.addEventListener('keydown', handleKeyDown);
 
-    // Удаляем обработчик при размонтировании/закрытии
+    // Видаляємо обробник при розмонтуванні/закритті
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
@@ -62,7 +61,7 @@ const IncomeModal = ({ isOpen, onClose }) => {
 
   const handleSubmit = async () => {
     if (!title || !amount || !currencyId || !categoryId || !accountTo) {
-      alert('Заполните все поля!');
+      alert('Заповніть всі поля!');
       return;
     }
 
@@ -90,10 +89,10 @@ const IncomeModal = ({ isOpen, onClose }) => {
       });
 
       if (!response.ok) {
-        throw new Error('Ошибка при создании транзакции');
+        throw new Error('Помилка при створенні транзакції');
       }
 
-      alert('Транзакция успешно добавлена!');
+      alert('Транзакцію успішно додано!');
       onClose();
     } catch (error) {
       setError(error.message);
@@ -107,25 +106,25 @@ const IncomeModal = ({ isOpen, onClose }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h3>Добавить доход</h3>
+        <h3>Додати дохід</h3>
         {error && <p className="error">{error}</p>}
 
         <input
           type="text"
-          placeholder="Название"
+          placeholder="Назва"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
 
         <input
           type="number"
-          placeholder="Сумма"
+          placeholder="Сума"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
         />
 
         <select value={currencyId} onChange={(e) => setCurrencyId(e.target.value)}>
-          <option value="">Выберите валюту</option>
+          <option value="">Оберіть валюту</option>
           {currencies.map((c) => (
             <option key={c.id} value={c.id}>
               {c.symbol} ({c.name})
@@ -134,7 +133,7 @@ const IncomeModal = ({ isOpen, onClose }) => {
         </select>
 
         <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
-          <option value="">Выберите категорию</option>
+          <option value="">Оберіть категорію</option>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.id}>
               {cat.title}
@@ -143,7 +142,7 @@ const IncomeModal = ({ isOpen, onClose }) => {
         </select>
 
         <select value={accountTo} onChange={(e) => setAccountTo(e.target.value)}>
-          <option value="">Выберите счёт</option>
+          <option value="">Оберіть рахунок</option>
           {accounts.map((acc) => (
             <option key={acc.id} value={acc.id}>
               {acc.title}
@@ -152,7 +151,7 @@ const IncomeModal = ({ isOpen, onClose }) => {
         </select>
 
         <textarea
-          placeholder="Описание"
+          placeholder="Опис"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
@@ -162,10 +161,10 @@ const IncomeModal = ({ isOpen, onClose }) => {
           disabled={loading}
           className="submit-button"
         >
-          {loading ? 'Создание...' : 'Создать транзакцию'}
+          {loading ? 'Створення...' : 'Створити транзакцію'}
         </button>
         <button onClick={onClose} className="close-button">
-          Отмена
+          Скасувати
         </button>
       </div>
     </div>

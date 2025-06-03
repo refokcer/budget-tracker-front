@@ -3,33 +3,28 @@ import API_ENDPOINTS from '../../../config/apiConfig';
 import './ExpenseModal.css';
 
 const ExpenseModal = ({ isOpen, onClose }) => {
-  // Поля формы
   const [title,         setTitle]        = useState('');
   const [amount,        setAmount]       = useState('');
   const [currencyId,    setCurrencyId]   = useState('');
   const [categoryId,    setCategoryId]   = useState('');
   const [accountFrom,   setAccountFrom]  = useState('');
-  const [budgetPlanId,  setBudgetPlanId] = useState('');  // ← новое
+  const [budgetPlanId,  setBudgetPlanId] = useState('');  
   const [description,   setDescription]  = useState('');
 
-  // Списки для селектов
   const [currencies, setCurrencies] = useState([]);
   const [categories, setCategories] = useState([]);
   const [accounts,   setAccounts]   = useState([]);
-  const [plans,      setPlans]      = useState([]);      // ← новое
+  const [plans,      setPlans]      = useState([]);  
 
-  // Служебные состояния
   const [error,   setError]   = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Обёртка fetch → JSON
   const fetchJson = async (url) => {
     const r = await fetch(url);
-    if (!r.ok) throw new Error(`Ошибка при запросе ${url}: ${r.status}`);
+    if (!r.ok) throw new Error(`Помилка при запиті ${url}: ${r.status}`);
     return r.json();
   };
 
-  // Загрузка справочников при открытии модалки
   useEffect(() => {
     if (!isOpen) return;
 
@@ -43,7 +38,7 @@ const ExpenseModal = ({ isOpen, onClose }) => {
           fetchJson(API_ENDPOINTS.currencies),
           fetchJson(API_ENDPOINTS.categoriesExpenses),
           fetchJson(API_ENDPOINTS.accounts),
-          fetchJson(API_ENDPOINTS.budgetPlans),    // ← план бюджета
+          fetchJson(API_ENDPOINTS.budgetPlans), 
         ]);
         setCurrencies(cur);
         setCategories(cat);
@@ -59,10 +54,9 @@ const ExpenseModal = ({ isOpen, onClose }) => {
     return () => document.removeEventListener('keydown', handleEsc);
   }, [isOpen, onClose]);
 
-  // Отправка формы
   const handleSubmit = async () => {
     if (!title || !amount || !currencyId || !categoryId || !accountFrom || !budgetPlanId) {
-      alert('Заполните все поля!');
+      alert('Заповніть усі поля!');
       return;
     }
 
@@ -70,7 +64,7 @@ const ExpenseModal = ({ isOpen, onClose }) => {
       title,
       amount:       parseFloat(amount),
       accountFrom:  parseInt(accountFrom),
-      budgetPlanId: parseInt(budgetPlanId), // ← используем выбранный план
+      budgetPlanId: parseInt(budgetPlanId),
       currencyId:   parseInt(currencyId),
       categoryId:   parseInt(categoryId),
       date:         new Date().toISOString(),
@@ -86,7 +80,7 @@ const ExpenseModal = ({ isOpen, onClose }) => {
         body: JSON.stringify(newTransaction),
       });
       if (!res.ok) throw new Error(`Статус ${res.status}`);
-      alert('Расход успешно добавлен!');
+      alert('Done!');
       onClose();
     } catch (e) {
       setError(e.message);
@@ -105,20 +99,20 @@ const ExpenseModal = ({ isOpen, onClose }) => {
 
         <input
           type="text"
-          placeholder="Название"
+          placeholder="Назва"
           value={title}
           onChange={e => setTitle(e.target.value)}
         />
 
         <input
           type="number"
-          placeholder="Сумма"
+          placeholder="Сума"
           value={amount}
           onChange={e => setAmount(e.target.value)}
         />
 
         <select value={currencyId} onChange={e => setCurrencyId(e.target.value)}>
-          <option value="">Выберите валюту</option>
+          <option value="">Оберіть валюту</option>
           {currencies.map(c => (
             <option key={c.id} value={c.id}>
               {c.symbol} ({c.name})
@@ -127,7 +121,7 @@ const ExpenseModal = ({ isOpen, onClose }) => {
         </select>
 
         <select value={categoryId} onChange={e => setCategoryId(e.target.value)}>
-          <option value="">Выберите категорию</option>
+          <option value="">Оберіть категорію</option>
           {categories.map(cat => (
             <option key={cat.id} value={cat.id}>
               {cat.title}
@@ -136,7 +130,7 @@ const ExpenseModal = ({ isOpen, onClose }) => {
         </select>
 
         <select value={accountFrom} onChange={e => setAccountFrom(e.target.value)}>
-          <option value="">Выберите счёт</option>
+          <option value="">Оберіть рахунок</option>
           {accounts.map(acc => (
             <option key={acc.id} value={acc.id}>
               {acc.title}
@@ -145,7 +139,7 @@ const ExpenseModal = ({ isOpen, onClose }) => {
         </select>
 
         <select value={budgetPlanId} onChange={e => setBudgetPlanId(e.target.value)}>
-          <option value="">Выберите план бюджета</option>
+          <option value="">Оберіть план</option>
           {plans.map(pl => (
             <option key={pl.id} value={pl.id}>
               {pl.title}
@@ -154,7 +148,7 @@ const ExpenseModal = ({ isOpen, onClose }) => {
         </select>
 
         <textarea
-          placeholder="Описание"
+          placeholder="Опис"
           value={description}
           onChange={e => setDescription(e.target.value)}
         />
@@ -164,10 +158,10 @@ const ExpenseModal = ({ isOpen, onClose }) => {
           disabled={loading}
           className="submit-button"
         >
-          {loading ? 'Создание...' : 'Создать транзакцию'}
+          {loading ? 'Creating...' : 'Створити транзакцію'}
         </button>
         <button onClick={onClose} className="close-button">
-          Отмена
+          Відмінити
         </button>
       </div>
     </div>

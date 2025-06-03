@@ -6,7 +6,7 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
   const [title,       setTitle]       = useState('');
   const [startDate,   setStartDate]   = useState('');
   const [endDate,     setEndDate]     = useState('');
-  const [type,        setType]        = useState('0');      // строка '0' | '1'
+  const [type,        setType]        = useState('0');      // рядок '0' | '1'
   const [description, setDescription] = useState('');
 
   const [error,   setError]   = useState(null);
@@ -16,7 +16,7 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
 
   const handleSubmit = async () => {
     if (!title || !startDate || !endDate) {
-      alert('Введите название и даты!');
+      alert('Введіть назву та дати!');
       return;
     }
 
@@ -24,7 +24,7 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
       title,
       startDate,
       endDate,
-      type: Number(type),            // отправляем 0 или 1
+      type: Number(type),            // надсилаємо 0 або 1
       description,
     };
 
@@ -35,7 +35,7 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newPlan),
       });
-      if (!res.ok) throw new Error('Ошибка при создании плана');
+      if (!res.ok) throw new Error('Помилка при створенні плану');
       onCreated();
     } catch (e) {
       setError(e.message);
@@ -47,53 +47,53 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h3>Создать план</h3>
+        <h3>Створити план</h3>
 
         {error && <p className="error">{error}</p>}
 
         <input
           type="text"
-          placeholder="Название"
+          placeholder="Назва"
           value={title}
           onChange={(e)=>setTitle(e.target.value)}
         />
 
-        <label>Дата начала:</label>
+        <label>Дата початку:</label>
         <input
           type="date"
           value={startDate}
           onChange={(e)=>setStartDate(e.target.value)}
         />
 
-        <label>Дата окончания:</label>
+        <label>Дата закінчення:</label>
         <input
           type="date"
           value={endDate}
           onChange={(e)=>setEndDate(e.target.value)}
         />
 
-        <label>Тип плана:</label>
+        <label>Тип плану:</label>
         <select value={type} onChange={(e)=>setType(e.target.value)}>
-          <option value="0">Monthly</option>
-          <option value="1">Event</option>
+          <option value="0">Місячний</option>
+          <option value="1">Подія</option>
         </select>
 
         <textarea
-          placeholder="Описание"
+          placeholder="Опис"
           value={description}
           onChange={(e)=>setDescription(e.target.value)}
         />
 
         <button
-          onClick={handleSubmit}
+          onClick={handleSubmit} 
           disabled={loading}
           className="submit-button"
         >
-          {loading ? 'Создание...' : 'Создать план'}
+          {loading ? 'Створення...' : 'Створити план'}
         </button>
 
         <button onClick={onClose} className="close-button">
-          Отмена
+          Скасувати
         </button>
       </div>
     </div>
