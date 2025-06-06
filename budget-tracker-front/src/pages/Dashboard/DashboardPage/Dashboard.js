@@ -43,7 +43,7 @@ const Dashboard = () => {
           fetch(API_ENDPOINTS.accounts),
           fetch(API_ENDPOINTS.expensesByDate(startStr, endStr)),
           fetch(API_ENDPOINTS.incomesByDate(startStr, endStr)),
-          fetch(API_ENDPOINTS.transactions),                // без фільтра -> фільтруємо локально
+          fetch(API_ENDPOINTS.expenses),                // без фільтра -> фільтруємо локально
           fetch(API_ENDPOINTS.categories),
           fetch(API_ENDPOINTS.currencies),
         ]);
