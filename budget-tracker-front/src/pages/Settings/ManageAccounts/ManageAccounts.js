@@ -11,7 +11,7 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
   const [error,   setError]     = useState(null);
   const [busyId,  setBusyId]    = useState(null);
 
-  /* ── загрузка при открытии ── */
+  /* ── завантаження при відкритті ── */
   useEffect(() => {
     if (!isOpen) return;
 
@@ -19,7 +19,7 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
       try {
         setLoading(true); setError(null);
         const res = await fetch(API_ENDPOINTS.accounts);
-        if (!res.ok) throw new Error('Ошибка загрузки');
+        if (!res.ok) throw new Error('Помилка завантаження');
         setAccounts(await res.json());
       } catch (e) {
         setError(e.message);
@@ -31,9 +31,9 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
     load();
   }, [isOpen]);
 
-  /* ── добавление ── */
+  /* ── додавання ── */
   const addAccount = async () => {
-    if (!title || !amount) return alert('Введите название и сумму');
+    if (!title || !amount) return alert('Введіть назву та суму');
     try {
       setLoading(true); setError(null);
       const res = await fetch(API_ENDPOINTS.accounts, {
@@ -41,7 +41,7 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title, amount: +amount, currencyId: 1, description: descr })
       });
-      if (!res.ok) throw new Error('Ошибка создания');
+      if (!res.ok) throw new Error('Помилка створення');
       const newAcc = await res.json();
       setAccounts(a => [...a, newAcc]);
       setTitle(''); setAmount(''); setDescr('');
@@ -53,13 +53,13 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
     }
   };
 
-  /* ── удаление ── */
+  /* ── видалення ── */
   const del = async (id) => {
-    if (!window.confirm('Удалить аккаунт?')) return;
+    if (!window.confirm('Видалити акаунт?')) return;
     try {
       setBusyId(id);
       const res = await fetch(API_ENDPOINTS.deleteAccount(id), { method: 'DELETE' });
-      if (!res.ok) throw new Error('Ошибка удаления');
+      if (!res.ok) throw new Error('Помилка видалення');
       setAccounts(a => a.filter(x => x.id !== id));
     } catch (e) {
       alert(e.message);
@@ -76,15 +76,15 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
         <h3>Manage accounts</h3>
 
         {error   && <p className="error">{error}</p>}
-        {loading && <p>Загрузка...</p>}
+        {loading && <p>Завантаження...</p>}
 
         {!loading&&(
           <>
-            {/* обёртка с прокруткой */}
+            {/* обгортка з прокруткою */}
             <div className="acc-table-wrapper">
               <table className="acc-table">
                 <thead>
-                  <tr><th>Название</th><th>Сумма</th><th>Описание</th><th></th></tr>
+                  <tr><th>Назва</th><th>Сума</th><th>Опис</th><th></th></tr>
                 </thead>
                 <tbody>
                   {accounts.map(a=>(
@@ -104,15 +104,15 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
             </div>
 
             <div className="add-form">
-              <input placeholder="Название" value={title} onChange={e=>setTitle(e.target.value)}/>
-              <input type="number" placeholder="Сумма" value={amount} onChange={e=>setAmount(e.target.value)}/>
-              <input placeholder="Описание" value={descr} onChange={e=>setDescr(e.target.value)}/>
-              <button className="submit-button submit-button-acc" onClick={addAccount}>Добавить</button>
+              <input placeholder="Назва" value={title} onChange={e=>setTitle(e.target.value)}/>
+              <input type="number" placeholder="Сума" value={amount} onChange={e=>setAmount(e.target.value)}/>
+              <input placeholder="Опис" value={descr} onChange={e=>setDescr(e.target.value)}/>
+              <button className="submit-button submit-button-acc" onClick={addAccount}>Додати</button>
             </div>
           </>
         )}
 
-        <button className="close-button" onClick={onClose}>Закрыть</button>
+        <button className="close-button" onClick={onClose}>Закрити</button>
       </div>
     </div>
   );

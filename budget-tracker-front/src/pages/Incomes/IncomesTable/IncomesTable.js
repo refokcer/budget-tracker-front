@@ -12,7 +12,7 @@ const IncomesTable = ({ startDate, endDate }) => {
   const [error,        setError]        = useState(null);
   const [busyId,       setBusyId]       = useState(null);
 
-  /* загрузка при смене месяца */
+  /* завантаження при зміні місяця */
   useEffect(()=>{
     const fetchData = async ()=>{
       setLoading(true); setError(null);
@@ -24,7 +24,7 @@ const IncomesTable = ({ startDate, endDate }) => {
           fetch(API_ENDPOINTS.categories),
           fetch(API_ENDPOINTS.accounts)
         ]);
-        if(!tr.ok||!curr.ok||!cat.ok||!acc.ok) throw new Error('Ошибка загрузки');
+        if(!tr.ok||!curr.ok||!cat.ok||!acc.ok) throw new Error('Помилка завантаження');
         const currencyMap = Object.fromEntries((await curr.json()).map(c=>[c.id,c.symbol]));
         const categoryMap = Object.fromEntries((await cat.json()).map(c=>[c.id,c.title]));
         const accountMap  = Object.fromEntries((await acc.json()).map(a=>[a.id,a.title]));
@@ -36,7 +36,7 @@ const IncomesTable = ({ startDate, endDate }) => {
     fetchData();
   },[startDate,endDate]);
 
-  /* сортировка */
+  /* сортування */
   const handleSort = (k)=>{
     setSortConfig(s=>({ key:k, direction: s.key===k && s.direction==='asc' ? 'desc':'asc' }));
   };
@@ -50,33 +50,33 @@ const IncomesTable = ({ startDate, endDate }) => {
     return A<B ? (sortConfig.direction==='asc'?-1:1) : A>B ? (sortConfig.direction==='asc'?1:-1) : 0;
   });
 
-  /* удаление */
+  /* видалення */
   const del = async (id)=>{
-    if(!window.confirm('Удалить транзакцию?')) return;
+    if(!window.confirm('Видалити транзакцію?')) return;
     try{
       setBusyId(id);
       const r=await fetch(API_ENDPOINTS.deleteTransaction(id),{method:'DELETE'});
-      if(!r.ok) throw new Error('Ошибка удаления');
+      if(!r.ok) throw new Error('Помилка видалення');
       setTransactions(p=>p.filter(t=>t.id!==id));
     }catch(e){ alert(e.message); }
     finally{ setBusyId(null); }
   };
 
-  if(loading) return <p>Загрузка...</p>;
-  if(error)   return <p className="error">Ошибка: {error}</p>;
+  if(loading) return <p>Завантаження...</p>;
+  if(error)   return <p className="error">Помилка: {error}</p>;
 
   return(
     <div className="incomes-table-container">
       <table className="incomes-table">
         <thead>
           <tr>
-            <th onClick={()=>handleSort('title')}>Название {sortConfig.key==='title'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
-            <th onClick={()=>handleSort('amount')}>Сумма {sortConfig.key==='amount'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
-            <th onClick={()=>handleSort('categoryId')}>Категория {sortConfig.key==='categoryId'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
-            <th onClick={()=>handleSort('accountTo')}>Счёт (Куда) {sortConfig.key==='accountTo'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
+            <th onClick={()=>handleSort('title')}>Назва {sortConfig.key==='title'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
+            <th onClick={()=>handleSort('amount')}>Сума {sortConfig.key==='amount'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
+            <th onClick={()=>handleSort('categoryId')}>Категорія {sortConfig.key==='categoryId'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
+            <th onClick={()=>handleSort('accountTo')}>Рахунок (Куди) {sortConfig.key==='accountTo'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
             <th onClick={()=>handleSort('date')}>Дата {sortConfig.key==='date'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
             <th onClick={()=>handleSort('type')}>Тип {sortConfig.key==='type'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
-            <th>Описание</th>
+            <th>Опис</th>
             <th></th>
           </tr>
         </thead>

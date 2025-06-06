@@ -15,9 +15,9 @@ const TransfersPage = () => {
     `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 
   const start = fmt(new Date(monthDate.getFullYear(), monthDate.getMonth(),   1));
-  const end   = fmt(new Date(monthDate.getFullYear(), monthDate.getMonth()+1, 1));  // начало след. мес.
+  const end   = fmt(new Date(monthDate.getFullYear(), monthDate.getMonth()+1, 1));  // початок наступного місяця
 
-  const label = monthDate.toLocaleString('default',{month:'long',year:'numeric'});
+  const label = monthDate.toLocaleString('uk',{month:'long',year:'numeric'});
 
   return (
     <div className="container">

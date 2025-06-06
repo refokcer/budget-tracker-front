@@ -15,13 +15,13 @@ const TransfersTable = ({ startDate, endDate }) => {
     const load=async()=>{
       setLoad(true); setErr(null);
       try{
-        const url=API_ENDPOINTS.transfersByDate(startDate,endDate); // endpoint должен существовать
+        const url=API_ENDPOINTS.transfersByDate(startDate,endDate); // endpoint повинен існувати
         const [t,c,a]=await Promise.all([
           fetch(url),
           fetch(API_ENDPOINTS.currencies),
           fetch(API_ENDPOINTS.accounts)
         ]);
-        if(!t.ok||!c.ok||!a.ok) throw new Error('Ошибка загрузки');
+        if(!t.ok||!c.ok||!a.ok) throw new Error('Помилка завантаження');
         setRows(await t.json());
         setCurr(Object.fromEntries((await c.json()).map(x=>[x.id,x.symbol])));
         setAcc (Object.fromEntries((await a.json()).map(x=>[x.id,x.title])));
@@ -44,30 +44,30 @@ const TransfersTable = ({ startDate, endDate }) => {
   });
 
   const del=async(id)=>{
-    if(!window.confirm('Удалить?')) return;
+    if(!window.confirm('Видалити?')) return;
     try{
       setBusy(id);
       const r=await fetch(API_ENDPOINTS.deleteTransaction(id),{method:'DELETE'});
-      if(!r.ok) throw new Error('Ошибка удаления');
+      if(!r.ok) throw new Error('Помилка видалення');
       setRows(p=>p.filter(x=>x.id!==id));
     }catch(e){alert(e.message);}
     finally{setBusy(null);}
   };
 
-  if(loading) return <p>Загрузка...</p>;
-  if(error)   return <p className="error">Ошибка: {error}</p>;
+  if(loading) return <p>Завантаження...</p>;
+  if(error)   return <p className="error">Помилка: {error}</p>;
 
   return(
     <div className="transfers-table-container">
       <table className="transfers-table">
         <thead>
           <tr>
-            <th onClick={()=>sort('title')}>Название {sortConfig.key==='title'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
-            <th onClick={()=>sort('amount')}>Сумма {sortConfig.key==='amount'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
-            <th onClick={()=>sort('accountFrom')}>Со счёта {sortConfig.key==='accountFrom'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
-            <th onClick={()=>sort('accountTo')}>На счёт {sortConfig.key==='accountTo'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
+            <th onClick={()=>sort('title')}>Назва {sortConfig.key==='title'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
+            <th onClick={()=>sort('amount')}>Сума {sortConfig.key==='amount'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
+            <th onClick={()=>sort('accountFrom')}>З рахунку {sortConfig.key==='accountFrom'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
+            <th onClick={()=>sort('accountTo')}>На рахунок {sortConfig.key==='accountTo'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
             <th onClick={()=>sort('date')}>Дата {sortConfig.key==='date'?(sortConfig.direction==='asc'?'▲':'▼'):''}</th>
-            <th>Описание</th>
+            <th>Опис</th>
             <th></th>
           </tr>
         </thead>

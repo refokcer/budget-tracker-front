@@ -3,7 +3,7 @@ import IncomesTable from '../IncomesTable/IncomesTable';
 import './Incomes.css';
 
 const Incomes = () => {
-  /* дата-якорь = 1-е число выбранного месяца */
+  /* дата-якір = 1-ше число обраного місяця */
   const [monthDate, setMonthDate] = useState(new Date());
 
   const jump = (d) => {
@@ -14,13 +14,13 @@ const Incomes = () => {
 
   const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   const start = fmt(new Date(monthDate.getFullYear(), monthDate.getMonth(), 1));
-  const end   = fmt(new Date(monthDate.getFullYear(), monthDate.getMonth()+1, 1));  // начало следующего
+  const end   = fmt(new Date(monthDate.getFullYear(), monthDate.getMonth()+1, 1));  // початок наступного
 
-  const label = monthDate.toLocaleString('default',{month:'long',year:'numeric'});
+  const label = monthDate.toLocaleString('uk-UA',{month:'long',year:'numeric'});
 
   return (
     <div className="container">
-      {/* селектор месяца под шапкой */}
+      {/* селектор місяця під шапкою */}
       <div className="month-selector">
         <button onClick={()=>jump(-1)}>&lt;</button>
         <span>{label}</span>

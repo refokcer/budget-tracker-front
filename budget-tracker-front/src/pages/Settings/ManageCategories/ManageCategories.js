@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import API_ENDPOINTS from '../../../config/apiConfig';
 import './ManageCategories.css';
 
-/* вкладки: key, надпись, type, endpoint */
+/* вкладки: key, надпис, type, endpoint */
 const tabs = [
-  { key: 'expense',  label: 'Категории для трат',    type: 2, endpoint: API_ENDPOINTS.categoriesExpenses },
-  { key: 'income',   label: 'Категории для доходов', type: 1, endpoint: API_ENDPOINTS.categoriesIncomes },
-  { key: 'transfer', label: 'Категории транзакций',  type: 0, endpoint: API_ENDPOINTS.categoriesTransfers },
+  { key: 'expense',  label: 'Категорії для витрат',    type: 2, endpoint: API_ENDPOINTS.categoriesExpenses },
+  { key: 'income',   label: 'Категорії для доходів',   type: 1, endpoint: API_ENDPOINTS.categoriesIncomes },
+  { key: 'transfer', label: 'Категорії транзакцій',    type: 0, endpoint: API_ENDPOINTS.categoriesTransfers },
 ];
 
 const ManageCategories = ({ isOpen, onClose }) => {
@@ -18,7 +18,7 @@ const ManageCategories = ({ isOpen, onClose }) => {
   const [error,      setError]      = useState(null);
   const [busyId,     setBusyId]     = useState(null);
 
-  /* загрузка при открытии или смене вкладки */
+  /* завантаження при відкритті або зміні вкладки */
   useEffect(() => {
     if (!isOpen) return;
 
@@ -28,7 +28,7 @@ const ManageCategories = ({ isOpen, onClose }) => {
       try {
         setLoading(true); setError(null);
         const res = await fetch(endpoint);
-        if (!res.ok) throw new Error('Ошибка загрузки');
+        if (!res.ok) throw new Error('Помилка завантаження');
         setCategories(await res.json());
       } catch (e) {
         setError(e.message);
@@ -40,9 +40,9 @@ const ManageCategories = ({ isOpen, onClose }) => {
     load();
   }, [isOpen, activeTab]);
 
-  /* добавление новой категории */
+  /* додавання нової категорії */
   const addCategory = async () => {
-    if (!title) return alert('Введите название');
+    if (!title) return alert('Введіть назву');
     const { type } = tabs.find(t => t.key === activeTab);
 
     try {
@@ -53,10 +53,10 @@ const ManageCategories = ({ isOpen, onClose }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title, type, description: descr })
       });
-      if (!res.ok) throw new Error('Ошибка создания');
+      if (!res.ok) throw new Error('Помилка створення');
 
-      const newCat = await res.json();          /* получаем объект */
-      setCategories(c => [...c, newCat]);       /* добавляем его */
+      const newCat = await res.json();          /* отримуємо об'єкт */
+      setCategories(c => [...c, newCat]);       /* додаємо його */
 
       setTitle(''); setDescr('');
     } catch (e) {
@@ -66,13 +66,13 @@ const ManageCategories = ({ isOpen, onClose }) => {
     }
   };
 
-  /* удаление */
+  /* видалення */
   const del = async (id) => {
-    if (!window.confirm('Удалить категорию?')) return;
+    if (!window.confirm('Видалити категорію?')) return;
     try {
       setBusyId(id);
       const res = await fetch(API_ENDPOINTS.deleteCategory(id), { method: 'DELETE' });
-      if (!res.ok) throw new Error('Ошибка удаления');
+      if (!res.ok) throw new Error('Помилка видалення');
       setCategories(c => c.filter(x => x.id !== id));
     } catch (e) {
       alert(e.message);
@@ -86,7 +86,7 @@ const ManageCategories = ({ isOpen, onClose }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-content large">
-        <h3>Manage categories</h3>
+        <h3>Керування категоріями</h3>
 
         <div className="cat-tabs">
           {tabs.map(t => (
@@ -101,13 +101,13 @@ const ManageCategories = ({ isOpen, onClose }) => {
         </div>
 
         {error && <p className="error">{error}</p>}
-        {loading && <p>Загрузка...</p>}
+        {loading && <p>Завантаження...</p>}
 
         {!loading && (
           <>
             <div className="cat-table-wrapper">
               <table className="cat-table">
-                <thead><tr><th>Название</th><th>Описание</th><th></th></tr></thead>
+                <thead><tr><th>Назва</th><th>Опис</th><th></th></tr></thead>
                 <tbody>
                   {categories.map(c => (
                     <tr key={c.id}>
@@ -126,23 +126,23 @@ const ManageCategories = ({ isOpen, onClose }) => {
 
             <div className="cat-add-form">
               <input
-                placeholder="Название"
+                placeholder="Назва"
                 value={title}
                 onChange={e => setTitle(e.target.value)}
               />
               <input
-                placeholder="Описание"
+                placeholder="Опис"
                 value={descr}
                 onChange={e => setDescr(e.target.value)}
               />
               <button className="submit-button" onClick={addCategory}>
-                Добавить
+                Додати
               </button>
             </div>
           </>
         )}
 
-        <button className="close-button" onClick={onClose}>Закрыть</button>
+        <button className="close-button" onClick={onClose}>Закрити</button>
       </div>
     </div>
   );
