@@ -35,7 +35,7 @@ const TransferModal = ({ isOpen, onClose }) => {
                 ]);
 
                 if (!currenciesRes.ok || !accountsRes.ok || !categoriesRes.ok) {
-                    throw new Error('Ошибка загрузки данных');
+                    throw new Error('Помилка завантаження даних');
                 }
 
                 const accountsData = await accountsRes.json();
@@ -61,12 +61,12 @@ const TransferModal = ({ isOpen, onClose }) => {
 
     const handleSubmit = async () => {
         if (!title || !amount || !currencyId || !accountFrom || !accountTo) {
-            alert('Заполните все поля!');
+            alert('Заповніть всі поля!');
             return;
         }
 
         if (accountFrom === accountTo) {
-            alert('Счёт отправителя и получателя не могут совпадать!');
+            alert('Рахунок відправника та одержувача не можуть співпадати!');
             return;
         }
 
@@ -85,7 +85,7 @@ const TransferModal = ({ isOpen, onClose }) => {
         };
 
         if (!newTransfer.categoryId) {
-            alert('Выберите категорию!');
+            alert('Оберіть категорію!');
             return;
         }
 
@@ -99,10 +99,10 @@ const TransferModal = ({ isOpen, onClose }) => {
             });
 
             if (!response.ok) {
-                throw new Error('Ошибка при создании перевода');
+                throw new Error('Помилка при створенні переказу');
             }
 
-            alert('Перевод успешно выполнен!');
+            alert('Переказ успішно виконано!');
             onClose();
         } catch (error) {
             setError(error.message);
@@ -116,25 +116,25 @@ const TransferModal = ({ isOpen, onClose }) => {
     return (
         <div className="modal-overlay">
             <div className="modal-content">
-                <h3>Создать перевод</h3>
+                <h3>Створити переказ</h3>
                 {error && <p className="error">{error}</p>}
 
                 <input
                 type="text"
-                placeholder="Название"
+                placeholder="Назва"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 />
 
                 <input
                     type="number"
-                    placeholder="Сумма"
+                    placeholder="Сума"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                 />
 
                 <select value={currencyId} onChange={(e) => setCurrencyId(e.target.value)}>
-                    <option value="">Выберите валюту</option>
+                    <option value="">Оберіть валюту</option>
                     {currencies.map((c) => (
                         <option key={c.id} value={c.id}>
                             {c.symbol} ({c.name})
@@ -143,7 +143,7 @@ const TransferModal = ({ isOpen, onClose }) => {
                 </select>
 
                 <select value={accountFrom} onChange={(e) => setAccountFrom(e.target.value)}>
-                    <option value="">Выберите счёт отправителя</option>
+                    <option value="">Оберіть рахунок відправника</option>
                     {accounts.map((acc) => (
                         <option key={acc.id} value={acc.id}>
                             {acc.title}
@@ -152,7 +152,7 @@ const TransferModal = ({ isOpen, onClose }) => {
                 </select>
 
                 <select value={accountTo} onChange={(e) => setAccountTo(e.target.value)}>
-                    <option value="">Выберите счёт получателя</option>
+                    <option value="">Оберіть рахунок одержувача</option>
                     {accounts.map((acc) => (
                         <option key={acc.id} value={acc.id}>
                             {acc.title}
@@ -160,7 +160,7 @@ const TransferModal = ({ isOpen, onClose }) => {
                     ))}
                 </select>
                 <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
-                    <option value="">Выберите категорию</option>
+                    <option value="">Оберіть категорію</option>
                     {categories.map((cat) => (
                         <option key={cat.id} value={cat.id}>
                             {cat.title}
@@ -169,7 +169,7 @@ const TransferModal = ({ isOpen, onClose }) => {
                 </select>
 
                 <textarea
-                    placeholder="Описание"
+                    placeholder="Опис"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                 />
@@ -179,10 +179,10 @@ const TransferModal = ({ isOpen, onClose }) => {
                     disabled={loading}
                     className="submit-button"
                 >
-                    {loading ? 'Создание...' : 'Создать перевод'}
+                    {loading ? 'Створення...' : 'Створити переказ'}
                 </button>
                 <button onClick={onClose} className="close-button">
-                    Отмена
+                    Скасувати
                 </button>
             </div>
         </div>
