@@ -10,9 +10,9 @@ const ExpensesTable = ({ startDate, endDate }) => {
   const [sortConfig,   setSortConfig]   = useState({ key: null, direction: 'asc' });
   const [loading,      setLoading]      = useState(true);
   const [error,        setError]        = useState(null);
-  const [busyId,       setBusyId]       = useState(null);         // ← для индикации удаления
+  const [busyId,       setBusyId]       = useState(null);         // ← для індикації видалення
 
-  /* загрузка данных при изменении месяца */
+  /* завантаження даних при зміні місяця */
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true); setError(null);
@@ -26,7 +26,7 @@ const ExpensesTable = ({ startDate, endDate }) => {
         ]);
 
         if (!transactionsRes.ok || !currenciesRes.ok || !categoriesRes.ok || !accountsRes.ok) {
-          throw new Error('Ошибка загрузки данных');
+          throw new Error('Помилка завантаження даних');
         }
 
         const transactionsData = await transactionsRes.json();
@@ -44,7 +44,7 @@ const ExpensesTable = ({ startDate, endDate }) => {
     fetchData();
   }, [startDate, endDate]);
 
-  /* сортировка */
+  /* сортування */
   const handleSort = (key) => {
     let direction = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') direction = 'desc';
@@ -62,34 +62,34 @@ const ExpensesTable = ({ startDate, endDate }) => {
     return 0;
   });
 
-  /* удаление транзакции */
+  /* видалення транзакції */
   const handleDelete = async (id) => {
-    if (!window.confirm('Удалить транзакцию?')) return;
+    if (!window.confirm('Видалити транзакцію?')) return;
     try {
       setBusyId(id);
       const res = await fetch(API_ENDPOINTS.deleteTransaction(id), { method:'DELETE' });
-      if (!res.ok) throw new Error('Ошибка удаления');
+      if (!res.ok) throw new Error('Помилка видалення');
       setTransactions((prev)=>prev.filter(t=>t.id!==id));
     } catch (e) { alert(e.message); }
     finally { setBusyId(null); }
   };
 
-  if (loading) return <p>Загрузка...</p>;
-  if (error)   return <p className="error">Ошибка: {error}</p>;
+  if (loading) return <p>Завантаження...</p>;
+  if (error)   return <p className="error">Помилка: {error}</p>;
 
   return (
     <div className="expenses-table-container">
       <table className="expenses-table">
         <thead>
           <tr>
-            <th onClick={()=>handleSort('title')}>Название {sortConfig.key==='title'   ? (sortConfig.direction==='asc'?'▲':'▼'):''}</th>
-            <th onClick={()=>handleSort('amount')}>Сумма {sortConfig.key==='amount'   ? (sortConfig.direction==='asc'?'▲':'▼'):''}</th>
-            <th onClick={()=>handleSort('categoryId')}>Категория {sortConfig.key==='categoryId' ? (sortConfig.direction==='asc'?'▲':'▼'):''}</th>
-            <th onClick={()=>handleSort('accountFrom')}>Счёт (Откуда) {sortConfig.key==='accountFrom' ? (sortConfig.direction==='asc'?'▲':'▼'):''}</th>
+            <th onClick={()=>handleSort('title')}>Назва {sortConfig.key==='title'   ? (sortConfig.direction==='asc'?'▲':'▼'):''}</th>
+            <th onClick={()=>handleSort('amount')}>Сума {sortConfig.key==='amount'   ? (sortConfig.direction==='asc'?'▲':'▼'):''}</th>
+            <th onClick={()=>handleSort('categoryId')}>Категорія {sortConfig.key==='categoryId' ? (sortConfig.direction==='asc'?'▲':'▼'):''}</th>
+            <th onClick={()=>handleSort('accountFrom')}>Рахунок (Звідки) {sortConfig.key==='accountFrom' ? (sortConfig.direction==='asc'?'▲':'▼'):''}</th>
             <th onClick={()=>handleSort('date')}>Дата {sortConfig.key==='date'     ? (sortConfig.direction==='asc'?'▲':'▼'):''}</th>
             <th onClick={()=>handleSort('type')}>Тип {sortConfig.key==='type'     ? (sortConfig.direction==='asc'?'▲':'▼'):''}</th>
-            <th>Описание</th>
-            <th></th> {/* колонка удаления */}
+            <th>Опис</th>
+            <th></th> {/* колонка видалення */}
           </tr>
         </thead>
         <tbody>
@@ -100,7 +100,7 @@ const ExpensesTable = ({ startDate, endDate }) => {
               <td>{categories[t.categoryId] || '—'}</td>
               <td>{accounts[t.accountFrom] || '-'}</td>
               <td>{new Date(t.date).toLocaleDateString()}</td>
-              <td>{t.type === 1 ? 'Income' : t.type === 2 ? 'Expense' : 'Transfer'}</td>
+              <td>{t.type === 1 ? 'Дохід' : t.type === 2 ? 'Витрата' : 'Переказ'}</td>
               <td style={{maxWidth:'200px',wordWrap:'break-word'}}>{t.description || '-'}</td>
               <td>
                 <button
