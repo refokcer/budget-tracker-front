@@ -77,7 +77,7 @@ const Dashboard = () => {
   /* агрегати */
   const totalBalance = accounts.reduce((s, a) => s + a.amount, 0);
   const totalExp = expenses.reduce((s, t) => s + t.amount, 0);
-  const totalInc = incomes .reduce((s, t) => s + t.amount, 0);
+  const totalInc = incomes.reduce((s, t) => s + t.amount, 0);
 
   const groupByCat = (arr) =>
     arr.reduce((m, t) => {
@@ -104,8 +104,6 @@ const Dashboard = () => {
   /* render */
   if (loading) return <p className="db-loading">Завантаження…</p>;
   if (error)   return <p className="db-error">{error}</p>;
-
-  const cur = currencies[1] || '₴';
 
   return (
     <div className="db-container">
