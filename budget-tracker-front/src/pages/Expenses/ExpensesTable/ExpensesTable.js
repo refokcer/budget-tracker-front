@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { API_ENDPOINTS } from '../../../config/apiConfig';
 import DataTable from '../../../components/DataTable/DataTable';
 
+/* util YYYY-MM-DD → {y,m} */
+const ymFromStr = (s) => {
+  const d = new Date(s);
+  return { y: d.getFullYear(), m: d.getMonth() + 1 }; // JS month 0-based
+};
+
 const ExpensesTable = ({ startDate, endDate }) => {
   const [transactions, setTransactions] = useState([]);
   const [currencies, setCurrencies] = useState({});
@@ -10,8 +16,9 @@ const ExpensesTable = ({ startDate, endDate }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [busyId, setBusyId] = useState(null);
-
   useEffect(() => {
+    const { y, m } = ymFromStr(startDate); // визначаємо рік / місяць
+
     const fetchData = async () => {
       setLoading(true); setError(null);
       try {
@@ -31,6 +38,7 @@ const ExpensesTable = ({ startDate, endDate }) => {
       } catch (e) { setError(e.message); }
       finally { setLoading(false); }
     };
+
     fetchData();
   }, [startDate, endDate]);
 
@@ -45,6 +53,7 @@ const ExpensesTable = ({ startDate, endDate }) => {
     finally { setBusyId(null); }
   };
 
+  /* ───── UI ───── */
   if (loading) return <p>Завантаження...</p>;
   if (error)   return <p className="error">Помилка: {error}</p>;
 
