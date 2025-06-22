@@ -22,9 +22,9 @@
   }
   
   .modal-content {
-    background-color: #fff;
+    background-color: var(--color-white);
     /* Лёгкий градиент для фона окна */
-    background-image: linear-gradient(135deg, #ffffff 0%, #f9f9ff 100%);
+    background-image: linear-gradient(135deg, var(--color-white) 0%, #f9f9ff 100%);
     padding: 20px;
     border-radius: 10px;
     width: 320px;
@@ -52,12 +52,12 @@
     margin-bottom: 15px;
     font-size: 1.2rem;
     font-weight: 600;
-    color: #333;
+    color: var(--table-bg-color);
   }
   
   /* Общий стиль для ошибок */
   .error {
-    color: #f44336;
+    color: var(--alert-color);
     margin: 0 0 10px 0;
   }
   
@@ -66,7 +66,7 @@
     width: 93%;
     padding: 10px;
     margin: 8px 0;
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-gray-lightest);
     border-radius: 6px;
     font-size: 0.95rem;
   }
@@ -75,7 +75,7 @@
    {
     padding: 10px;
     margin: 8px 0;
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-gray-lightest);
     border-radius: 6px;
     font-size: 0.95rem;
     width: 100%;
@@ -97,23 +97,23 @@
   }
   
   .modal-content button:disabled {
-    background-color: #ccc;
+    background-color: var(--color-gray-disabled);
     cursor: not-allowed;
   }
   
   .submit-button {
-    background-color: #4caf50; /* зеленая кнопка */
-    color: #fff;
+    background-color: var(--positive-color); /* зеленая кнопка */
+    color: var(--color-white);
   }
   .submit-button:hover:not(:disabled) {
-    background-color: #43a047;
+    background-color: var(--positive-color-hover);
   }
   
   .close-button {
-    background-color: #f44336;
-    color: #fff;
+    background-color: var(--alert-color);
+    color: var(--color-white);
   }
   .close-button:hover {
-    background-color: #e53935;
+    background-color: var(--danger-color);
   }
   

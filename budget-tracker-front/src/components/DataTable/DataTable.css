@@ -7,19 +7,19 @@
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  color: #ddd;
-  background-color: #333;
+  color: var(--color-light);
+  background-color: var(--table-bg-color);
 }
 
 .data-table th,
 .data-table td {
   padding: 10px;
   text-align: left;
-  border-bottom: 1px solid #444;
+  border-bottom: 1px solid var(--table-row-hover-bg);
 }
 
 .data-table th {
-  background-color: #222;
+  background-color: var(--table-header-bg);
   font-weight: bold;
   cursor: pointer;
   -webkit-user-select: none;
@@ -31,16 +31,16 @@
 }
 
 .data-table tr:nth-child(even) {
-  background-color: #3a3a3a;
+  background-color: var(--table-row-even-bg);
 }
 
 .data-table tr:hover {
-  background-color: #444;
+  background-color: var(--table-row-hover-bg);
 }
 
 .del-btn {
-  background: #e53935;
-  color: #fff;
+  background: var(--danger-color);
+  color: var(--color-white);
   border: none;
   border-radius: 4px;
   padding: 2px 8px;

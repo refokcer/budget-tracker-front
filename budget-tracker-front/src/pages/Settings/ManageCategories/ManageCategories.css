@@ -7,7 +7,7 @@
 
 /* modal */
 .modal-content{
-  background:#fff;
+  background:var(--color-white);
   padding:20px; border-radius:10px; width:320px;
   box-shadow:0 10px 25px rgba(0,0,0,.3);
   transform:scale(.85); opacity:0;
@@ -20,7 +20,7 @@
 /* tabs */
 .cat-tabs{ display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
 .tab{
-  background:#3d3d55; color:#fff; border:none; border-radius:6px;
+  background:#3d3d55; color:var(--color-white); border:none; border-radius:6px;
   padding:6px 12px; cursor:pointer; font-size:.9rem;
 }
 .tab.active{ background:#1e88e5; }
@@ -29,13 +29,13 @@
 .cat-table-wrapper{ max-height:300px; overflow-y:auto; margin-bottom:12px; }
 .cat-table{ width:100%; border-collapse:collapse; }
 .cat-table th, .cat-table td{
-  padding:8px 10px; border-bottom:1px solid #444; text-align:left;
+  padding:8px 10px; border-bottom:1px solid var(--table-row-hover-bg); text-align:left;
 }
 .cat-table thead{ position:-webkit-sticky; position:sticky; top:0; }
 
 /* delete button */
 .del-btn{
-  background:#e53935; color:#fff; border:none; border-radius:4px;
+  background:var(--danger-color); color:var(--color-white); border:none; border-radius:4px;
   padding:2px 8px; cursor:pointer; font-size:.85rem;
 }
 .del-btn:disabled{ opacity:.6; }
@@ -48,14 +48,14 @@
   padding:6px 8px; border:1px solid #777; border-radius:4px;
 }
 .submit-button{
-  background:#4caf50; color:#fff; border:none; border-radius:6px;
+  background:var(--positive-color); color:var(--color-white); border:none; border-radius:6px;
   padding:8px 14px; cursor:pointer; transition:opacity .2s;
 }
 .submit-button:hover{ opacity:.85; }
 
 /* close */
 .close-button{
-  background:#f44336; color:#fff; border:none; border-radius:6px;
+  background:var(--alert-color); color:var(--color-white); border:none; border-radius:6px;
   padding:8px 16px; cursor:pointer; margin-top:10px;
 }
 .close-button:hover{ opacity:.85; }

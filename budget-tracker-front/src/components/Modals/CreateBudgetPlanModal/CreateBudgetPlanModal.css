@@ -14,7 +14,7 @@
   }
   
   .modal-content {
-    background-color: #fff;
+    background-color: var(--color-white);
     width: 320px;
     padding: 20px;
     border-radius: 10px;
@@ -35,7 +35,7 @@
     margin: 5px 0 15px 0;
     padding: 8px;
     font-size: 0.95rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--color-gray-disabled);
     border-radius: 4px;
   }
   
@@ -46,27 +46,27 @@
   }
   
   .create-button {
-    background-color: #4caf50;
-    color: #fff;
+    background-color: var(--positive-color);
+    color: var(--color-white);
     padding: 8px 14px;
     border-radius: 4px;
     border: none;
     cursor: pointer;
   }
   .create-button:hover {
-    background-color: #43a047;
+    background-color: var(--positive-color-hover);
   }
   
   .close-button {
-    background-color: #f44336;
-    color: #fff;
+    background-color: var(--alert-color);
+    color: var(--color-white);
     padding: 8px 14px;
     border-radius: 4px;
     border: none;
     cursor: pointer;
   }
   .close-button:hover {
-    background-color: #e53935;
+    background-color: var(--danger-color);
   }
   
   .error {
