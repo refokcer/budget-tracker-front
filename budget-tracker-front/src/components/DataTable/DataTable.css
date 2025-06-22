@@ -1,28 +1,24 @@
-/* контейнер */
-.transfers-table-container {
+.data-table-container {
   overflow-x: auto;
   margin: 20px 0;
   width: 100%;
 }
 
-/* сама таблица */
-.transfers-table {
+.data-table {
   width: 100%;
   border-collapse: collapse;
   color: #ddd;
   background-color: #333;
 }
 
-/* ячейки */
-.transfers-table th,
-.transfers-table td {
+.data-table th,
+.data-table td {
   padding: 10px;
   text-align: left;
   border-bottom: 1px solid #444;
 }
 
-/* шапка */
-.transfers-table th {
+.data-table th {
   background-color: #222;
   font-weight: bold;
   cursor: pointer;
@@ -30,20 +26,18 @@
   user-select: none;
 }
 
-.transfers-table th:hover {
+.data-table th:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* зебра */
-.transfers-table tr:nth-child(even) {
+.data-table tr:nth-child(even) {
   background-color: #3a3a3a;
 }
 
-.transfers-table tr:hover {
+.data-table tr:hover {
   background-color: #444;
 }
 
-/* кнопка удаления */
 .del-btn {
   background: #e53935;
   color: #fff;
