@@ -40,7 +40,7 @@
 /* ───────────── текст ───────────── */
 .sc-label {
   font-size: 1.1rem;
-  color: #bbbbbb;
+  color: var(--color-light);
   letter-spacing: 0.4px;
 }
 
@@ -48,4 +48,5 @@
   font-size: 1.45rem;
   font-weight: 700;
   white-space: nowrap;
+  color: var(--color-light);
 }
