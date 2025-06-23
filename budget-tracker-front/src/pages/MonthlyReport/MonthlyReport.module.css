@@ -3,9 +3,8 @@
   width: 80%;
   margin:30px auto 0;
   color:#fff;
-  height: 700%;
-  overflow-y: hidden;
-  overflow:hidden;
+  height:100%;        /* fit viewport like other pages */
+  overflow-y:auto;    /* scroll if needed */
 }
 .period-label{
   text-align:center;
