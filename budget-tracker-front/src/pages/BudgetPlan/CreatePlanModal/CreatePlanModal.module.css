@@ -84,3 +84,20 @@
 
 .close-button { background-color: var(--alert-color); color: var(--color-white); }
 .close-button:hover { background-color: var(--danger-color); }
+
+
+.modal-content select
+ {
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid var(--color-gray-lightest);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  width: 100%;
+}
+
+.modal-content textarea {
+  resize: none; /* Можно растягивать по вертикали */
+  width: 96%;
+  height: 50px; /* Установите нужную высоту */
+}
