@@ -17,6 +17,20 @@
     --error-color: #dc3545; /* Ошибки */
     --success-color: #28a745; /* Успешные действия */
     --warning-color: #ffc107; /* Предупреждения */
+
+    /* Цвета таблицы и общие оттенки */
+    --color-white: #ffffff;
+    --table-bg-color: #333333;
+    --table-header-bg: #222222;
+    --table-row-even-bg: #3a3a3a;
+    --table-row-hover-bg: #444444;
+    --danger-color: #e53935;
+    --color-gray-lightest: #dddddd;
+    --color-gray-disabled: #cccccc;
+    --positive-color: #4caf50;
+    --positive-color-hover: #43a047;
+    --alert-color: #f44336;
+    --color-gray-lightest: #dddddd;
   
     /* Отступы */
     --spacing-small: 8px;

@@ -5,11 +5,11 @@
   width:100%; border-collapse:collapse; margin-bottom:12px;
 }
 .acc-table th, .acc-table td{
-  border-bottom:1px solid #444; padding:8px; text-align:left;
+  border-bottom:1px solid var(--table-row-hover-bg); padding:8px; text-align:left;
 }
 
 .del-btn{
-  background:#e53935; color:#fff; border:none; border-radius:4px;
+  background:var(--danger-color); color:var(--color-white); border:none; border-radius:4px;
   padding:2px 8px; cursor:pointer;
 }
 .del-btn:disabled{ opacity:.6; }
@@ -43,8 +43,8 @@
 @keyframes overlayFadeIn { to { background: rgba(0, 0, 0, 0.5); } }
 
 .modal-content {
-  background-color: #fff;
-  background-image: linear-gradient(135deg, #ffffff 0%, #f9f9ff 100%);
+  background-color: var(--color-white);
+  background-image: linear-gradient(135deg, var(--color-white) 0%, #f9f9ff 100%);
   padding: 20px;
   border-radius: 10px;
   width: 320px;
@@ -62,16 +62,16 @@
   margin-bottom: 15px;
   font-size: 1.2rem;
   font-weight: 600;
-  color: #333;
+  color: var(--table-bg-color);
 }
 
-.error { color: #f44336; margin: 0 0 10px 0; }
+.error { color: var(--alert-color); margin: 0 0 10px 0; }
 
 .modal-content input,
 .modal-content textarea{
   padding: 10px;
   margin: 8px 0;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-gray-lightest);
   border-radius: 6px;
   font-size: 0.95rem;
 }
@@ -87,7 +87,7 @@
   display: block;
   font-size: 0.9rem;
   margin-top: 6px;
-  color: #444;
+  color: var(--table-row-hover-bg);
 }
 
 .modal-content button {
@@ -101,15 +101,15 @@
 }
 
 .modal-content button:disabled {
-  background-color: #ccc;
+  background-color: var(--color-gray-disabled);
   cursor: not-allowed;
 }
 
-.submit-button { background-color: #4caf50; color: #fff; }
-.submit-button:hover:not(:disabled) { background-color: #43a047; }
+.submit-button { background-color: var(--positive-color); color: var(--color-white); }
+.submit-button:hover:not(:disabled) { background-color: var(--positive-color-hover); }
 
-.close-button { background-color: #f44336; color: #fff; }
-.close-button:hover { background-color: #e53935; }
+.close-button { background-color: var(--alert-color); color: var(--color-white); }
+.close-button:hover { background-color: var(--danger-color); }
 
 .submit-button-acc{
     height: 70%;
