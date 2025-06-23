@@ -1,7 +1,7 @@
 // filepath: d:\Programming\Projects\budget-tracker\budget-tracker-front\budget-tracker-front\src\components\Modals\TransferModal\TransferModal.js
 import React, { useState, useEffect } from 'react';
 import API_ENDPOINTS from '../../../config/apiConfig';
-import './TransferModal.css';
+import styles from './TransferModal.module.css';
 
 const TransferModal = ({ isOpen, onClose }) => {
     const [title, setTitle] = useState('');
@@ -114,10 +114,10 @@ const TransferModal = ({ isOpen, onClose }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="modal-overlay">
-            <div className="modal-content">
+        <div className={styles['modal-overlay']}>
+            <div className={styles['modal-content']}>
                 <h3>Створити переказ</h3>
-                {error && <p className="error">{error}</p>}
+                {error && <p className={styles.error}>{error}</p>}
 
                 <input
                 type="text"
@@ -177,11 +177,11 @@ const TransferModal = ({ isOpen, onClose }) => {
                 <button
                     onClick={handleSubmit}
                     disabled={loading}
-                    className="submit-button"
+                    className={styles['submit-button']}
                 >
                     {loading ? 'Створення...' : 'Створити переказ'}
                 </button>
-                <button onClick={onClose} className="close-button">
+                <button onClick={onClose} className={styles['close-button']}>
                     Скасувати
                 </button>
             </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import './PieChart.css';
+import styles from './PieChart.module.css';
 
 const PieChart = ({ title, data, labels, limit }) => {
   const entries = Object.entries(data)
@@ -22,24 +22,24 @@ const PieChart = ({ title, data, labels, limit }) => {
       <path
         key={i}
         d={`M100,100 L${x1},${y1} A100,100 0 ${large} 1 ${x2},${y2} z`}
-        className={`slice c${i}`}
+        className={`${styles.slice} ${styles['c'+i]}`}
       />
     );
   });
 
   return (
-    <div className="pie-card">
+    <div className={styles['pie-card']}>
       <h4>{title}</h4>
       {sum === 0 ? (
-        <p className="empty">Немає даних</p>
+        <p className={styles.empty}>Немає даних</p>
       ) : (
         <>
-          <svg viewBox="0 0 200 200" className="pie-chart">
+          <svg viewBox="0 0 200 200" className={styles['pie-chart']}>
             {sectors}
           </svg>
-          <ul className="legend">
+          <ul className={styles.legend}>
             {entries.map(([key, value], i) => (
-              <li key={i}><span className={`dot c${i}`}></span>{labels[key]||'—'} — {value.toFixed(2)}</li>
+              <li key={i}><span className={`${styles.dot} ${styles['c'+i]}`}></span>{labels[key]||'—'} — {value.toFixed(2)}</li>
             ))}
           </ul>
         </>

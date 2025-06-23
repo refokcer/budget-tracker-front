@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import './Header.css';
+import styles from './Header.module.css';
 
 import notificationsIcon from '../../data/notifications.svg';
 import ExpenseModal  from '../Modals/ExpenseModal/ExpenseModal';
@@ -50,48 +50,48 @@ const Header = () => {
   };
 
   return (
-    <header className="header">
+    <header className={styles.header}>
       {/* бренд слева */}
-      <div className="header-left">
-        <h2 className="brand-title">My App</h2>
+      <div className={styles['header-left']}>
+        <h2 className={styles['brand-title']}>My App</h2>
       </div>
 
       {/* ЗАГОЛОВОК ЧЁТКО ПО ЦЕНТРУ ЭКРАНА */}
-      <h2 className="page-title">{currentPageTitle}</h2>
+      <h2 className={styles['page-title']}>{currentPageTitle}</h2>
 
       {/* выпадающий список планов только на /budget-plans */}
       {location.pathname === '/budget-plans' && (
-        <div className="plans-dropdown">
-          {plansError && <p className="error">{plansError}</p>}
+        <div className={styles['plans-dropdown']}>
+          {plansError && <p className={styles.error}>{plansError}</p>}
           <label htmlFor="planSelect">План:</label>
-          <div className="custom-select-wrapper">
+          <div className={styles['custom-select-wrapper']}>
             <select
               id="planSelect"
               value={selectedPlanId}
               onChange={handlePlanChange}
-              className="custom-select"
+              className={styles['custom-select']}
             >
               {plans.map((p) => (
                 <option key={p.id} value={p.id}>{p.title}</option>
               ))}
             </select>
-            <span className="custom-arrow" />
+            <span className={styles['custom-arrow']} />
           </div>
         </div>
       )}
 
       {/* правая часть */}
-      <div className="header-right">
-        <div className="header-right-buttons">
-          <button className="expense"  onClick={()=>setIsModalOpen(true)}>+ expense</button>
-          <button className="income"   onClick={()=>setIsIncomeModalOpen(true)}>+ income</button>
-          <button className="transfer" onClick={()=>setIsTransferModalOpen(true)}>+ transfer</button>
+      <div className={styles['header-right']}>
+        <div className={styles['header-right-buttons']}>
+          <button className={styles.expense}  onClick={()=>setIsModalOpen(true)}>+ expense</button>
+          <button className={styles.income}   onClick={()=>setIsIncomeModalOpen(true)}>+ income</button>
+          <button className={styles.transfer} onClick={()=>setIsTransferModalOpen(true)}>+ transfer</button>
         </div>
-        <div className="header-right-icons">
-          <img src={notificationsIcon} alt="Notifications" className="bell-icon" />
+        <div className={styles['header-right-icons']}>
+          <img src={notificationsIcon} alt="Notifications" className={styles['bell-icon']} />
         </div>
-        <div className="header-right-avatar">
-          <img src="favicon.ico" alt="User Avatar" className="avatar" />
+        <div className={styles['header-right-avatar']}>
+          <img src="favicon.ico" alt="User Avatar" className={styles.avatar} />
         </div>
       </div>
 

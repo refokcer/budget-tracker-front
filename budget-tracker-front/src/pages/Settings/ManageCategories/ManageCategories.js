@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import API_ENDPOINTS from '../../../config/apiConfig';
-import './ManageCategories.css';
+import styles from './ManageCategories.module.css';
 
 /* вкладки: key, надпис, type, endpoint */
 const tabs = [
@@ -84,15 +84,15 @@ const ManageCategories = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content large">
+    <div className={styles['modal-overlay']}>
+      <div className={`${styles['modal-content']} ${styles.large}`}>
         <h3>Керування категоріями</h3>
 
-        <div className="cat-tabs">
+        <div className={styles['cat-tabs']}>
           {tabs.map(t => (
             <button
               key={t.key}
-              className={activeTab === t.key ? 'tab active' : 'tab'}
+              className={activeTab === t.key ? `${styles.tab} ${styles.active}` : styles.tab}
               onClick={() => setActiveTab(t.key)}
             >
               {t.label}
@@ -100,13 +100,13 @@ const ManageCategories = ({ isOpen, onClose }) => {
           ))}
         </div>
 
-        {error && <p className="error">{error}</p>}
+        {error && <p className={styles.error}>{error}</p>}
         {loading && <p>Завантаження...</p>}
 
         {!loading && (
           <>
-            <div className="cat-table-wrapper">
-              <table className="cat-table">
+            <div className={styles['cat-table-wrapper']}>
+              <table className={styles['cat-table']}>
                 <thead><tr><th>Назва</th><th>Опис</th><th></th></tr></thead>
                 <tbody>
                   {categories.map(c => (
@@ -114,7 +114,7 @@ const ManageCategories = ({ isOpen, onClose }) => {
                       <td>{c.title}</td>
                       <td>{c.description || '-'}</td>
                       <td>
-                        <button className="del-btn" disabled={busyId === c.id} onClick={() => del(c.id)}>
+                        <button className={styles['del-btn']} disabled={busyId === c.id} onClick={() => del(c.id)}>
                           {busyId === c.id ? '…' : '✕'}
                         </button>
                       </td>
@@ -124,7 +124,7 @@ const ManageCategories = ({ isOpen, onClose }) => {
               </table>
             </div>
 
-            <div className="cat-add-form">
+            <div className={styles['cat-add-form']}>
               <input
                 placeholder="Назва"
                 value={title}
@@ -135,14 +135,14 @@ const ManageCategories = ({ isOpen, onClose }) => {
                 value={descr}
                 onChange={e => setDescr(e.target.value)}
               />
-              <button className="submit-button" onClick={addCategory}>
+              <button className={styles['submit-button']} onClick={addCategory}>
                 Додати
               </button>
             </div>
           </>
         )}
 
-        <button className="close-button" onClick={onClose}>Закрити</button>
+        <button className={styles['close-button']} onClick={onClose}>Закрити</button>
       </div>
     </div>
   );

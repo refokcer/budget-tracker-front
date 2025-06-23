@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import API_ENDPOINTS from '../../../config/apiConfig';
-import './ExpenseModal.css';
+import styles from './ExpenseModal.module.css';
 
 const ExpenseModal = ({ isOpen, onClose }) => {
   const [title,         setTitle]        = useState('');
@@ -92,10 +92,10 @@ const ExpenseModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className={styles['modal-overlay']}>
+      <div className={styles['modal-content']}>
         <h3>Добавить расход</h3>
-        {error && <p className="error">{error}</p>}
+        {error && <p className={styles.error}>{error}</p>}
 
         <input
           type="text"
@@ -156,11 +156,11 @@ const ExpenseModal = ({ isOpen, onClose }) => {
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="submit-button"
+          className={styles['submit-button']}
         >
           {loading ? 'Creating...' : 'Створити транзакцію'}
         </button>
-        <button onClick={onClose} className="close-button">
+        <button onClick={onClose} className={styles['close-button']}>
           Відмінити
         </button>
       </div>

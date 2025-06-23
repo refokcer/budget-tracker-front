@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import API_ENDPOINTS from '../../../config/apiConfig';
-import './EditPlanModal.css';
+import styles from './EditPlanModal.module.css';
 
 const EditPlanModal = ({ isOpen, onClose, plan, items, categories, currencies, onSaved }) => {
   /* поля плану */
@@ -17,6 +17,15 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, categories, currencies, o
   const [allCur , setAllCur ] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   /* ───── ініціалізація при відкритті ───── */
   useEffect(() => {
@@ -136,10 +145,10 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, categories, currencies, o
 
   /* ───── рендер ───── */
   return (
-    <div className="modal-overlay">
-      <div className="modal-content large">
+    <div className={styles['modal-overlay']}>
+      <div className={`${styles['modal-content']} ${styles.large}`}>
         <h3>Редагувати план</h3>
-        {error && <p className="error">{error}</p>}
+        {error && <p className={styles.error}>{error}</p>}
 
         <input placeholder="Назва" value={title} onChange={(e) => setTitle(e.target.value)} />
 
@@ -162,8 +171,8 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, categories, currencies, o
         />
 
         {/* таблиця рядків */}
-        <div className="table-scroll">
-          <table className="edit-table">
+        <div className={styles['table-scroll']}>
+          <table className={styles['edit-table']}>
             <thead>
               <tr>
                 <th>Категорія</th>
@@ -218,7 +227,7 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, categories, currencies, o
                       />
                     </td>
                     <td>
-                      <button className="del-row" onClick={() => deleteRow(idx)}>
+                      <button className={styles['del-row']} onClick={() => deleteRow(idx)}>
                         ✕
                       </button>
                     </td>
@@ -228,14 +237,14 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, categories, currencies, o
           </table>
         </div>
 
-        <button className="add-row" onClick={addRow}>
+        <button className={styles['add-row']} onClick={addRow}>
           + рядок
         </button>
 
-        <button onClick={handleSave} disabled={loading} className="submit-button">
+        <button onClick={handleSave} disabled={loading} className={styles['submit-button']}>
           {loading ? 'Збереження…' : 'Зберегти'}
         </button>
-        <button onClick={onClose} className="close-button">
+        <button onClick={onClose} className={styles['close-button']}>
           Скасувати
         </button>
       </div>

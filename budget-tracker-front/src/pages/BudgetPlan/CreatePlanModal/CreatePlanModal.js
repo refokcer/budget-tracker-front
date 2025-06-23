@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import API_ENDPOINTS from '../../../config/apiConfig';
-import './CreatePlanModal.css';
+import styles from './CreatePlanModal.module.css';
 
 const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
   const [title,       setTitle]       = useState('');
@@ -11,6 +11,15 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
 
   const [error,   setError]   = useState(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -45,11 +54,11 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className={styles['modal-overlay']}>
+      <div className={styles['modal-content']}>
         <h3>Створити план</h3>
 
-        {error && <p className="error">{error}</p>}
+        {error && <p className={styles.error}>{error}</p>}
 
         <input
           type="text"
@@ -87,12 +96,12 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
         <button
           onClick={handleSubmit} 
           disabled={loading}
-          className="submit-button"
+          className={styles['submit-button']}
         >
           {loading ? 'Створення...' : 'Створити план'}
         </button>
 
-        <button onClick={onClose} className="close-button">
+        <button onClick={onClose} className={styles['close-button']}>
           Скасувати
         </button>
       </div>

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import API_ENDPOINTS from '../../../config/apiConfig';
-import './CreateBudgetPlanModal.css';
+import styles from './CreateBudgetPlanModal.module.css';
 
 const CreateBudgetPlanModal = ({ isOpen, onClose, onPlanCreated }) => {
   const [title, setTitle] = useState('');
@@ -54,10 +54,10 @@ const CreateBudgetPlanModal = ({ isOpen, onClose, onPlanCreated }) => {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className={styles['modal-overlay']}>
+      <div className={styles['modal-content']}>
         <h3>Создать новый план</h3>
-        {error && <p className="error">{error}</p>}
+        {error && <p className={styles.error}>{error}</p>}
 
         <label>Название плана:</label>
         <input
@@ -96,15 +96,15 @@ const CreateBudgetPlanModal = ({ isOpen, onClose, onPlanCreated }) => {
           onChange={(e) => setDescription(e.target.value)}
         />
 
-        <div className="modal-buttons">
+        <div className={styles['modal-buttons']}>
           <button 
             onClick={handleSubmit}
             disabled={loading}
-            className="create-button"
+            className={styles['create-button']}
           >
             {loading ? 'Создание...' : 'Создать'}
           </button>
-          <button onClick={onClose} className="close-button">Отмена</button>
+          <button onClick={onClose} className={styles['close-button']}>Отмена</button>
         </div>
       </div>
     </div>

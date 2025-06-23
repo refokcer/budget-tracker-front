@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import TransfersTable from '../TransfersTable/TransfersTable';
-import './TransfersPage.css';
+import styles from './TransfersPage.module.css';
 
 const TransfersPage = () => {
   const [monthDate, setMonthDate] = useState(new Date());
@@ -20,14 +20,14 @@ const TransfersPage = () => {
   const label = monthDate.toLocaleString('uk',{month:'long',year:'numeric'});
 
   return (
-    <div className="container">
-      <div className="month-selector">
+    <div className={styles.container}>
+      <div className={styles['month-selector']}>
         <button onClick={()=>jump(-1)}>&lt;</button>
         <span>{label}</span>
         <button onClick={()=>jump(1)}>&gt;</button>
       </div>
 
-      <div className="content">
+      <div className={styles.content}>
         <TransfersTable startDate={start} endDate={end} />
       </div>
     </div>

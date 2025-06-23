@@ -7,7 +7,7 @@ import PlanItemsTable     from '../PlanItemsTable/PlanItemsTable';
 import CreatePlanModal    from '../CreatePlanModal/CreatePlanModal';
 import EditPlanModal      from '../EditPlanModal/EditPlanModal';
 
-import './BudgetPlanPage.css';
+import styles from './BudgetPlanPage.module.css';
 
 const BudgetPlanPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -110,20 +110,20 @@ const BudgetPlanPage = () => {
   };
 
   /* 4. рендер */
-  if(loading) return <p className="loading">Загрузка...</p>;
-  if(error)   return <p className="error">{error}</p>;
+  if(loading) return <p className={styles.loading}>Загрузка...</p>;
+  if(error)   return <p className={styles.error}>{error}</p>;
 
   return(
-    <div className="budget-plan-page">
+    <div className={styles['container']}>
       {!plans.length && (
         <>
-          <button className="create-btn" onClick={()=>setCreateOpen(true)}>+ новый план</button>
-          <p className="no-plan-text">Планов пока нет…</p>
+          <button className={styles['create-btn']} onClick={()=>setCreateOpen(true)}>+ новый план</button>
+          <p className={styles['no-plan-text']}>Планов пока нет…</p>
         </>
       )}
 
       {selectedPlan && (
-        <div className="plan-details-wrapper">
+        <div className={styles['content']}>
           <PlanDetails plan={selectedPlan}/>
           <PlanItemsTable
             items={itemsExt}
@@ -132,12 +132,12 @@ const BudgetPlanPage = () => {
           />
 
           {/* ——— действия над планом ——— */}
-          <div className="plan-actions">
-            <button className="edit-btn"    onClick={()=>setEditOpen(true)}>✎ редактировать</button>
-            <button className="delete-btn"  onClick={deletePlan} disabled={busyDel}>
+          <div className={styles['plan-actions']}>
+            <button className={styles['edit-btn']}    onClick={()=>setEditOpen(true)}>✎ редактировать</button>
+            <button className={styles['delete-btn']}  onClick={deletePlan} disabled={busyDel}>
               {busyDel?'…':'✕ удалить'}
             </button>
-            <button className="create-btn"  onClick={()=>setCreateOpen(true)}>+ новый</button>
+            <button className={styles['create-btn']}  onClick={()=>setCreateOpen(true)}>+ новый</button>
           </div>
         </div>
       )}

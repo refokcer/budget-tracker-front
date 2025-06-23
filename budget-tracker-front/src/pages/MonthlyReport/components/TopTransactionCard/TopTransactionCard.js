@@ -1,30 +1,30 @@
 import React from 'react';
-import './TopTransactionCard.css';
+import styles from './TopTransactionCard.module.css';
 
 const TopTransactionCard = ({ transaction, category, account, currency }) => {
   if (!transaction) return null;
 
   return (
-    <div className="toptx-card">
-      <div className="accent-bar" />
+    <div className={styles['toptx-card']}>
+      <div className={styles['accent-bar']} />
 
-      <h4 className="card-title">Найбільша транзакція місяця</h4>
+      <h4 className={styles['card-title']}>Найбільша транзакція місяця</h4>
 
-      <p className="tx-name">{transaction.title}</p>
+      <p className={styles['tx-name']}>{transaction.title}</p>
 
-      <p className="amount">
+      <p className={styles.amount}>
         {currency}&nbsp;{transaction.amount.toFixed(2)}
       </p>
 
-      <div className="info-grid">
-        <span className="label">Категорія:</span>
-        <span className="value">{category || '—'}</span>
+      <div className={styles['info-grid']}>
+        <span className={styles.label}>Категорія:</span>
+        <span className={styles.value}>{category || '—'}</span>
 
-        <span className="label">Рахунок:</span>
-        <span className="value">{account || '—'}</span>
+        <span className={styles.label}>Рахунок:</span>
+        <span className={styles.value}>{account || '—'}</span>
 
-        <span className="label">Дата:</span>
-        <span className="value">
+        <span className={styles.label}>Дата:</span>
+        <span className={styles.value}>
           {new Date(transaction.date).toLocaleDateString()}
         </span>
       </div>
@@ -32,7 +32,7 @@ const TopTransactionCard = ({ transaction, category, account, currency }) => {
       {transaction.description && (
         <>
           <hr />
-          <p className="description">{transaction.description}</p>
+          <p className={styles.description}>{transaction.description}</p>
         </>
       )}
     </div>

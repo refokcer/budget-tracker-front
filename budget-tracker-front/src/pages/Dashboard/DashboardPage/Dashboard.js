@@ -1,7 +1,7 @@
 // src/pages/Dashboard/Dashboard.js
 import React, { useState, useEffect } from 'react';
 import { API_ENDPOINTS } from '../../../config/apiConfig';
-import './Dashboard.css';
+import styles from './Dashboard.module.css';
 
 /* YYYY-MM-DD */
 const fmt = (d) =>
@@ -102,16 +102,16 @@ const Dashboard = () => {
     total ? `${((sum / total) * 100).toFixed(1)} %` : '—';
 
   /* render */
-  if (loading) return <p className="db-loading">Завантаження…</p>;
-  if (error)   return <p className="db-error">{error}</p>;
+  if (loading) return <p className={styles['db-loading']}>Завантаження…</p>;
+  if (error)   return <p className={styles['db-error']}>{error}</p>;
 
   return (
-    <div className="db-container">
-      <div className="db-grid">
+    <div className={styles['db-container']}>
+      <div className={styles['db-grid']}>
         {/* Accounts */}
-        <div className="db-card">
-          <h3 className="db-title">Accounts</h3>
-          <table className="db-table">
+        <div className={styles['db-card']}>
+          <h3 className={styles['db-title']}>Accounts</h3>
+          <table className={styles['db-table']}>
             <thead><tr><th>Назва</th><th>Сума</th></tr></thead>
             <tbody>
               {accounts.map(a => (
@@ -122,18 +122,18 @@ const Dashboard = () => {
               ))}
             </tbody>
           </table>
-          <div className="db-balance">
+          <div className={styles['db-balance']}>
             <span>Balance:</span><span>{totalBalance.toFixed(2)}</span>
           </div>
         </div>
 
         {/* Top-10 Expenses */}
-        <div className="db-card">
-          <h3 className="db-title">Top 10 Expenses</h3>
+        <div className={styles['db-card']}>
+          <h3 className={styles['db-title']}>Top 10 Expenses</h3>
           {expByCat.length === 0 ? (
-            <p className="db-empty">Немає даних</p>
+            <p className={styles['db-empty']}>Немає даних</p>
           ) : (
-            <table className="db-small-table">
+            <table className={styles['db-small-table']}>
               <thead><tr><th>Категорія</th><th>Сума</th><th>%</th></tr></thead>
               <tbody>
                 {expByCat.map(([id, sum]) => (
@@ -149,12 +149,12 @@ const Dashboard = () => {
         </div>
 
         {/* Top-10 Incomes */}
-        <div className="db-card">
-          <h3 className="db-title">Top 10 Incomes</h3>
+        <div className={styles['db-card']}>
+          <h3 className={styles['db-title']}>Top 10 Incomes</h3>
           {incByCat.length === 0 ? (
-            <p className="db-empty">Немає даних</p>
+            <p className={styles['db-empty']}>Немає даних</p>
           ) : (
-            <table className="db-small-table">
+            <table className={styles['db-small-table']}>
               <thead><tr><th>Категорія</th><th>Сума</th><th>%</th></tr></thead>
               <tbody>
                 {incByCat.map(([id, sum]) => (
@@ -170,21 +170,21 @@ const Dashboard = () => {
         </div>
 
         {/* Biggest transaction */}
-        <div className="db-card">
-          <h3 className="db-title">Найбільша транзакція</h3>
+        <div className={styles['db-card']}>
+          <h3 className={styles['db-title']}>Найбільша транзакція</h3>
           {biggestTx ? (
             <>
-              <p className="db-big">
+              <p className={styles['db-big']}>
                 {currencies[biggestTx.currencyId] || '₴'}&nbsp;
                 {biggestTx.amount.toFixed(2)}
               </p>
-              <p className="db-sub">{biggestTx.title}</p>
-              <p className="db-sub">
+              <p className={styles['db-sub']}>{biggestTx.title}</p>
+              <p className={styles['db-sub']}>
                 {new Date(biggestTx.date).toLocaleDateString()}
               </p>
             </>
           ) : (
-            <p className="db-empty">—</p>
+            <p className={styles['db-empty']}>—</p>
           )}
         </div>
       </div>
