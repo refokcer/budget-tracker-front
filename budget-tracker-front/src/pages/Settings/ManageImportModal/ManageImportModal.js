@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import Papa from 'papaparse';                  // npm i papaparse
 import API_ENDPOINTS from '../../../config/apiConfig';
-import './ManageImportModal.css';
+import styles from './ManageImportModal.module.css';
 
 /**
  * Перетворює рядок ПриватБанк-csv → об’єкт TransactionDTO.
@@ -104,9 +104,9 @@ const ManageImportModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="imp-overlay">
-      <div className="imp-modal">
-        <h3 className="imp-title">Імпорт виписки</h3>
+    <div className={styles['imp-overlay']}>
+      <div className={styles['imp-modal']}>
+        <h3 className={styles['imp-title']}>Імпорт виписки</h3>
 
         {step === 'select' && (
           <>
@@ -115,15 +115,15 @@ const ManageImportModal = ({ isOpen, onClose }) => {
               type="file"
               accept=".csv"
               onChange={handleFile}
-              className="imp-file"
+              className={styles['imp-file']}
             />
-            {error && <p className="imp-error">{error}</p>}
+            {error && <p className={styles['imp-error']}>{error}</p>}
           </>
         )}
 
         {step === 'preview' && (
           <>
-            <p className="imp-info">
+            <p className={styles['imp-info']}>
               Рядків до імпорту: <strong>{rowsOk.length}</strong>
               {rowsErr.length > 0 && (
                 <>,&nbsp;пропущено: {rowsErr.length}</>
@@ -132,18 +132,18 @@ const ManageImportModal = ({ isOpen, onClose }) => {
             {rowsErr.length > 0 && (
               <details>
                 <summary>Показати номера пропущених рядків</summary>
-                <div className="imp-error">{rowsErr.join(', ')}</div>
+                <div className={styles['imp-error']}>{rowsErr.join(', ')}</div>
               </details>
             )}
-            <button className="imp-btn imp-green" onClick={sendData}>
+            <button className={`${styles['imp-btn']} ${styles['imp-green']}`} onClick={sendData}>
               Імпортувати
             </button>
           </>
         )}
 
-        {step === 'sending' && <p className="imp-info">Імпорт …</p>}
+        {step === 'sending' && <p className={styles['imp-info']}>Імпорт …</p>}
 
-        <button className="imp-btn imp-red" onClick={onClose}>
+        <button className={`${styles['imp-btn']} ${styles['imp-red']}`} onClick={onClose}>
           Закрити
         </button>
       </div>

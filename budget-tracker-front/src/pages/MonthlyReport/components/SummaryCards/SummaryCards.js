@@ -1,27 +1,27 @@
 import React from 'react';
-import './SummaryCards.css';
+import styles from './SummaryCards.module.css';
 
 const format = (n) => n.toLocaleString('uk-UA', { minimumFractionDigits: 2 });
 
 const SummaryCards = ({ totalExp, totalInc, balance, defaultCurrency }) => (
-  <div className="sc-wrapper">
-    <div className="sc-card sc-red">
-      <span className="sc-label">Всього витрачено</span>
-      <span className="sc-value">
+  <div className={styles['sc-wrapper']}>
+    <div className={`${styles['sc-card']} ${styles['sc-red']}`}>
+      <span className={styles['sc-label']}>Всього витрачено</span>
+      <span className={styles['sc-value']}>
         {defaultCurrency}&nbsp;{format(totalExp)}
       </span>
     </div>
 
-    <div className="sc-card sc-green">
-      <span className="sc-label">Всього зароблено</span>
-      <span className="sc-value">
+    <div className={`${styles['sc-card']} ${styles['sc-green']}`}>
+      <span className={styles['sc-label']}>Всього зароблено</span>
+      <span className={styles['sc-value']}>
         {defaultCurrency}&nbsp;{format(totalInc)}
       </span>
     </div>
 
-    <div className="sc-card sc-blue">
-      <span className="sc-label">Баланс</span>
-      <span className="sc-value">
+    <div className={`${styles['sc-card']} ${styles['sc-blue']}`}>
+      <span className={styles['sc-label']}>Баланс</span>
+      <span className={styles['sc-value']}>
         {defaultCurrency}&nbsp;{format(balance)}
       </span>
     </div>

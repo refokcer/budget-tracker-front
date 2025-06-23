@@ -1,5 +1,5 @@
 import React from 'react';
-import './PlanDetails.css';
+import styles from './PlanDetails.module.css';
 
 const PlanDetails = ({ plan }) => {
   if (!plan) return null;
@@ -14,20 +14,20 @@ const PlanDetails = ({ plan }) => {
     'Не указан';
 
   return (
-    <div className="plan-details-inline">
-      <span className="plan-title">
+    <div className={styles['plan-details-inline']}>
+      <span className={styles['plan-title']}>
         <strong>Название:</strong> {plan.title || 'Без названия'}
       </span>
 
-      <span className="plan-period">
+      <span className={styles['plan-period']}>
         <strong>Период:</strong> {periodString}
       </span>
 
-      <span className="plan-type">
+      <span className={styles['plan-type']}>
         <strong>Тип:</strong> {typeString}
       </span>
 
-      <span className="plan-description">
+      <span className={styles['plan-description']}>
         <strong>Описание:</strong> {plan.description || 'Нет описания'}
       </span>
     </div>

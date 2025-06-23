@@ -1,4 +1,4 @@
-@import '../CreatePlanModal/CreatePlanModal.css';
+@import '../CreatePlanModal/CreatePlanModal.module.css';
 
 .modal-content.large{ width:600px; }
 

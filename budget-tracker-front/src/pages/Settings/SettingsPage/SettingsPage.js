@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './SettingsPage.css';
+import styles from './SettingsPage.module.css';
 
 import ManageAccountsModal   from '../ManageAccounts/ManageAccounts';
 import ManageCategoriesModal from '../ManageCategories/ManageCategories';
@@ -9,26 +9,26 @@ const Settings = () => {
   const [catOpen, setCatOpen] = useState(false);
 
   return (
-    <div className="settings-container">
-      <div className="settings-grid">
+    <div className={styles['settings-container']}>
+      <div className={styles['settings-grid']}>
 
         {/* ───── Manage ───── */}
-        <section className="settings-card">
+        <section className={styles['settings-card']}>
           <h3>Manage</h3>
 
-          <button className="settings-btn" onClick={()=>setAccOpen(true)}>
+          <button className={styles['settings-btn']} onClick={()=>setAccOpen(true)}>
             Manage accounts
           </button>
 
-          <button className="settings-btn" onClick={()=>setCatOpen(true)}>
+          <button className={styles['settings-btn']} onClick={()=>setCatOpen(true)}>
             Manage categories
           </button>
         </section>
 
         {/* ───── Import ───── */}
-        <section className="settings-card">
+        <section className={styles['settings-card']}>
           <h3>Import</h3>
-          <button className="settings-btn">Import statement</button>
+          <button className={styles['settings-btn']}>Import statement</button>
         </section>
       </div>
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import API_ENDPOINTS from '../../../config/apiConfig';
-import './CreatePlanModal.css';
+import styles from './CreatePlanModal.module.css';
 
 const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
   const [title,       setTitle]       = useState('');
@@ -45,11 +45,11 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className={styles['modal-overlay']}>
+      <div className={styles['modal-content']}>
         <h3>Створити план</h3>
 
-        {error && <p className="error">{error}</p>}
+        {error && <p className={styles.error}>{error}</p>}
 
         <input
           type="text"
@@ -87,12 +87,12 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
         <button
           onClick={handleSubmit} 
           disabled={loading}
-          className="submit-button"
+          className={styles['submit-button']}
         >
           {loading ? 'Створення...' : 'Створити план'}
         </button>
 
-        <button onClick={onClose} className="close-button">
+        <button onClick={onClose} className={styles['close-button']}>
           Скасувати
         </button>
       </div>

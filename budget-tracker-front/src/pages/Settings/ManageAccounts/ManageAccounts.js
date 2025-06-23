@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import API_ENDPOINTS from '../../../config/apiConfig';
-import './ManageAccounts.css';
+import styles from './ManageAccounts.module.css';
 
 const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
   const [accounts, setAccounts] = useState([]);
@@ -71,18 +71,18 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
   if (!isOpen) return null;
 
   return(
-    <div className="modal-overlay">
-      <div className="modal-content large">
+    <div className={styles['modal-overlay']}>
+      <div className={`${styles['modal-content']} ${styles.large}`}>
         <h3>Manage accounts</h3>
 
-        {error   && <p className="error">{error}</p>}
+        {error   && <p className={styles.error}>{error}</p>}
         {loading && <p>Завантаження...</p>}
 
         {!loading&&(
           <>
             {/* обгортка з прокруткою */}
-            <div className="acc-table-wrapper">
-              <table className="acc-table">
+            <div className={styles['acc-table-wrapper']}>
+              <table className={styles['acc-table']}>
                 <thead>
                   <tr><th>Назва</th><th>Сума</th><th>Опис</th><th></th></tr>
                 </thead>
@@ -93,7 +93,7 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
                       <td>{a.amount.toFixed(2)}</td>
                       <td>{a.description||'-'}</td>
                       <td>
-                        <button className="del-btn" disabled={busyId===a.id} onClick={()=>del(a.id)}>
+                        <button className={styles['del-btn']} disabled={busyId===a.id} onClick={()=>del(a.id)}>
                           {busyId===a.id?'…':'✕'}
                         </button>
                       </td>
@@ -103,16 +103,16 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
               </table>
             </div>
 
-            <div className="add-form">
+            <div className={styles['add-form']}>
               <input placeholder="Назва" value={title} onChange={e=>setTitle(e.target.value)}/>
               <input type="number" placeholder="Сума" value={amount} onChange={e=>setAmount(e.target.value)}/>
               <input placeholder="Опис" value={descr} onChange={e=>setDescr(e.target.value)}/>
-              <button className="submit-button submit-button-acc" onClick={addAccount}>Додати</button>
+              <button className={`${styles['submit-button']} ${styles['submit-button-acc']}`} onClick={addAccount}>Додати</button>
             </div>
           </>
         )}
 
-        <button className="close-button" onClick={onClose}>Закрити</button>
+        <button className={styles['close-button']} onClick={onClose}>Закрити</button>
       </div>
     </div>
   );

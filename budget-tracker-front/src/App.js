@@ -6,7 +6,7 @@ import Dashboard from './pages/Dashboard/DashboardPage/Dashboard';
 import Expenses from './pages/Expenses/ExpensesPage/Expenses';
 import Incomes from './pages/Incomes/IncomesPage/Incomes';
 import BudgetPlanPage from './pages/BudgetPlan/BudgetPlanPage/BudgetPlanPage';
-import './App.css';
+import styles from './App.module.css';
 import TransfersPage from './pages/Transfers/TransfersPage/TransfersPage';
 import SettingsPage from './pages/Settings/SettingsPage/SettingsPage';
 import MonthlyReport from './pages/MonthlyReport/MonthlyReport'; // Adjust the path if needed
@@ -14,11 +14,11 @@ import MonthlyReport from './pages/MonthlyReport/MonthlyReport'; // Adjust the p
 const App = () => {
   return (
     <Router>
-      <div className="app">
+      <div className={styles.app}>
         <Header />
-        <div className="main-content">
+        <div className={styles['main-content']}>
           <Sidebar />
-          <main className="content">
+          <main className={styles.content}>
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/dashboard" element={<Dashboard />} />

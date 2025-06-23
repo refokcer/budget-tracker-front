@@ -6,7 +6,7 @@ import PieChart           from './components/PieChart/PieChart';
 import TopList            from './components/TopList/TopList';
 import TopTransactionCard from './components/TopTransactionCard/TopTransactionCard';
 
-import './MonthlyReport.css';
+import styles from './MonthlyReport.module.css';
 
 /* утиліта форматування YYYY-MM-DD */
 const fmt = (d) =>
@@ -87,15 +87,15 @@ const MonthlyReport = () => {
 
   const maxExpense = expenses.sort((a, b) => b.amount - a.amount)[0];
 
-  if (loading) return <p className="loading">Завантаження…</p>;
-  if (error)   return <p className="error">{error}</p>;
+  if (loading) return <p className={styles.loading}>Завантаження…</p>;
+  if (error)   return <p className={styles.error}>{error}</p>;
 
   const monthLabel = monthDate.toLocaleString('default', { month: 'long', year: 'numeric' });
 
   return (
-    <div className="monthly-report">
+    <div className={styles['monthly-report']}>
       {/* селектор місяця */}
-      <div className="month-selector">
+      <div className={styles['month-selector']}>
         <button onClick={() => jumpMonth(-1)}>&lt;</button>
         <span>{monthLabel}</span>
         <button onClick={() => jumpMonth(1)}>&gt;</button>
@@ -108,7 +108,7 @@ const MonthlyReport = () => {
         defaultCurrency={currencies[1] || '₴'}
       />
 
-      <div className="charts-grid">
+      <div className={styles['charts-grid']}>
         <TopList
           title="Топ-10 категорій витрат"
           dataMap={expByCat}
