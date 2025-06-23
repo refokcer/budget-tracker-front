@@ -8,7 +8,7 @@
   width: 100%;
   border-collapse: collapse;
   color: var(--color-light);
-  background-color: var(--table-bg-color);
+  background-color: var(--color-gray-dark);
 }
 
 .data-table th,
@@ -19,7 +19,7 @@
 }
 
 .data-table th {
-  background-color: var(--table-header-bg);
+  background-color: var(--color-dark);
   font-weight: bold;
   cursor: pointer;
   -webkit-user-select: none;
@@ -27,15 +27,15 @@
 }
 
 .data-table th:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--color-purple-dark);
 }
 
 .data-table tr:nth-child(even) {
-  background-color: var(--table-row-even-bg);
+  background-color: var(--color-gray-dark);
 }
 
 .data-table tr:hover {
-  background-color: var(--table-row-hover-bg);
+  background-color: var(--color-purple-dark);
 }
 
 .del-btn {
