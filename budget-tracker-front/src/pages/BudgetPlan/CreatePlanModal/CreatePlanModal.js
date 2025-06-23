@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import API_ENDPOINTS from '../../../config/apiConfig';
 import styles from './CreatePlanModal.module.css';
 
@@ -11,6 +11,15 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
 
   const [error,   setError]   = useState(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
