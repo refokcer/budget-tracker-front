@@ -1,3 +1,20 @@
+/* Стили контейнера и селектора месяца взяты из ExpensesPage */
+.container{
+    display:flex;
+    align-items:center;
+    justify-content:start;
+    flex-direction:column;
+    width:100%;
+}
+
+.content{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:start;
+    align-items:center;
+}
+
 .monthly-report{
   padding:20px;
   width: 80%;

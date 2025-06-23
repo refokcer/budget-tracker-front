@@ -5,6 +5,7 @@
     display: flex;
     gap: 80px;           /* Отступы между элементами */
     align-items: baseline; 
+    justify-content: center; /* Элементы растягиваются по ширине */
     flex-wrap: wrap;     /* Если окно станет узким, пойдёт перенос, но аккуратно */
     margin-bottom: 15px; /* Отступ перед таблицей */
   }

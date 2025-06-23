@@ -14,14 +14,51 @@
 
   /* общий селектор месяца (тот же класс, что у расходов) */
 .month-selector{
-  position:absolute; top:80px; left:50%; transform:translateX(-50%);
-  display:flex; align-items:center; width:260px; justify-content:space-between;
-  font-size:1.3rem; color:var(--color-white); z-index:900;
+  position:absolute;
+  top:80px;
+  left:54.5%;
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  width:260px;
+  justify-content:space-between;
+  gap:12px;
+  font-size:1.3rem;
+  color:var(--color-white);
+  z-index:900;
 }
-.month-selector span{ flex:1; text-align:center; white-space:nowrap; }
+
+.month-selector span{
+  flex:1;
+  text-align:center;
+  white-space:nowrap;
+}
+
 .month-selector button{
-  flex:0 0 32px; background:transparent; border:none; color:var(--color-white);
-  font-size:1.5rem; cursor:pointer; padding:0;
+  flex:0 0 32px;
+  background:transparent;
+  border:none;
+  color:var(--color-white);
+  font-size:1.5rem;
+  cursor:pointer;
+  padding:0;
 }
-.month-selector button:hover{ opacity:.75; }
+
+.month-selector button:hover{opacity:.75;}
   
+/* Стили контейнера и селектора месяца взяты из ExpensesPage */
+.container{
+    display:flex;
+    align-items:center;
+    justify-content:start;
+    flex-direction:column;
+    width:100%;
+}
+
+.content{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:start;
+    align-items:center;
+}

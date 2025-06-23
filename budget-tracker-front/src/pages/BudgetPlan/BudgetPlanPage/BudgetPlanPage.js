@@ -114,7 +114,7 @@ const BudgetPlanPage = () => {
   if(error)   return <p className={styles.error}>{error}</p>;
 
   return(
-    <div className={styles['budget-plan-page']}>
+    <div className={styles['container']}>
       {!plans.length && (
         <>
           <button className={styles['create-btn']} onClick={()=>setCreateOpen(true)}>+ новый план</button>
@@ -123,7 +123,7 @@ const BudgetPlanPage = () => {
       )}
 
       {selectedPlan && (
-        <div className={styles['plan-details-wrapper']}>
+        <div className={styles['content']}>
           <PlanDetails plan={selectedPlan}/>
           <PlanItemsTable
             items={itemsExt}
