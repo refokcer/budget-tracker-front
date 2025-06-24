@@ -1,6 +1,6 @@
 .data-table-container {
   overflow-x: auto;
-  margin: 20px auto; /* center tables */
+  margin: 10px auto; /* center tables */
   width: 100%;        /* leave space on sides */
 }
 
