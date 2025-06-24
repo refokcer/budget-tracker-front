@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
-import Papa from 'papaparse';                  // npm i papaparse
-import API_ENDPOINTS from '../../../config/apiConfig';
-import styles from './ManageImportModal.module.css';
+import React, { useState, useRef } from "react";
+import Papa from "papaparse"; // npm i papaparse
+import API_ENDPOINTS from "../../../config/apiConfig";
+import styles from "./ManageImportModal.module.css";
 
 /**
  * Перетворює рядок ПриватБанк-csv → об’єкт TransactionDTO.
@@ -26,28 +26,28 @@ const mapRow = (row) => {
   const [dateTime, , , title, amountRaw, currency] = row;
   if (!title || !amountRaw) return null;
 
-  const amount = parseFloat(amountRaw.replace(/\s/g, '').replace(',', '.'));
+  const amount = parseFloat(amountRaw.replace(/\s/g, "").replace(",", "."));
   const isIncome = amount > 0;
 
   return {
-    title:        title.trim().slice(0, 100),
-    amount:       Math.abs(amount),
-    currencyId:   1,                   // TODO: зіставити (UAH = 1)
-    categoryId:   null,
-    date:         new Date(dateTime).toISOString(),
-    accountFrom:  isIncome ? null : null,   // можна заповнити за потреби
-    accountTo:    isIncome ? null : null,
-    type:         isIncome ? 1 : 2,
-    description:  row[3]?.trim() || '',
+    title: title.trim().slice(0, 100),
+    amount: Math.abs(amount),
+    currencyId: 1, // TODO: зіставити (UAH = 1)
+    categoryId: null,
+    date: new Date(dateTime).toISOString(),
+    accountFrom: isIncome ? null : null, // можна заповнити за потреби
+    accountTo: isIncome ? null : null,
+    type: isIncome ? 1 : 2,
+    description: row[3]?.trim() || "",
     budgetPlanId: null,
   };
 };
 
 const ManageImportModal = ({ isOpen, onClose }) => {
-  const fileRef           = useRef(null);
+  const fileRef = useRef(null);
   const [rowsOk, setRows] = useState([]);
   const [rowsErr, setErr] = useState([]);
-  const [step, setStep]   = useState('select'); // select | preview | sending
+  const [step, setStep] = useState("select"); // select | preview | sending
   const [error, setError] = useState(null);
 
   /* ───────── читання файлу ───────── */
@@ -56,12 +56,13 @@ const ManageImportModal = ({ isOpen, onClose }) => {
     if (!file) return;
 
     Papa.parse(file, {
-      delimiter: ';',
+      delimiter: ";",
       skipEmptyLines: true,
       complete: (res) => {
         // перший рядок web-csv Привату – «Звіт…», пропускаємо
-        const raw = res.data.filter(r => /^\d{2}\./.test(r[0]));
-        const good = [], bad = [];
+        const raw = res.data.filter((r) => /^\d{2}\./.test(r[0]));
+        const good = [],
+          bad = [];
 
         raw.forEach((r, idx) => {
           try {
@@ -74,7 +75,7 @@ const ManageImportModal = ({ isOpen, onClose }) => {
 
         setRows(good);
         setErr(bad);
-        setStep('preview');
+        setStep("preview");
       },
       error: (err) => setError(err.message),
     });
@@ -82,68 +83,72 @@ const ManageImportModal = ({ isOpen, onClose }) => {
 
   /* ───────── надсилання у бекенд ───────── */
   const sendData = async () => {
-    setStep('sending');
+    setStep("sending");
     try {
       await Promise.all(
         rowsOk.map((trx) =>
           fetch(API_ENDPOINTS.createTransaction, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(trx),
-          }),
-        ),
+          })
+        )
       );
       onClose();
       alert(`Імпортовано ${rowsOk.length} транзакцій`);
     } catch (e) {
-      setError('Помилка під час імпорту. Спробуйте пізніше.');
-      setStep('preview');
+      setError("Помилка під час імпорту. Спробуйте пізніше.");
+      setStep("preview");
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className={styles['imp-overlay']}>
-      <div className={styles['imp-modal']}>
-        <h3 className={styles['imp-title']}>Імпорт виписки</h3>
+    <div className={styles["imp-overlay"]}>
+      <div className={styles["imp-modal"]}>
+        <h3 className={styles["imp-title"]}>Імпорт виписки</h3>
 
-        {step === 'select' && (
+        {step === "select" && (
           <>
             <input
               ref={fileRef}
               type="file"
               accept=".csv"
               onChange={handleFile}
-              className={styles['imp-file']}
+              className={styles["imp-file"]}
             />
-            {error && <p className={styles['imp-error']}>{error}</p>}
+            {error && <p className={styles["imp-error"]}>{error}</p>}
           </>
         )}
 
-        {step === 'preview' && (
+        {step === "preview" && (
           <>
-            <p className={styles['imp-info']}>
+            <p className={styles["imp-info"]}>
               Рядків до імпорту: <strong>{rowsOk.length}</strong>
-              {rowsErr.length > 0 && (
-                <>,&nbsp;пропущено: {rowsErr.length}</>
-              )}
+              {rowsErr.length > 0 && <>,&nbsp;пропущено: {rowsErr.length}</>}
             </p>
             {rowsErr.length > 0 && (
               <details>
                 <summary>Показати номера пропущених рядків</summary>
-                <div className={styles['imp-error']}>{rowsErr.join(', ')}</div>
+                <div className={styles["imp-error"]}>{rowsErr.join(", ")}</div>
               </details>
             )}
-            <button className={`${styles['imp-btn']} ${styles['imp-green']}`} onClick={sendData}>
+            <button
+              className={`${styles["imp-btn"]} ${styles["imp-green"]}`}
+              onClick={sendData}
+            >
               Імпортувати
             </button>
           </>
         )}
 
-        {step === 'sending' && <p className={styles['imp-info']}>Імпорт …</p>}
+        {step === "sending" && <p className={styles["imp-info"]}>Імпорт …</p>}
 
-        <button className={`${styles['imp-btn']} ${styles['imp-red']}`} onClick={onClose}>
+        <button
+          className={`${styles["imp-btn"]} ${styles["imp-red"]}`}
+          onClick={onClose}
+        >
           Закрити
         </button>
       </div>

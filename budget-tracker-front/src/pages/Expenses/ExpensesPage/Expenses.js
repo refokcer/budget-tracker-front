@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import ExpensesTable from '../ExpensesTable/ExpensesTable';
-import MonthSelector from '../../../components/MonthSelector/MonthSelector';
-import styles from './Expenses.module.css';
+import React, { useState } from "react";
+import ExpensesTable from "../ExpensesTable/ExpensesTable";
+import MonthSelector from "../../../components/MonthSelector/MonthSelector";
+import styles from "./Expenses.module.css";
 
 /* YYYY-MM-DD */
 const fmt = (d) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
-    d.getDate(),
-  ).padStart(2, '0')}`;
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+    d.getDate()
+  ).padStart(2, "0")}`;
 
 const Expenses = () => {
   /* перший день активного місяця */
@@ -21,14 +21,20 @@ const Expenses = () => {
   };
 
   /* межі місяця */
-  const startOfMonth = fmt(new Date(monthDate.getFullYear(), monthDate.getMonth(), 1));
-  const nextMonth    = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 1);
-  const endOfMonth   = fmt(nextMonth); // перший день наступного місяця (API ≤ end)
+  const startOfMonth = fmt(
+    new Date(monthDate.getFullYear(), monthDate.getMonth(), 1)
+  );
+  const nextMonth = new Date(
+    monthDate.getFullYear(),
+    monthDate.getMonth() + 1,
+    1
+  );
+  const endOfMonth = fmt(nextMonth); // перший день наступного місяця (API ≤ end)
 
   /* назва місяця українською */
-  const monthLabel = monthDate.toLocaleString('uk-UA', {
-    month: 'long',
-    year: 'numeric',
+  const monthLabel = monthDate.toLocaleString("uk-UA", {
+    month: "long",
+    year: "numeric",
   });
 
   return (

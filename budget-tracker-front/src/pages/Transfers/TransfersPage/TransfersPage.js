@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import TransfersTable from '../TransfersTable/TransfersTable';
-import MonthSelector from '../../../components/MonthSelector/MonthSelector';
-import styles from './TransfersPage.module.css';
+import React, { useState } from "react";
+import TransfersTable from "../TransfersTable/TransfersTable";
+import MonthSelector from "../../../components/MonthSelector/MonthSelector";
+import styles from "./TransfersPage.module.css";
 
 const TransfersPage = () => {
   const [monthDate, setMonthDate] = useState(new Date());
@@ -12,13 +12,20 @@ const TransfersPage = () => {
     setMonthDate(tmp);
   };
 
-  const fmt = (d)=>
-    `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const fmt = (d) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+      d.getDate()
+    ).padStart(2, "0")}`;
 
-  const start = fmt(new Date(monthDate.getFullYear(), monthDate.getMonth(),   1));
-  const end   = fmt(new Date(monthDate.getFullYear(), monthDate.getMonth()+1, 1));  // початок наступного місяця
+  const start = fmt(new Date(monthDate.getFullYear(), monthDate.getMonth(), 1));
+  const end = fmt(
+    new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 1)
+  ); // початок наступного місяця
 
-  const label = monthDate.toLocaleString('uk',{month:'long',year:'numeric'});
+  const label = monthDate.toLocaleString("uk", {
+    month: "long",
+    year: "numeric",
+  });
 
   return (
     <div className={styles.container}>

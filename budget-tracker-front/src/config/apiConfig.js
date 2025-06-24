@@ -5,7 +5,7 @@ const API_BASE_URL = "https://localhost:7281/api";
 export const API_ENDPOINTS = {
   // Accounts
   accounts: `${API_BASE_URL}/Accounts`,
-  createAccount: `${API_BASE_URL}/Accounts`,  
+  createAccount: `${API_BASE_URL}/Accounts`,
   updateAccount: `${API_BASE_URL}/Accounts`,
   accountById: (id) => `${API_BASE_URL}/Accounts/${id}`,
   deleteAccount: (id) => `${API_BASE_URL}/Accounts/${id}`,
@@ -68,13 +68,16 @@ export const API_ENDPOINTS = {
   updateTransaction: `${API_BASE_URL}/Transactions`,
   transactionById: (id) => `${API_BASE_URL}/Transactions/${id}`,
   deleteTransaction: (id) => `${API_BASE_URL}/Transactions/${id}`,
-  transactionsByEvent: (eventId) => `${API_BASE_URL}/Transactions/byEvent/${eventId}`,
-  transactionsByPlan: (planId) => `${API_BASE_URL}/Transactions/byPlan/${planId}`,
+  transactionsByEvent: (eventId) =>
+    `${API_BASE_URL}/Transactions/byEvent/${eventId}`,
+  transactionsByPlan: (planId) =>
+    `${API_BASE_URL}/Transactions/byPlan/${planId}`,
 
   // Transfers
   transfers: `${API_BASE_URL}/Transfers`,
   createTransfer: `${API_BASE_URL}/Transfers`,
-  transfersByDate: (start, end) => `${API_BASE_URL}/Transfers/filter?start=${start}&end=${end}`,
+  transfersByDate: (start, end) =>
+    `${API_BASE_URL}/Transfers/filter?start=${start}&end=${end}`,
   transfersByEvent: (eventId) => `${API_BASE_URL}/Transfers/event/${eventId}`,
 };
 

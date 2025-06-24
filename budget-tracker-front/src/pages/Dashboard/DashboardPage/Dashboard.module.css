@@ -1,82 +1,89 @@
-.db-container{
-  width:90%;
-  margin:0 auto;
-  padding:20px;
+.db-container {
+  width: 90%;
+  margin: 0 auto;
+  padding: 20px;
   height: 90%;
 }
 
-.db-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  grid-auto-rows:1fr;
-  gap:24px;
+.db-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 24px;
 }
 
-@media(max-width:800px){ .db-grid{ grid-template-columns:1fr; } }
-
-.db-card{
-  background:#2e2e3d;
-  border-radius:10px;
-  padding:22px 26px;
-  color:#fff;
-  box-shadow:0 4px 14px rgba(0,0,0,.35);
-  display:flex;
-  flex-direction:column;
-  gap:10px;
+@media (max-width: 800px) {
+  .db-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
-.db-title{
-  text-align:center;
-  margin:0 0 6px 0;
-  font-size:1.05rem;
-  letter-spacing:.4px;
+.db-card {
+  background: #2e2e3d;
+  border-radius: 10px;
+  padding: 22px 26px;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.db-title {
+  text-align: center;
+  margin: 0 0 6px 0;
+  font-size: 1.05rem;
+  letter-spacing: 0.4px;
 }
 
 .db-table,
-.db-small-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:.9rem;
+.db-small-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
 }
 
 .db-table th,
 .db-table td,
 .db-small-table th,
-.db-small-table td{
-  border-bottom:1px solid #444;
-  padding:4px 6px;
-  text-align:left;
+.db-small-table td {
+  border-bottom: 1px solid #444;
+  padding: 4px 6px;
+  text-align: left;
 }
 
 .db-table th,
-.db-small-table th{ color:#bbb; font-weight:500; }
-
-.db-balance{
-  margin-top:6px;
-  display:flex;
-  justify-content:space-between;
-  font-weight:600;
+.db-small-table th {
+  color: #bbb;
+  font-weight: 500;
 }
 
-.db-big{
-  font-size:1.8rem;
-  font-weight:700;
-  text-align:center;
-  margin:6px 0;
+.db-balance {
+  margin-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
 }
 
-.db-sub{
-  font-size:.9rem;
-  text-align:center;
-  opacity:.9;
+.db-big {
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 6px 0;
 }
 
-.db-empty{
-  text-align:center;
-  color:#aaa;
+.db-sub {
+  font-size: 0.9rem;
+  text-align: center;
+  opacity: 0.9;
+}
+
+.db-empty {
+  text-align: center;
+  color: #aaa;
 }
 
 .db-loading,
-.db-error{
-  text-align:center;
+.db-error {
+  text-align: center;
 }

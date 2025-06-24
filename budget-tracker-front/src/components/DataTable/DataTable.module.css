@@ -1,7 +1,7 @@
 .data-table-container {
   overflow-x: auto;
   margin: 10px auto; /* center tables */
-  width: 100%;        /* leave space on sides */
+  width: 100%; /* leave space on sides */
 }
 
 .data-table {

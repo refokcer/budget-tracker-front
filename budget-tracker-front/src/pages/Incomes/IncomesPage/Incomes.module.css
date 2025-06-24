@@ -1,32 +1,32 @@
 /* src/pages/Incomes.css */
 
 .incomes-page {
-    padding: 20px;
-    font-size: 1rem;
-    color: var(--table-bg-color);
-  }
-  
-  .highlight {
-    color: red;
-    font-size: 1.2em; /* Увеличиваем размер шрифта на 1.2 раза */
-    font-weight: bold;
-  }
-
-  /* общий селектор месяца (тот же класс, что у расходов) */
-  
-/* Стили контейнера и селектора месяца взяты из ExpensesPage */
-.container{
-    display:flex;
-    align-items:center;
-    justify-content:start;
-    flex-direction:column;
-    width:100%;
+  padding: 20px;
+  font-size: 1rem;
+  color: var(--table-bg-color);
 }
 
-.content{
-    width:100%;
-    display:flex;
-    flex-direction:column;
-    justify-content:start;
-    align-items:center;
+.highlight {
+  color: red;
+  font-size: 1.2em; /* Увеличиваем размер шрифта на 1.2 раза */
+  font-weight: bold;
+}
+
+/* общий селектор месяца (тот же класс, что у расходов) */
+
+/* Стили контейнера и селектора месяца взяты из ExpensesPage */
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  flex-direction: column;
+  width: 100%;
+}
+
+.content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
 }

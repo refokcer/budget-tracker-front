@@ -1,14 +1,14 @@
-import React, { useState, useMemo } from 'react';
-import styles from './DataTable.module.css';
+import React, { useState, useMemo } from "react";
+import styles from "./DataTable.module.css";
 
 const DataTable = ({ columns, rows, onDelete, deletingId }) => {
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
   const handleSort = (key) => {
     if (!key) return;
     setSortConfig((s) => ({
       key,
-      direction: s.key === key && s.direction === 'asc' ? 'desc' : 'asc',
+      direction: s.key === key && s.direction === "asc" ? "desc" : "asc",
     }));
   };
 
@@ -18,8 +18,8 @@ const DataTable = ({ columns, rows, onDelete, deletingId }) => {
       data.sort((a, b) => {
         let A = a[sortConfig.key];
         let B = b[sortConfig.key];
-        if (A < B) return sortConfig.direction === 'asc' ? -1 : 1;
-        if (A > B) return sortConfig.direction === 'asc' ? 1 : -1;
+        if (A < B) return sortConfig.direction === "asc" ? -1 : 1;
+        if (A > B) return sortConfig.direction === "asc" ? 1 : -1;
         return 0;
       });
     }
@@ -27,8 +27,8 @@ const DataTable = ({ columns, rows, onDelete, deletingId }) => {
   }, [rows, sortConfig]);
 
   return (
-    <div className={styles['data-table-container']}>
-      <table className={styles['data-table']}>
+    <div className={styles["data-table-container"]}>
+      <table className={styles["data-table"]}>
         <thead>
           <tr>
             {columns.map((col) => (
@@ -38,10 +38,10 @@ const DataTable = ({ columns, rows, onDelete, deletingId }) => {
               >
                 {col.label}
                 {col.sortable && sortConfig.key === col.key
-                  ? sortConfig.direction === 'asc'
-                    ? ' ▲'
-                    : ' ▼'
-                  : ''}
+                  ? sortConfig.direction === "asc"
+                    ? " ▲"
+                    : " ▼"
+                  : ""}
               </th>
             ))}
             {onDelete && <th></th>}
@@ -58,11 +58,11 @@ const DataTable = ({ columns, rows, onDelete, deletingId }) => {
               {onDelete && (
                 <td>
                   <button
-                    className={styles['del-btn']}
+                    className={styles["del-btn"]}
                     disabled={deletingId === row.id}
                     onClick={() => onDelete(row.id)}
                   >
-                    {deletingId === row.id ? '…' : '✕'}
+                    {deletingId === row.id ? "…" : "✕"}
                   </button>
                 </td>
               )}

@@ -8,7 +8,7 @@
 
 /* ───────────── картка ───────────── */
 .sc-card {
-  flex: 1 1 220px;           /* мінімум 220 px, далі росте */
+  flex: 1 1 220px; /* мінімум 220 px, далі росте */
   min-width: 220px;
   background: #2e2e3d;
   border-radius: 10px;
@@ -24,7 +24,7 @@
 
 /* кольорова акцент-смуга зверху */
 .sc-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -33,9 +33,15 @@
 }
 
 /* ───────────── акцентні кольори ───────────── */
-.sc-red::before   { background: linear-gradient(90deg, #d32f2f, #ef5350); }
-.sc-green::before { background: linear-gradient(90deg, #2e7d32, #66bb6a); }
-.sc-blue::before  { background: linear-gradient(90deg, #1565c0, #42a5f5); }
+.sc-red::before {
+  background: linear-gradient(90deg, #d32f2f, #ef5350);
+}
+.sc-green::before {
+  background: linear-gradient(90deg, #2e7d32, #66bb6a);
+}
+.sc-blue::before {
+  background: linear-gradient(90deg, #1565c0, #42a5f5);
+}
 
 /* ───────────── текст ───────────── */
 .sc-label {

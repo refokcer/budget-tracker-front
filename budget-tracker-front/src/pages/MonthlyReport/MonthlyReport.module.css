@@ -1,47 +1,49 @@
 /* Стили контейнера и селектора месяца взяты из ExpensesPage */
-.container{
-    display:flex;
-    align-items:center;
-    justify-content:start;
-    flex-direction:column;
-    width:90%;
-    margin: 0 auto;
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  flex-direction: column;
+  width: 90%;
+  margin: 0 auto;
 }
 
-.content{
-    width:100%;
-    display:flex;
-    flex-direction:column;
-    justify-content:start;
+.content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
 }
 
-.monthly-report{
-  padding:20px;
+.monthly-report {
+  padding: 20px;
   width: 80%;
-  margin:30px auto 0;
-  color:#fff;
-  height:100%;        /* fit viewport like other pages */
-  overflow-y:auto;    /* scroll if needed */
+  margin: 30px auto 0;
+  color: #fff;
+  height: 100%; /* fit viewport like other pages */
+  overflow-y: auto; /* scroll if needed */
 }
-.period-label{
-  text-align:center;
-  margin-bottom:20px;
+.period-label {
+  text-align: center;
+  margin-bottom: 20px;
 }
-.charts-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(300px,2fr));
-  gap:20px;
-  margin-top:20px;
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 2fr));
+  gap: 20px;
+  margin-top: 20px;
 }
-.loading,.error{ text-align:center; }
-
+.loading,
+.error {
+  text-align: center;
+}
 
 /* центруємо title у всіх картках звіту */
 .pie-card h4,
 .toplist-card h4,
 .top-transaction h4,
 .summary-card h4,
-.top-transaction-card h4{
+.top-transaction-card h4 {
   text-align: center;
   font-size: 18px;
 }

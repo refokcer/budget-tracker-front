@@ -1,6 +1,6 @@
 /* src/components/Header.css */
 .header {
-  position: relative;  
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -17,7 +17,7 @@
   margin: 0;
   font-size: 26px;
   color: var(--color-light);
-  pointer-events: none;                /* клики не перехватывает */
+  pointer-events: none; /* клики не перехватывает */
 }
 
 .header-left h2 {
@@ -42,14 +42,14 @@
 
   .expense {
     background-color: red;
-    height: 70%; 
+    height: 70%;
   }
-  
+
   .income {
     background-color: green;
     height: 70%;
   }
-  
+
   .transfer {
     background-color: blue;
     height: 70%;
@@ -65,7 +65,7 @@
   cursor: pointer;
 }
 
-.header-right-icons{
+.header-right-icons {
   height: 100%;
   display: flex;
   align-items: center;
@@ -77,8 +77,7 @@
   }
 }
 
-
-.header-right-avatar{
+.header-right-avatar {
   height: 100%;
   display: flex;
   align-items: center;
@@ -91,45 +90,51 @@
 
 /* ---------- блок с выпадающим списком ---- */
 .plans-dropdown {
-/* position: absolute; */
-left: 50%;
-transform: translateX(-50%);
-top: 64px;            /* ниже шапки */
-display: flex;
-align-items: center;
-gap: 8px;
-color: var(--color-white);
-font-size: 0.95rem;
+  /* position: absolute; */
+  left: 50%;
+  transform: translateX(-50%);
+  top: 64px; /* ниже шапки */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-white);
+  font-size: 0.95rem;
 }
 
 /* ----------- кастомный select ------------- */
 .custom-select-wrapper {
-position: relative;
+  position: relative;
 }
 
 .custom-select {
-appearance: none;           /* убираем стандартный стиль */
-background: #2e2e3d;
-color: var(--color-white);
-border: 1px solid var(--table-row-hover-bg);
-border-radius: 4px;
-padding: 6px 36px 6px 10px; /* справа место под стрелку */
-font-size: 0.95rem;
-cursor: pointer;
+  appearance: none; /* убираем стандартный стиль */
+  background: #2e2e3d;
+  color: var(--color-white);
+  border: 1px solid var(--table-row-hover-bg);
+  border-radius: 4px;
+  padding: 6px 36px 6px 10px; /* справа место под стрелку */
+  font-size: 0.95rem;
+  cursor: pointer;
 }
 
-.custom-select:hover   { border-color: #666; }
-.custom-select:focus   { outline: none; border-color: var(--primary-color); }
+.custom-select:hover {
+  border-color: #666;
+}
+.custom-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
 
 /* стрелка */
 .custom-arrow {
-position: absolute;
-right: 12px;
-top: 50%;
-width: 0; height: 0;
-pointer-events: none;
-border-left: 6px solid transparent;
-border-right: 6px solid transparent;
-border-top: 6px solid var(--color-white);
-transform: translateY(-50%);
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--color-white);
+  transform: translateY(-50%);
 }

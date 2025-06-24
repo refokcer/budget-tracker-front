@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import API_ENDPOINTS from '../../../config/apiConfig';
-import styles from './ManageAccounts.module.css';
+import React, { useState, useEffect } from "react";
+import API_ENDPOINTS from "../../../config/apiConfig";
+import styles from "./ManageAccounts.module.css";
 
 const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
   const [accounts, setAccounts] = useState([]);
-  const [title, setTitle]       = useState('');
-  const [amount, setAmount]     = useState('');
-  const [descr,  setDescr]      = useState('');
-  const [loading, setLoading]   = useState(true);
-  const [error,   setError]     = useState(null);
-  const [busyId,  setBusyId]    = useState(null);
+  const [title, setTitle] = useState("");
+  const [amount, setAmount] = useState("");
+  const [descr, setDescr] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [busyId, setBusyId] = useState(null);
 
   /* ── завантаження при відкритті ── */
   useEffect(() => {
@@ -17,9 +17,10 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
 
     const load = async () => {
       try {
-        setLoading(true); setError(null);
+        setLoading(true);
+        setError(null);
         const res = await fetch(API_ENDPOINTS.accounts);
-        if (!res.ok) throw new Error('Помилка завантаження');
+        if (!res.ok) throw new Error("Помилка завантаження");
         setAccounts(await res.json());
       } catch (e) {
         setError(e.message);
@@ -33,18 +34,26 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
 
   /* ── додавання ── */
   const addAccount = async () => {
-    if (!title || !amount) return alert('Введіть назву та суму');
+    if (!title || !amount) return alert("Введіть назву та суму");
     try {
-      setLoading(true); setError(null);
+      setLoading(true);
+      setError(null);
       const res = await fetch(API_ENDPOINTS.accounts, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, amount: +amount, currencyId: 1, description: descr })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          amount: +amount,
+          currencyId: 1,
+          description: descr,
+        }),
       });
-      if (!res.ok) throw new Error('Помилка створення');
+      if (!res.ok) throw new Error("Помилка створення");
       const newAcc = await res.json();
-      setAccounts(a => [...a, newAcc]);
-      setTitle(''); setAmount(''); setDescr('');
+      setAccounts((a) => [...a, newAcc]);
+      setTitle("");
+      setAmount("");
+      setDescr("");
       onSaved && onSaved();
     } catch (e) {
       setError(e.message);
@@ -55,12 +64,14 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
 
   /* ── видалення ── */
   const del = async (id) => {
-    if (!window.confirm('Видалити акаунт?')) return;
+    if (!window.confirm("Видалити акаунт?")) return;
     try {
       setBusyId(id);
-      const res = await fetch(API_ENDPOINTS.deleteAccount(id), { method: 'DELETE' });
-      if (!res.ok) throw new Error('Помилка видалення');
-      setAccounts(a => a.filter(x => x.id !== id));
+      const res = await fetch(API_ENDPOINTS.deleteAccount(id), {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Помилка видалення");
+      setAccounts((a) => a.filter((x) => x.id !== id));
     } catch (e) {
       alert(e.message);
     } finally {
@@ -70,31 +81,40 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
 
   if (!isOpen) return null;
 
-  return(
-    <div className={styles['modal-overlay']}>
-      <div className={`${styles['modal-content']} ${styles.large}`}>
+  return (
+    <div className={styles["modal-overlay"]}>
+      <div className={`${styles["modal-content"]} ${styles.large}`}>
         <h3>Manage accounts</h3>
 
-        {error   && <p className={styles.error}>{error}</p>}
+        {error && <p className={styles.error}>{error}</p>}
         {loading && <p>Завантаження...</p>}
 
-        {!loading&&(
+        {!loading && (
           <>
             {/* обгортка з прокруткою */}
-            <div className={styles['acc-table-wrapper']}>
-              <table className={styles['acc-table']}>
+            <div className={styles["acc-table-wrapper"]}>
+              <table className={styles["acc-table"]}>
                 <thead>
-                  <tr><th>Назва</th><th>Сума</th><th>Опис</th><th></th></tr>
+                  <tr>
+                    <th>Назва</th>
+                    <th>Сума</th>
+                    <th>Опис</th>
+                    <th></th>
+                  </tr>
                 </thead>
                 <tbody>
-                  {accounts.map(a=>(
+                  {accounts.map((a) => (
                     <tr key={a.id}>
                       <td>{a.title}</td>
                       <td>{a.amount.toFixed(2)}</td>
-                      <td>{a.description||'-'}</td>
+                      <td>{a.description || "-"}</td>
                       <td>
-                        <button className={styles['del-btn']} disabled={busyId===a.id} onClick={()=>del(a.id)}>
-                          {busyId===a.id?'…':'✕'}
+                        <button
+                          className={styles["del-btn"]}
+                          disabled={busyId === a.id}
+                          onClick={() => del(a.id)}
+                        >
+                          {busyId === a.id ? "…" : "✕"}
                         </button>
                       </td>
                     </tr>
@@ -103,16 +123,36 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
               </table>
             </div>
 
-            <div className={styles['add-form']}>
-              <input placeholder="Назва" value={title} onChange={e=>setTitle(e.target.value)}/>
-              <input type="number" placeholder="Сума" value={amount} onChange={e=>setAmount(e.target.value)}/>
-              <input placeholder="Опис" value={descr} onChange={e=>setDescr(e.target.value)}/>
-              <button className={`${styles['submit-button']} ${styles['submit-button-acc']}`} onClick={addAccount}>Додати</button>
+            <div className={styles["add-form"]}>
+              <input
+                placeholder="Назва"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+              <input
+                type="number"
+                placeholder="Сума"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+              />
+              <input
+                placeholder="Опис"
+                value={descr}
+                onChange={(e) => setDescr(e.target.value)}
+              />
+              <button
+                className={`${styles["submit-button"]} ${styles["submit-button-acc"]}`}
+                onClick={addAccount}
+              >
+                Додати
+              </button>
             </div>
           </>
         )}
 
-        <button className={styles['close-button']} onClick={onClose}>Закрити</button>
+        <button className={styles["close-button"]} onClick={onClose}>
+          Закрити
+        </button>
       </div>
     </div>
   );

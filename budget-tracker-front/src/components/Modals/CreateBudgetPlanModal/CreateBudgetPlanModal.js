@@ -1,15 +1,15 @@
 // src/pages/BudgetPlanPage/CreateBudgetPlanModal.js
 
-import React, { useState } from 'react';
-import API_ENDPOINTS from '../../../config/apiConfig';
-import styles from './CreateBudgetPlanModal.module.css';
+import React, { useState } from "react";
+import API_ENDPOINTS from "../../../config/apiConfig";
+import styles from "./CreateBudgetPlanModal.module.css";
 
 const CreateBudgetPlanModal = ({ isOpen, onClose, onPlanCreated }) => {
-  const [title, setTitle] = useState('');
-  const [type, setType] = useState('0'); // Пример: 0 = "None", 1="Some type", ... зависит от вашего enum
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [description, setDescription] = useState('');
+  const [title, setTitle] = useState("");
+  const [type, setType] = useState("0"); // Пример: 0 = "None", 1="Some type", ... зависит от вашего enum
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -17,7 +17,7 @@ const CreateBudgetPlanModal = ({ isOpen, onClose, onPlanCreated }) => {
 
   const handleSubmit = async () => {
     if (!title || !startDate || !endDate) {
-      alert('Заполните все обязательные поля!');
+      alert("Заполните все обязательные поля!");
       return;
     }
 
@@ -28,22 +28,22 @@ const CreateBudgetPlanModal = ({ isOpen, onClose, onPlanCreated }) => {
       title,
       startDate,
       endDate,
-      type: parseInt(type), 
-      description
+      type: parseInt(type),
+      description,
     };
 
     try {
       const response = await fetch(API_ENDPOINTS.createBudgetPlan, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newPlan)
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newPlan),
       });
 
       if (!response.ok) {
-        throw new Error('Ошибка при создании плана бюджета');
+        throw new Error("Ошибка при создании плана бюджета");
       }
 
-      alert('План бюджета успешно создан!');
+      alert("План бюджета успешно создан!");
       // Сообщаем родителю, что план создан
       onPlanCreated();
     } catch (err) {
@@ -54,8 +54,8 @@ const CreateBudgetPlanModal = ({ isOpen, onClose, onPlanCreated }) => {
   };
 
   return (
-    <div className={styles['modal-overlay']}>
-      <div className={styles['modal-content']}>
+    <div className={styles["modal-overlay"]}>
+      <div className={styles["modal-content"]}>
         <h3>Создать новый план</h3>
         {error && <p className={styles.error}>{error}</p>}
 
@@ -96,15 +96,17 @@ const CreateBudgetPlanModal = ({ isOpen, onClose, onPlanCreated }) => {
           onChange={(e) => setDescription(e.target.value)}
         />
 
-        <div className={styles['modal-buttons']}>
-          <button 
+        <div className={styles["modal-buttons"]}>
+          <button
             onClick={handleSubmit}
             disabled={loading}
-            className={styles['create-button']}
+            className={styles["create-button"]}
           >
-            {loading ? 'Создание...' : 'Создать'}
+            {loading ? "Создание..." : "Создать"}
           </button>
-          <button onClick={onClose} className={styles['close-button']}>Отмена</button>
+          <button onClick={onClose} className={styles["close-button"]}>
+            Отмена
+          </button>
         </div>
       </div>
     </div>

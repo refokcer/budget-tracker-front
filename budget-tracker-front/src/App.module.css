@@ -11,7 +11,7 @@
   padding: auto;
 }
 
-.content{
+.content {
   display: flex;
   flex: 1;
   background-color: var(--secondary-color);
