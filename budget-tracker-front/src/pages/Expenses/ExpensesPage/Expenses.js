@@ -34,11 +34,7 @@ const Expenses = () => {
   return (
     <div className={styles.container}>
       {/* селектор місяця */}
-      <MonthSelector
-        label={monthLabel}
-        onJump={changeMonth}
-        variant="overlay"
-      />
+      <MonthSelector label={monthLabel} onJump={changeMonth} />
 
       <div className={styles.content}>
         <ExpensesTable startDate={startOfMonth} endDate={endOfMonth} />

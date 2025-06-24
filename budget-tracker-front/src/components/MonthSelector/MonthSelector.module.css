@@ -5,6 +5,7 @@
   justify-content:space-between;
   font-size:1.3rem;
   color:var(--color-white);
+  margin:0 auto 24px auto;
 }
 
 .month-selector span{
@@ -22,17 +23,6 @@
   cursor:pointer;
   padding:0;
 }
+
 .month-selector button:hover{opacity:.75;}
 
-.overlay{
-  position:absolute;
-  top:80px;
-  left:54.5%;
-  transform:translateX(-50%);
-  gap:12px;
-  z-index:900;
-}
-
-.spaced{
-  margin:0 auto 24px auto;
-}

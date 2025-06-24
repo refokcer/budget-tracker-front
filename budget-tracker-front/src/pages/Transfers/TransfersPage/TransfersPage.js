@@ -22,7 +22,7 @@ const TransfersPage = () => {
 
   return (
     <div className={styles.container}>
-      <MonthSelector label={label} onJump={jump} variant="overlay" />
+      <MonthSelector label={label} onJump={jump} />
 
       <div className={styles.content}>
         <TransfersTable startDate={start} endDate={end} />

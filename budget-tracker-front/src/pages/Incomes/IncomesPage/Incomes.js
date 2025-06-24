@@ -22,7 +22,7 @@ const Incomes = () => {
   return (
     <div className={styles.container}>
       {/* селектор місяця під шапкою */}
-      <MonthSelector label={label} onJump={jump} variant="overlay" />
+      <MonthSelector label={label} onJump={jump} />
 
       <div className={styles.content}>
         <IncomesTable startDate={start} endDate={end} />

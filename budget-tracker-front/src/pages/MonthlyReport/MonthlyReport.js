@@ -106,7 +106,7 @@ const MonthlyReport = () => {
   return (
     <div className={styles.container}>
       {/* селектор місяця */}
-      <MonthSelector label={monthLabel} onJump={jumpMonth} variant="spaced" />
+      <MonthSelector label={monthLabel} onJump={jumpMonth} />
 
       <div className={styles.content}>
         <SummaryCards
