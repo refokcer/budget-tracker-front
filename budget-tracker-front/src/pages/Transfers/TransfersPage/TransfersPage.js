@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import TransfersTable from '../TransfersTable/TransfersTable';
+import MonthSelector from '../../../components/MonthSelector/MonthSelector';
 import styles from './TransfersPage.module.css';
 
 const TransfersPage = () => {
@@ -21,11 +22,7 @@ const TransfersPage = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles['month-selector']}>
-        <button onClick={()=>jump(-1)}>&lt;</button>
-        <span>{label}</span>
-        <button onClick={()=>jump(1)}>&gt;</button>
-      </div>
+      <MonthSelector label={label} onJump={jump} variant="overlay" />
 
       <div className={styles.content}>
         <TransfersTable startDate={start} endDate={end} />

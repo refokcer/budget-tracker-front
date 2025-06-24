@@ -35,22 +35,6 @@
 }
 .loading,.error{ text-align:center; }
 
-.month-selector{
-  display:flex; align-items:center;
-  width:260px;                     /* фіксована ширина — тепер не «роздуває» сторінку */
-  justify-content:space-between;
-  margin:0 auto 24px auto;         /* 24 px відступ униз → більше не перекриває картки */
-  font-size:1.3rem; color:#fff;
-}
-.month-selector span{
-  flex:1; text-align:center; white-space:nowrap;
-}
-.month-selector button{
-  flex:0 0 32px;
-  background:transparent; border:none; color:#fff;
-  font-size:1.5rem; cursor:pointer; padding:0;
-}
-.month-selector button:hover{ opacity:.75; }
 
 /* центруємо title у всіх картках звіту */
 .pie-card h4,
