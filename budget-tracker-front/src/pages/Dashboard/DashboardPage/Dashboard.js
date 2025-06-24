@@ -1,6 +1,10 @@
 // src/pages/Dashboard/Dashboard.js
 import React, { useState, useEffect } from 'react';
 import { API_ENDPOINTS } from '../../../config/apiConfig';
+import AccountsCard from '../components/AccountsCard/AccountsCard';
+import TopExpensesCard from '../components/TopExpensesCard/TopExpensesCard';
+import TopIncomesCard from '../components/TopIncomesCard/TopIncomesCard';
+import BiggestTransactionCard from '../components/BiggestTransactionCard/BiggestTransactionCard';
 import styles from './Dashboard.module.css';
 
 /* YYYY-MM-DD */
@@ -108,85 +112,30 @@ const Dashboard = () => {
   return (
     <div className={styles['db-container']}>
       <div className={styles['db-grid']}>
-        {/* Accounts */}
-        <div className={styles['db-card']}>
-          <h3 className={styles['db-title']}>Accounts</h3>
-          <table className={styles['db-table']}>
-            <thead><tr><th>Назва</th><th>Сума</th></tr></thead>
-            <tbody>
-              {accounts.map(a => (
-                <tr key={a.id}>
-                  <td>{a.title}</td>
-                  <td>{currencies[a.currencyId] || ''}&nbsp;{a.amount.toFixed(2)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className={styles['db-balance']}>
-            <span>Balance:</span><span>{totalBalance.toFixed(2)}</span>
-          </div>
-        </div>
+        <AccountsCard
+          accounts={accounts}
+          currencies={currencies}
+          totalBalance={totalBalance}
+        />
 
-        {/* Top-10 Expenses */}
-        <div className={styles['db-card']}>
-          <h3 className={styles['db-title']}>Top 10 Expenses</h3>
-          {expByCat.length === 0 ? (
-            <p className={styles['db-empty']}>Немає даних</p>
-          ) : (
-            <table className={styles['db-small-table']}>
-              <thead><tr><th>Категорія</th><th>Сума</th><th>%</th></tr></thead>
-              <tbody>
-                {expByCat.map(([id, sum]) => (
-                  <tr key={id}>
-                    <td>{categories[id] || '—'}</td>
-                    <td>{sum.toFixed(2)}</td>
-                    <td>{percent(sum, totalExp)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+        <TopExpensesCard
+          expByCat={expByCat}
+          categories={categories}
+          totalExp={totalExp}
+          percent={percent}
+        />
 
-        {/* Top-10 Incomes */}
-        <div className={styles['db-card']}>
-          <h3 className={styles['db-title']}>Top 10 Incomes</h3>
-          {incByCat.length === 0 ? (
-            <p className={styles['db-empty']}>Немає даних</p>
-          ) : (
-            <table className={styles['db-small-table']}>
-              <thead><tr><th>Категорія</th><th>Сума</th><th>%</th></tr></thead>
-              <tbody>
-                {incByCat.map(([id, sum]) => (
-                  <tr key={id}>
-                    <td>{categories[id] || '—'}</td>
-                    <td>{sum.toFixed(2)}</td>
-                    <td>{percent(sum, totalInc)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+        <TopIncomesCard
+          incByCat={incByCat}
+          categories={categories}
+          totalInc={totalInc}
+          percent={percent}
+        />
 
-        {/* Biggest transaction */}
-        <div className={styles['db-card']}>
-          <h3 className={styles['db-title']}>Найбільша транзакція</h3>
-          {biggestTx ? (
-            <>
-              <p className={styles['db-big']}>
-                {currencies[biggestTx.currencyId] || '₴'}&nbsp;
-                {biggestTx.amount.toFixed(2)}
-              </p>
-              <p className={styles['db-sub']}>{biggestTx.title}</p>
-              <p className={styles['db-sub']}>
-                {new Date(biggestTx.date).toLocaleDateString()}
-              </p>
-            </>
-          ) : (
-            <p className={styles['db-empty']}>—</p>
-          )}
-        </div>
+        <BiggestTransactionCard
+          transaction={biggestTx}
+          currencies={currencies}
+        />
       </div>
     </div>
   );
