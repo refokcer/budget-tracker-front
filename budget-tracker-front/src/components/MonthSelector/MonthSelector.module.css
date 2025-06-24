@@ -5,7 +5,7 @@
   justify-content:space-between;
   font-size:1.3rem;
   color:var(--color-white);
-  margin:0 auto 24px auto;
+  margin:0 auto 15px auto;
 }
 
 .month-selector span{
