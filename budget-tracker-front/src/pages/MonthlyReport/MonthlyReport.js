@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../config/apiConfig";
+import MonthSelector from "../../components/MonthSelector/MonthSelector";
 
 import SummaryCards from "./components/SummaryCards/SummaryCards";
 import PieChart from "./components/PieChart/PieChart";
@@ -105,11 +106,7 @@ const MonthlyReport = () => {
   return (
     <div className={styles.container}>
       {/* селектор місяця */}
-      <div className={styles["month-selector"]}>
-        <button onClick={() => jumpMonth(-1)}>&lt;</button>
-        <span>{monthLabel}</span>
-        <button onClick={() => jumpMonth(1)}>&gt;</button>
-      </div>
+      <MonthSelector label={monthLabel} onJump={jumpMonth} />
 
       <div className={styles.content}>
         <SummaryCards

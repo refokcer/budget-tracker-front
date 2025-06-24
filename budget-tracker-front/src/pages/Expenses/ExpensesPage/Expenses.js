@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ExpensesTable from '../ExpensesTable/ExpensesTable';
+import MonthSelector from '../../../components/MonthSelector/MonthSelector';
 import styles from './Expenses.module.css';
 
 /* YYYY-MM-DD */
@@ -33,11 +34,7 @@ const Expenses = () => {
   return (
     <div className={styles.container}>
       {/* селектор місяця */}
-      <div className={styles['month-selector']}>
-        <button onClick={() => changeMonth(-1)}>&lt;</button>
-        <span>{monthLabel}</span>
-        <button onClick={() => changeMonth(1)}>&gt;</button>
-      </div>
+      <MonthSelector label={monthLabel} onJump={changeMonth} />
 
       <div className={styles.content}>
         <ExpensesTable startDate={startOfMonth} endDate={endOfMonth} />

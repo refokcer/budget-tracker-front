@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import IncomesTable from '../IncomesTable/IncomesTable';
+import MonthSelector from '../../../components/MonthSelector/MonthSelector';
 import styles from './Incomes.module.css';
 
 const Incomes = () => {
@@ -21,11 +22,7 @@ const Incomes = () => {
   return (
     <div className={styles.container}>
       {/* селектор місяця під шапкою */}
-      <div className={styles['month-selector']}>
-        <button onClick={()=>jump(-1)}>&lt;</button>
-        <span>{label}</span>
-        <button onClick={()=>jump(1)}>&gt;</button>
-      </div>
+      <MonthSelector label={label} onJump={jump} />
 
       <div className={styles.content}>
         <IncomesTable startDate={start} endDate={end} />
