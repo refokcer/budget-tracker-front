@@ -1,7 +1,7 @@
 
 .data-table-container {
   overflow-x: auto;
-  margin: 20px 0; /* give tables a bit more breathing room */
+  margin: 10px auto; /* give tables a bit more breathing room */
   width: 100%;
 }
 
