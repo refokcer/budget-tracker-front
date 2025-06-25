@@ -35,6 +35,9 @@ const DataTable = ({ columns, rows, onDelete, deletingId }) => {
               <th
                 key={col.key}
                 onClick={() => col.sortable && handleSort(col.key)}
+                className={
+                  sortConfig.key === col.key ? styles["sorted"] : undefined
+                }
               >
                 {col.label}
                 {col.sortable && sortConfig.key === col.key
