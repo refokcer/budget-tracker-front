@@ -81,17 +81,17 @@ export const API_ENDPOINTS = {
   transfersByEvent: (eventId) => `${API_BASE_URL}/Transfers/event/${eventId}`,
 
   // Aggregated models for pages
-  budgetPlanPage: (planId) => `${API_BASE_URL}/Pages/BudgetPlanPage/${planId}`,
-  expensesTable: (start, end) =>
-    `${API_BASE_URL}/Pages/ExpensesTable?start=${start}&end=${end}`,
+  budgetPlanPage: (planId) => `${API_BASE_URL}/pages/BudgetPlanPage/${planId}`,
+  expensesTable: (month, year) =>
+    `${API_BASE_URL}/pages/expensesByMonth/${month}?year=${year}`,
   incomesTable: (start, end) =>
-    `${API_BASE_URL}/Pages/IncomesTable?start=${start}&end=${end}`,
+    `${API_BASE_URL}/pages/IncomesTable?start=${start}&end=${end}`,
   transfersTable: (start, end) =>
-    `${API_BASE_URL}/Pages/TransfersTable?start=${start}&end=${end}`,
+    `${API_BASE_URL}/pages/TransfersTable?start=${start}&end=${end}`,
   dashboardPage: (start, end) =>
-    `${API_BASE_URL}/Pages/Dashboard?start=${start}&end=${end}`,
+    `${API_BASE_URL}/pages/Dashboard?start=${start}&end=${end}`,
   monthlyReport: (start, end) =>
-    `${API_BASE_URL}/Pages/MonthlyReport?start=${start}&end=${end}`,
+    `${API_BASE_URL}/pages/MonthlyReport?start=${start}&end=${end}`,
 
   // Aggregated models for components
   incomeModal: `${API_BASE_URL}/Components/IncomeModal`,

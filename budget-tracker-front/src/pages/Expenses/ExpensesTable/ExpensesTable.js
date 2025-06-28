@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { API_ENDPOINTS } from '../../../config/apiConfig';
 import DataTable from '../../../components/DataTable/DataTable';
 
-const ExpensesTable = ({ startDate, endDate }) => {
+const ExpensesTable = ({ month, year }) => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,7 +11,7 @@ const ExpensesTable = ({ startDate, endDate }) => {
     const fetchData = async () => {
       setLoading(true); setError(null);
       try {
-        const url = API_ENDPOINTS.expensesTable(startDate, endDate);
+        const url = API_ENDPOINTS.expensesTable(month, year);
         const res = await fetch(url);
         if (!res.ok) throw new Error('Помилка завантаження даних');
         const data = await res.json();
@@ -21,7 +21,7 @@ const ExpensesTable = ({ startDate, endDate }) => {
     };
 
     fetchData();
-  }, [startDate, endDate]);
+  }, [month, year]);
 
   const handleDelete = async (id) => {
     if (!window.confirm('Видалити транзакцію?')) return;
