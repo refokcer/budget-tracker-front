@@ -42,7 +42,8 @@ const ManageCategories = ({ isOpen, onClose }) => {
         setError(null);
         const res = await fetch(API_ENDPOINTS.manageCategories(type));
         if (!res.ok) throw new Error("Помилка завантаження");
-        setCategories(await res.json());
+        const data = await res.json();
+        setCategories(Array.isArray(data.categories) ? data.categories : []);
       } catch (e) {
         setError(e.message);
       } finally {

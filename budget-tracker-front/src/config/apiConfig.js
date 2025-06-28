@@ -96,10 +96,10 @@ export const API_ENDPOINTS = {
   incomeModal: `${API_BASE_URL}/components/incomeModal`,
   expenseModal: `${API_BASE_URL}/components/expenseModal`,
   transferModal: `${API_BASE_URL}/components/transferModal`,
-  editPlanModal: `${API_BASE_URL}/Components/EditPlanModal`,
-  manageAccounts: `${API_BASE_URL}/Components/ManageAccounts`,
+  editPlanModal: `${API_BASE_URL}/components/editPlanModal`,
+  manageAccounts: `${API_BASE_URL}/components/manageAccounts`,
   manageCategories: (type) =>
-    `${API_BASE_URL}/Components/ManageCategories/${type}`,
+    `${API_BASE_URL}/components/manageCategories/${type}`,
   header: `${API_BASE_URL}/Components/Header`,
 };
 

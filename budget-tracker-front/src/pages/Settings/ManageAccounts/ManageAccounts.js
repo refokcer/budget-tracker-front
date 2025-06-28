@@ -21,7 +21,8 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
         setError(null);
         const res = await fetch(API_ENDPOINTS.manageAccounts);
         if (!res.ok) throw new Error("Помилка завантаження");
-        setAccounts(await res.json());
+        const data = await res.json();
+        setAccounts(Array.isArray(data.accounts) ? data.accounts : []);
       } catch (e) {
         setError(e.message);
       } finally {

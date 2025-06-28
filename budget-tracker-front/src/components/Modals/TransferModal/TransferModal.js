@@ -66,7 +66,6 @@ const TransferModal = ({ isOpen, onClose }) => {
       amount: parseFloat(amount),
       accountFrom: parseInt(accountFrom),
       accountTo: parseInt(accountTo),
-      eventId: 2,
       currencyId: parseInt(currencyId),
       categoryId: parseInt(categoryId),
       date: new Date().toISOString(),
