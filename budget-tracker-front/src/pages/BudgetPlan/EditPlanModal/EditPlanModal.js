@@ -51,12 +51,11 @@ const EditPlanModal = ({
     /* довідники */
     (async () => {
       try {
-        const [cat, cur] = await Promise.all([
-          fetch(API_ENDPOINTS.categoriesExpenses).then((r) => r.json()),
-          fetch(API_ENDPOINTS.currencies).then((r) => r.json()),
-        ]);
-        setAllCats(cat);
-        setAllCur(cur);
+        const res = await fetch(API_ENDPOINTS.editPlanModal);
+        if (!res.ok) throw new Error('Помилка завантаження');
+        const data = await res.json();
+        setAllCats(data.categories);
+        setAllCur(data.currencies);
       } catch {
         /* ігноруємо */
       }
@@ -294,3 +293,4 @@ const EditPlanModal = ({
 };
 
 export default EditPlanModal;
+// Expected model from API_ENDPOINTS.editPlanModal: { categories, currencies }

@@ -27,23 +27,12 @@ const IncomeModal = ({ isOpen, onClose }) => {
 
     const fetchData = async () => {
       try {
-        const [currenciesRes, categoriesRes, accountsRes] = await Promise.all([
-          fetch(API_ENDPOINTS.currencies),
-          fetch(API_ENDPOINTS.categoriesIncomes),
-          fetch(API_ENDPOINTS.accounts),
-        ]);
-
-        if (!currenciesRes.ok || !categoriesRes.ok || !accountsRes.ok) {
-          throw new Error("Помилка завантаження даних");
-        }
-
-        const currenciesData = await currenciesRes.json();
-        const categoriesData = await categoriesRes.json();
-        const accountsData = await accountsRes.json();
-
-        setCurrencies(currenciesData);
-        setCategories(categoriesData);
-        setAccounts(accountsData);
+        const res = await fetch(API_ENDPOINTS.incomeModal);
+        if (!res.ok) throw new Error("Помилка завантаження даних");
+        const data = await res.json();
+        setCurrencies(data.currencies);
+        setCategories(data.categories);
+        setAccounts(data.accounts);
       } catch (error) {
         setError(error.message);
       }
@@ -181,3 +170,4 @@ const IncomeModal = ({ isOpen, onClose }) => {
 };
 
 export default IncomeModal;
+// Expected model from API_ENDPOINTS.incomeModal: { currencies, categories, accounts }

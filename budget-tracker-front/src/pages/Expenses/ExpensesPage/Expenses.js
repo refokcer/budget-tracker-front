@@ -3,47 +3,28 @@ import ExpensesTable from "../ExpensesTable/ExpensesTable";
 import MonthSelector from "../../../components/MonthSelector/MonthSelector";
 import styles from "./Expenses.module.css";
 
-/* YYYY-MM-DD */
-const fmt = (d) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
-    d.getDate()
-  ).padStart(2, "0")}`;
-
 const Expenses = () => {
-  /* перший день активного місяця */
   const [monthDate, setMonthDate] = useState(new Date());
 
-  /* зміщення місяця ±1 */
   const changeMonth = (delta) => {
     const d = new Date(monthDate);
     d.setMonth(d.getMonth() + delta);
     setMonthDate(d);
   };
 
-  /* межі місяця */
-  const startOfMonth = fmt(
-    new Date(monthDate.getFullYear(), monthDate.getMonth(), 1)
-  );
-  const nextMonth = new Date(
-    monthDate.getFullYear(),
-    monthDate.getMonth() + 1,
-    1
-  );
-  const endOfMonth = fmt(nextMonth); // перший день наступного місяця (API ≤ end)
-
-  /* назва місяця українською */
   const monthLabel = monthDate.toLocaleString("uk-UA", {
     month: "long",
     year: "numeric",
   });
 
+  const month = monthDate.getMonth() + 1;
+  const year = monthDate.getFullYear();
+
   return (
     <div className={styles.container}>
-      {/* селектор місяця */}
       <MonthSelector label={monthLabel} onJump={changeMonth} />
-
       <div className={styles.content}>
-        <ExpensesTable startDate={startOfMonth} endDate={endOfMonth} />
+        <ExpensesTable month={month} year={year} />
       </div>
     </div>
   );

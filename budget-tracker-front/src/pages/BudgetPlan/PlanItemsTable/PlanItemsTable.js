@@ -1,17 +1,16 @@
 import React from 'react';
 import DataTable from '../../../components/DataTable/DataTable';
 
-const PlanItemsTable = ({ items, categoryMap, currencyMap }) => {
+const PlanItemsTable = ({ items }) => {
   if (!items || items.length === 0) return <p>Нет позиций в этом плане.</p>;
-
-  const renderAmount = (val, curId) =>
-    val === '-' ? '-' : `${currencyMap[curId] || ''}${val}`;
+  const renderAmount = (val, symbol) =>
+    val === '-' ? '-' : `${symbol}${val}`;
 
   const columns = [
-    { key: 'categoryId', label: 'Категория', render: v => categoryMap[v] || v },
-    { key: 'amount',     label: 'Выделено',  render: (v,r) => renderAmount(v, r.currencyId) },
-    { key: 'spent',      label: 'Потрачено', render: (v,r) => renderAmount(v, r.currencyId) },
-    { key: 'remaining',  label: 'Осталось',  render: (v,r) => renderAmount(v, r.currencyId) },
+    { key: 'categoryTitle', label: 'Категория' },
+    { key: 'amount',     label: 'Выделено',  render: (v,r) => renderAmount(v, r.currencySymbol) },
+    { key: 'spent',      label: 'Потрачено', render: (v,r) => renderAmount(v, r.currencySymbol) },
+    { key: 'remaining',  label: 'Осталось',  render: (v,r) => renderAmount(v, r.currencySymbol) },
     { key: 'description',label: 'Описание',  render: v => v || '—' },
   ];
 

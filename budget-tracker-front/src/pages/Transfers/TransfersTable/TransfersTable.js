@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import API_ENDPOINTS from '../../../config/apiConfig';
 import DataTable from '../../../components/DataTable/DataTable';
 
-const TransfersTable = ({ startDate, endDate }) => {
+const TransfersTable = ({ month, year }) => {
   const [rows, setRows] = useState([]);
-  const [currencies, setCurrencies] = useState({});
-  const [accounts, setAccounts] = useState({});
   const [loading, setLoad] = useState(true);
   const [error, setErr] = useState(null);
   const [busyId, setBusy] = useState(null);
@@ -14,21 +12,16 @@ const TransfersTable = ({ startDate, endDate }) => {
     const load = async () => {
       setLoad(true); setErr(null);
       try {
-        const url = API_ENDPOINTS.transfersByDate(startDate, endDate);
-        const [t,c,a] = await Promise.all([
-          fetch(url),
-          fetch(API_ENDPOINTS.currencies),
-          fetch(API_ENDPOINTS.accounts)
-        ]);
-        if (!t.ok || !c.ok || !a.ok) throw new Error('Помилка завантаження');
-        setRows(await t.json());
-        setCurrencies(Object.fromEntries((await c.json()).map(x => [x.id, x.symbol])));
-        setAccounts(Object.fromEntries((await a.json()).map(x => [x.id, x.title])));
+        const url = API_ENDPOINTS.transfersTable(month, year);
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Помилка завантаження');
+        const data = await res.json();
+        setRows(data.transactions);
       } catch (e) { setErr(e.message); }
       finally { setLoad(false); }
     };
     load();
-  }, [startDate, endDate]);
+  }, [month, year]);
 
   const del = async (id) => {
     if (!window.confirm('Видалити?')) return;
@@ -46,9 +39,9 @@ const TransfersTable = ({ startDate, endDate }) => {
 
   const columns = [
     { key: 'title',       label: 'Назва',       sortable: true },
-    { key: 'amount',      label: 'Сума',        sortable: true, render: (v,r) => `${currencies[r.currencyId] || ''} ${v.toFixed(2)}` },
-    { key: 'accountFrom', label: 'З рахунку',   sortable: true, render: v => accounts[v] || '-' },
-    { key: 'accountTo',   label: 'На рахунок',  sortable: true, render: v => accounts[v] || '-' },
+    { key: 'amount',      label: 'Сума',        sortable: true, render: (v,r) => `${r.currencySymbol} ${v.toFixed(2)}` },
+    { key: 'accountFromTitle', label: 'З рахунку',   sortable: true },
+    { key: 'accountToTitle',   label: 'На рахунок',  sortable: true },
     { key: 'date',        label: 'Дата',        sortable: true, render: v => new Date(v).toLocaleDateString() },
     { key: 'description', label: 'Опис',                       render: v => v || '-' },
   ];
@@ -57,3 +50,21 @@ const TransfersTable = ({ startDate, endDate }) => {
 };
 
 export default TransfersTable;
+// Expected model from API_ENDPOINTS.transfersTable(start,end):
+// {
+//   start: string,
+//   end: string,
+//   transactions: [
+//     {
+//       id: number,
+//       title: string,
+//       amount: number,
+//       currencySymbol: string,
+//       accountFromTitle: string,
+//       accountToTitle: string,
+//       date: string,
+//       description?: string
+//     }
+//   ]
+// }
+

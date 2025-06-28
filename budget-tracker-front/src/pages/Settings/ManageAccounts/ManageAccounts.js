@@ -19,9 +19,10 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
       try {
         setLoading(true);
         setError(null);
-        const res = await fetch(API_ENDPOINTS.accounts);
+        const res = await fetch(API_ENDPOINTS.manageAccounts);
         if (!res.ok) throw new Error("Помилка завантаження");
-        setAccounts(await res.json());
+        const data = await res.json();
+        setAccounts(Array.isArray(data.accounts) ? data.accounts : []);
       } catch (e) {
         setError(e.message);
       } finally {
@@ -159,3 +160,4 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
 };
 
 export default ManageAccounts;
+// Expected model from API_ENDPOINTS.manageAccounts: { accounts }

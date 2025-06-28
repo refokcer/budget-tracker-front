@@ -2,25 +2,22 @@ import React, { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./ManageCategories.module.css";
 
-/* вкладки: key, надпис, type, endpoint */
+/* вкладки: key, надпис, type */
 const tabs = [
   {
     key: "expense",
     label: "Категорії для витрат",
     type: 2,
-    endpoint: API_ENDPOINTS.categoriesExpenses,
   },
   {
     key: "income",
     label: "Категорії для доходів",
     type: 1,
-    endpoint: API_ENDPOINTS.categoriesIncomes,
   },
   {
     key: "transfer",
     label: "Категорії транзакцій",
     type: 0,
-    endpoint: API_ENDPOINTS.categoriesTransfers,
   },
 ];
 
@@ -37,15 +34,16 @@ const ManageCategories = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (!isOpen) return;
 
-    const { endpoint } = tabs.find((t) => t.key === activeTab);
+    const { type } = tabs.find((t) => t.key === activeTab);
 
     const load = async () => {
       try {
         setLoading(true);
         setError(null);
-        const res = await fetch(endpoint);
+        const res = await fetch(API_ENDPOINTS.manageCategories(type));
         if (!res.ok) throw new Error("Помилка завантаження");
-        setCategories(await res.json());
+        const data = await res.json();
+        setCategories(Array.isArray(data.categories) ? data.categories : []);
       } catch (e) {
         setError(e.message);
       } finally {
@@ -185,3 +183,4 @@ const ManageCategories = ({ isOpen, onClose }) => {
 };
 
 export default ManageCategories;
+// Expected model from API_ENDPOINTS.manageCategories(type): { categories }

@@ -1,16 +1,15 @@
 import React from "react";
 import styles from "./PieChart.module.css";
 
-const PieChart = ({ title, data, labels, limit }) => {
-  const entries = Object.entries(data)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, limit || Object.keys(data).length);
+const PieChart = ({ title, items }) => {
+  const entries = items;
 
-  const sum = entries.reduce((s, [, v]) => s + v, 0);
+  const sum = entries.reduce((s, it) => s + it.value, 0);
   let acc = 0;
 
-  const sectors = entries.map(([key, value], i) => {
+  const sectors = entries.map((it, i) => {
     const start = acc;
+    const value = it.value;
     const angle = (value / sum) * 360;
     acc += angle;
     const large = angle > 180 ? 1 : 0;
@@ -38,10 +37,10 @@ const PieChart = ({ title, data, labels, limit }) => {
             {sectors}
           </svg>
           <ul className={styles.legend}>
-            {entries.map(([key, value], i) => (
+            {entries.map((it, i) => (
               <li key={i}>
                 <span className={`${styles.dot} ${styles["c" + i]}`}></span>
-                {labels[key] || "—"} — {value.toFixed(2)}
+                {it.label} — {it.value.toFixed(2)}
               </li>
             ))}
           </ul>

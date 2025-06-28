@@ -7,67 +7,23 @@ import TopIncomesCard from "../components/TopIncomesCard/TopIncomesCard";
 import BiggestTransactionCard from "../components/BiggestTransactionCard/BiggestTransactionCard";
 import styles from "./Dashboard.module.css";
 
-/* YYYY-MM-DD */
-const fmt = (d) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
-    d.getDate()
-  ).padStart(2, "0")}`;
-
 const Dashboard = () => {
   /* стани */
-  const [accounts, setAccounts] = useState([]);
-  const [expenses, setExpenses] = useState([]);
-  const [incomes, setIncomes] = useState([]);
-  const [transactions, setTrx] = useState([]);
-  const [categories, setCats] = useState({});
-  const [currencies, setCurs] = useState({});
+  const [data, setData] = useState(null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  /* межі поточного місяця */
-  const today = new Date();
-  const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-  const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-  const startStr = fmt(monthStart);
-  const endStr = fmt(monthEnd);
 
   /* fetch */
   useEffect(() => {
     const load = async () => {
       try {
-        const [accRes, expRes, incRes, trxRes, catRes, curRes] =
-          await Promise.all([
-            fetch(API_ENDPOINTS.accounts),
-            fetch(API_ENDPOINTS.expensesByDate(startStr, endStr)),
-            fetch(API_ENDPOINTS.incomesByDate(startStr, endStr)),
-            fetch(API_ENDPOINTS.expenses), // без фільтра -> фільтруємо локально
-            fetch(API_ENDPOINTS.categories),
-            fetch(API_ENDPOINTS.currencies),
-          ]);
-
-        if (
-          ![accRes, expRes, incRes, trxRes, catRes, curRes].every((r) => r.ok)
-        )
-          throw new Error("Помилка завантаження");
-
-        setAccounts(await accRes.json());
-        setExpenses(await expRes.json());
-        setIncomes(await incRes.json());
-
-        const trxAll = await trxRes.json();
-        const inMonth = trxAll.filter((t) => {
-          const d = new Date(t.date);
-          return d >= monthStart && d <= monthEnd;
-        });
-        setTrx(inMonth);
-
-        setCats(
-          Object.fromEntries((await catRes.json()).map((c) => [c.id, c.title]))
+        const res = await fetch(
+          API_ENDPOINTS.dashboardPage
         );
-        setCurs(
-          Object.fromEntries((await curRes.json()).map((c) => [c.id, c.symbol]))
-        );
+        if (!res.ok) throw new Error("Помилка завантаження");
+        const data = await res.json();
+        setData(data);
       } catch (e) {
         setError(e.message);
       } finally {
@@ -79,31 +35,9 @@ const Dashboard = () => {
   }, []);
 
   /* агрегати */
-  const totalBalance = accounts.reduce((s, a) => s + a.amount, 0);
-  const totalExp = expenses.reduce((s, t) => s + t.amount, 0);
-  const totalInc = incomes.reduce((s, t) => s + t.amount, 0);
+  if (!data) return <p className={styles["db-loading"]}>Завантаження…</p>;
 
-  const groupByCat = (arr) =>
-    arr.reduce((m, t) => {
-      m[t.categoryId] = (m[t.categoryId] || 0) + t.amount;
-      return m;
-    }, {});
-
-  const expByCat = Object.entries(groupByCat(expenses))
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 10);
-
-  const incByCat = Object.entries(groupByCat(incomes))
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 10);
-
-  const biggestTx =
-    transactions.length > 0
-      ? [...transactions].sort((a, b) => b.amount - a.amount)[0]
-      : null;
-
-  const percent = (sum, total) =>
-    total ? `${((sum / total) * 100).toFixed(1)} %` : "—";
+  const { accounts, totalBalance, topExpenses, topIncomes, biggestTransaction } = data;
 
   /* render */
   if (loading) return <p className={styles["db-loading"]}>Завантаження…</p>;
@@ -112,33 +46,24 @@ const Dashboard = () => {
   return (
     <div className={styles["db-container"]}>
       <div className={styles["db-grid"]}>
-        <AccountsCard
-          accounts={accounts}
-          currencies={currencies}
-          totalBalance={totalBalance}
-        />
+        <AccountsCard accounts={accounts} totalBalance={totalBalance} />
 
-        <TopExpensesCard
-          expByCat={expByCat}
-          categories={categories}
-          totalExp={totalExp}
-          percent={percent}
-        />
+        <TopExpensesCard items={topExpenses} />
 
-        <TopIncomesCard
-          incByCat={incByCat}
-          categories={categories}
-          totalInc={totalInc}
-          percent={percent}
-        />
+        <TopIncomesCard items={topIncomes} />
 
-        <BiggestTransactionCard
-          transaction={biggestTx}
-          currencies={currencies}
-        />
+        <BiggestTransactionCard transaction={biggestTransaction} />
       </div>
     </div>
   );
 };
 
 export default Dashboard;
+// Expected model from API_ENDPOINTS.dashboardPage(start,end):
+// {
+//   accounts: [{ id, title, amount, currencySymbol }],
+//   totalBalance: number,
+//   topExpenses: [{ categoryTitle, amount, percent }],
+//   topIncomes: [{ categoryTitle, amount, percent }],
+//   biggestTransaction: { title, amount, currencySymbol, date }
+// }
