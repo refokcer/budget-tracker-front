@@ -7,25 +7,12 @@ import TopIncomesCard from "../components/TopIncomesCard/TopIncomesCard";
 import BiggestTransactionCard from "../components/BiggestTransactionCard/BiggestTransactionCard";
 import styles from "./Dashboard.module.css";
 
-/* YYYY-MM-DD */
-const fmt = (d) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
-    d.getDate()
-  ).padStart(2, "0")}`;
-
 const Dashboard = () => {
   /* стани */
   const [data, setData] = useState(null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  /* межі поточного місяця */
-  const today = new Date();
-  const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-  const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-  const startStr = fmt(monthStart);
-  const endStr = fmt(monthEnd);
 
   /* fetch */
   useEffect(() => {
