@@ -32,7 +32,7 @@ const Dashboard = () => {
     const load = async () => {
       try {
         const res = await fetch(
-          API_ENDPOINTS.dashboardPage(startStr, endStr)
+          API_ENDPOINTS.dashboardPage
         );
         if (!res.ok) throw new Error("Помилка завантаження");
         const data = await res.json();

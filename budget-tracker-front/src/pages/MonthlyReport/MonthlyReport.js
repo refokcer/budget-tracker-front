@@ -9,12 +9,6 @@ import TopTransactionCard from "./components/TopTransactionCard/TopTransactionCa
 
 import styles from "./MonthlyReport.module.css";
 
-/* утиліта форматування YYYY-MM-DD */
-const fmt = (d) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
-    d.getDate()
-  ).padStart(2, "0")}`;
-
 const MonthlyReport = () => {
   /* ───────── вибір місяця ───────── */
   const [monthDate, setMonthDate] = useState(() => new Date()); // сьогодні
@@ -24,14 +18,8 @@ const MonthlyReport = () => {
     setMonthDate(copy);
   };
 
-  const monthStart = React.useMemo(
-    () => new Date(monthDate.getFullYear(), monthDate.getMonth(), 1),
-    [monthDate]
-  );
-  const nextMonth = React.useMemo(
-    () => new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 1),
-    [monthDate]
-  );
+  const month = monthDate.getMonth() + 1; // 1-based
+  const year = monthDate.getFullYear();
 
   /* ───────── стани даних ───────── */
   const [loading, setLoading] = useState(true);
@@ -45,7 +33,7 @@ const MonthlyReport = () => {
       setError(null);
       try {
         const res = await fetch(
-          API_ENDPOINTS.monthlyReport(fmt(monthStart), fmt(nextMonth))
+          `${API_ENDPOINTS.monthlyReport(month, year)}`
         );
         if (!res.ok) throw new Error("Помилка завантаження даних");
         const data = await res.json();
@@ -57,7 +45,7 @@ const MonthlyReport = () => {
       }
     };
     load();
-  }, [monthDate, monthStart, nextMonth]);
+  }, [month, year]);
 
   if (!report) return <p className={styles.loading}>Завантаження…</p>;
 

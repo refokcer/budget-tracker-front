@@ -37,10 +37,9 @@ const Header = () => {
     if (location.pathname !== "/budget-plans") return;
     (async () => {
       try {
-        const r = await fetch(API_ENDPOINTS.header);
+        const r = await fetch(API_ENDPOINTS.budgetPlans);
         if (!r.ok) throw new Error("Ошибка при загрузке планов");
-        const data = await r.json();
-        setPlans(data.plans || data);
+        setPlans(await r.json());
       } catch (e) {
         setPlansError(e.message);
       }
