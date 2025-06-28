@@ -34,16 +34,13 @@ const ExpenseModal = ({ isOpen, onClose }) => {
 
     const load = async () => {
       try {
-        const [cur, cat, acc, pl] = await Promise.all([
-          fetchJson(API_ENDPOINTS.currencies),
-          fetchJson(API_ENDPOINTS.categoriesExpenses),
-          fetchJson(API_ENDPOINTS.accounts),
-          fetchJson(API_ENDPOINTS.budgetPlans),
-        ]);
-        setCurrencies(cur);
-        setCategories(cat);
-        setAccounts(acc);
-        setPlans(pl);
+        const res = await fetch(API_ENDPOINTS.expenseModal);
+        if (!res.ok) throw new Error("Помилка завантаження даних");
+        const data = await res.json();
+        setCurrencies(data.currencies);
+        setCategories(data.categories);
+        setAccounts(data.accounts);
+        setPlans(data.plans);
       } catch (e) {
         setError(e.message);
       }
@@ -188,3 +185,4 @@ const ExpenseModal = ({ isOpen, onClose }) => {
 };
 
 export default ExpenseModal;
+// Expected model from API_ENDPOINTS.expenseModal: { currencies, categories, accounts, plans }

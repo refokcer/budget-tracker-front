@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "../../DashboardPage/Dashboard.module.css";
 
-const AccountsCard = ({ accounts, currencies, totalBalance }) => (
+const AccountsCard = ({ accounts, totalBalance }) => (
   <div className={styles["db-card"]}>
     <h3 className={styles["db-title"]}>Accounts</h3>
     <table className={styles["db-table"]}>
@@ -16,7 +16,7 @@ const AccountsCard = ({ accounts, currencies, totalBalance }) => (
           <tr key={a.id}>
             <td>{a.title}</td>
             <td>
-              {currencies[a.currencyId] || ""}&nbsp;{a.amount.toFixed(2)}
+              {a.currencySymbol}&nbsp;{a.amount.toFixed(2)}
             </td>
           </tr>
         ))}

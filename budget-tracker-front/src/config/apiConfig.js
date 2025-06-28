@@ -79,6 +79,29 @@ export const API_ENDPOINTS = {
   transfersByDate: (start, end) =>
     `${API_BASE_URL}/Transfers/filter?start=${start}&end=${end}`,
   transfersByEvent: (eventId) => `${API_BASE_URL}/Transfers/event/${eventId}`,
+
+  // Aggregated models for pages
+  budgetPlanPage: (planId) => `${API_BASE_URL}/Pages/BudgetPlanPage/${planId}`,
+  expensesTable: (start, end) =>
+    `${API_BASE_URL}/Pages/ExpensesTable?start=${start}&end=${end}`,
+  incomesTable: (start, end) =>
+    `${API_BASE_URL}/Pages/IncomesTable?start=${start}&end=${end}`,
+  transfersTable: (start, end) =>
+    `${API_BASE_URL}/Pages/TransfersTable?start=${start}&end=${end}`,
+  dashboardPage: (start, end) =>
+    `${API_BASE_URL}/Pages/Dashboard?start=${start}&end=${end}`,
+  monthlyReport: (start, end) =>
+    `${API_BASE_URL}/Pages/MonthlyReport?start=${start}&end=${end}`,
+
+  // Aggregated models for components
+  incomeModal: `${API_BASE_URL}/Components/IncomeModal`,
+  expenseModal: `${API_BASE_URL}/Components/ExpenseModal`,
+  transferModal: `${API_BASE_URL}/Components/TransferModal`,
+  editPlanModal: `${API_BASE_URL}/Components/EditPlanModal`,
+  manageAccounts: `${API_BASE_URL}/Components/ManageAccounts`,
+  manageCategories: (type) =>
+    `${API_BASE_URL}/Components/ManageCategories/${type}`,
+  header: `${API_BASE_URL}/Components/Header`,
 };
 
 export default API_ENDPOINTS;

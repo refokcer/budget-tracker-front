@@ -4,9 +4,6 @@ import DataTable from '../../../components/DataTable/DataTable';
 
 const IncomesTable = ({ startDate, endDate }) => {
   const [transactions, setTransactions] = useState([]);
-  const [currencies,   setCurrencies]   = useState({});
-  const [categories,   setCategories]   = useState({});
-  const [accounts,     setAccounts]     = useState({});
   const [loading,      setLoading]      = useState(true);
   const [error,        setError]        = useState(null);
   const [busyId,       setBusyId]       = useState(null);
@@ -16,19 +13,11 @@ const IncomesTable = ({ startDate, endDate }) => {
     const fetchData = async ()=>{
       setLoading(true); setError(null);
       try{
-        const url = API_ENDPOINTS.incomesByDate(startDate, endDate);
-        const [tr,curr,cat,acc] = await Promise.all([
-          fetch(url),
-          fetch(API_ENDPOINTS.currencies),
-          fetch(API_ENDPOINTS.categories),
-          fetch(API_ENDPOINTS.accounts)
-        ]);
-        if(!tr.ok||!curr.ok||!cat.ok||!acc.ok) throw new Error('Помилка завантаження');
-        const currencyMap = Object.fromEntries((await curr.json()).map(c=>[c.id,c.symbol]));
-        const categoryMap = Object.fromEntries((await cat.json()).map(c=>[c.id,c.title]));
-        const accountMap  = Object.fromEntries((await acc.json()).map(a=>[a.id,a.title]));
-        setTransactions(await tr.json());
-        setCurrencies(currencyMap); setCategories(categoryMap); setAccounts(accountMap);
+        const url = API_ENDPOINTS.incomesTable(startDate, endDate);
+        const res = await fetch(url);
+        if(!res.ok) throw new Error('Помилка завантаження');
+        const data = await res.json();
+        setTransactions(data.transactions);
       }catch(e){ setError(e.message); }
       finally{ setLoading(false); }
     };
@@ -54,11 +43,10 @@ const IncomesTable = ({ startDate, endDate }) => {
 
   const columns = [
     { key: 'title',      label: 'Назва',            sortable: true },
-    { key: 'amount',     label: 'Сума',             sortable: true, render: (v,r) => `${currencies[r.currencyId] || ''} ${v.toFixed(2)}` },
-    { key: 'categoryId', label: 'Категорія',        sortable: true, render: v => categories[v] || '—' },
-    { key: 'accountTo',  label: 'Рахунок (Куди)',   sortable: true, render: v => accounts[v] || '-' },
+    { key: 'amount',     label: 'Сума',             sortable: true, render: (v,r) => `${r.currencySymbol} ${v.toFixed(2)}` },
+    { key: 'categoryTitle', label: 'Категорія',     sortable: true },
+    { key: 'accountTitle',  label: 'Рахунок',       sortable: true },
     { key: 'date',       label: 'Дата',             sortable: true, render: v => new Date(v).toLocaleDateString() },
-    { key: 'type',       label: 'Тип',              sortable: true, render: v => v===1?'Income':v===2?'Expense':'Transfer' },
     { key: 'description',label: 'Опис',             render: v => v || '-' },
   ];
 
@@ -68,3 +56,20 @@ const IncomesTable = ({ startDate, endDate }) => {
 };
 
 export default IncomesTable;
+// Expected model from API_ENDPOINTS.incomesTable(start,end):
+// {
+//   start: string,
+//   end: string,
+//   transactions: [
+//     {
+//       id: number,
+//       title: string,
+//       amount: number,
+//       currencySymbol: string,
+//       categoryTitle: string,
+//       accountTitle: string,
+//       date: string,
+//       description?: string
+//     }
+//   ]
+// }

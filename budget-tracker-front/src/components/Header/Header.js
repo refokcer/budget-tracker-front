@@ -37,9 +37,10 @@ const Header = () => {
     if (location.pathname !== "/budget-plans") return;
     (async () => {
       try {
-        const r = await fetch(API_ENDPOINTS.budgetPlans);
+        const r = await fetch(API_ENDPOINTS.header);
         if (!r.ok) throw new Error("Ошибка при загрузке планов");
-        setPlans(await r.json());
+        const data = await r.json();
+        setPlans(data.plans || data);
       } catch (e) {
         setPlansError(e.message);
       }
@@ -136,3 +137,4 @@ const Header = () => {
 };
 
 export default Header;
+// Expected model from API_ENDPOINTS.header: { plans }

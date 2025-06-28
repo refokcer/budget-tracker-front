@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./TopTransactionCard.module.css";
 
-const TopTransactionCard = ({ transaction, category, account, currency }) => {
+const TopTransactionCard = ({ transaction }) => {
   if (!transaction) return null;
 
   return (
@@ -13,15 +13,15 @@ const TopTransactionCard = ({ transaction, category, account, currency }) => {
       <p className={styles["tx-name"]}>{transaction.title}</p>
 
       <p className={styles.amount}>
-        {currency}&nbsp;{transaction.amount.toFixed(2)}
+        {transaction.currencySymbol}&nbsp;{transaction.amount.toFixed(2)}
       </p>
 
       <div className={styles["info-grid"]}>
         <span className={styles.label}>Категорія:</span>
-        <span className={styles.value}>{category || "—"}</span>
+        <span className={styles.value}>{transaction.categoryTitle || "—"}</span>
 
         <span className={styles.label}>Рахунок:</span>
-        <span className={styles.value}>{account || "—"}</span>
+        <span className={styles.value}>{transaction.accountTitle || "—"}</span>
 
         <span className={styles.label}>Дата:</span>
         <span className={styles.value}>

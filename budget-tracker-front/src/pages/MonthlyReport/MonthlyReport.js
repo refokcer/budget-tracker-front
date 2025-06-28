@@ -36,12 +36,7 @@ const MonthlyReport = () => {
   /* ───────── стани даних ───────── */
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const [expenses, setExpenses] = useState([]);
-  const [incomes, setIncomes] = useState([]);
-  const [categories, setCategories] = useState({});
-  const [accounts, setAccounts] = useState({});
-  const [currencies, setCurrencies] = useState({});
+  const [report, setReport] = useState(null);
 
   /* ───────── fetch on month change ───────── */
   useEffect(() => {
@@ -49,27 +44,12 @@ const MonthlyReport = () => {
       setLoading(true);
       setError(null);
       try {
-        const [expRes, incRes, catRes, accRes, curRes] = await Promise.all([
-          fetch(API_ENDPOINTS.expensesByDate(fmt(monthStart), fmt(nextMonth))),
-          fetch(API_ENDPOINTS.incomesByDate(fmt(monthStart), fmt(nextMonth))),
-          fetch(API_ENDPOINTS.categories),
-          fetch(API_ENDPOINTS.accounts),
-          fetch(API_ENDPOINTS.currencies),
-        ]);
-        if (![expRes, incRes, catRes, accRes, curRes].every((r) => r.ok))
-          throw new Error("Помилка завантаження даних");
-
-        setExpenses(await expRes.json());
-        setIncomes(await incRes.json());
-        setCategories(
-          Object.fromEntries((await catRes.json()).map((c) => [c.id, c.title]))
+        const res = await fetch(
+          API_ENDPOINTS.monthlyReport(fmt(monthStart), fmt(nextMonth))
         );
-        setAccounts(
-          Object.fromEntries((await accRes.json()).map((a) => [a.id, a.title]))
-        );
-        setCurrencies(
-          Object.fromEntries((await curRes.json()).map((c) => [c.id, c.symbol]))
-        );
+        if (!res.ok) throw new Error("Помилка завантаження даних");
+        const data = await res.json();
+        setReport(data);
       } catch (e) {
         setError(e.message);
       } finally {
@@ -77,23 +57,22 @@ const MonthlyReport = () => {
       }
     };
     load();
-  }, [monthDate, monthStart, nextMonth]); // ← рефетч при зміні місяця
+  }, [monthDate, monthStart, nextMonth]);
 
-  /* ───────── агрегати ───────── */
-  const totalExp = expenses.reduce((s, t) => s + t.amount, 0);
-  const totalInc = incomes.reduce((s, t) => s + t.amount, 0);
-  const balance = totalInc - totalExp;
+  if (!report) return <p className={styles.loading}>Завантаження…</p>;
 
-  const aggregate = (arr, field) =>
-    arr.reduce((acc, t) => {
-      acc[t[field]] = (acc[t[field]] || 0) + t.amount;
-      return acc;
-    }, {});
-  const expByCat = aggregate(expenses, "categoryId");
-  const incByCat = aggregate(incomes, "categoryId");
-  const expByAcc = aggregate(expenses, "accountFrom");
-
-  const maxExpense = expenses.sort((a, b) => b.amount - a.amount)[0];
+  const {
+    totalExp,
+    totalInc,
+    balance,
+    defaultCurrency,
+    topExpenseCategories,
+    topIncomeCategories,
+    expensesByCategory,
+    incomesByCategory,
+    expensesByAccount,
+    topExpenseTransaction,
+  } = report;
 
   if (loading) return <p className={styles.loading}>Завантаження…</p>;
   if (error) return <p className={styles.error}>{error}</p>;
@@ -113,48 +92,21 @@ const MonthlyReport = () => {
           totalExp={totalExp}
           totalInc={totalInc}
           balance={balance}
-          defaultCurrency={currencies[1] || "₴"}
+          defaultCurrency={defaultCurrency}
         />
 
         <div className={styles["charts-grid"]}>
-          <TopList
-            title="Топ-10 категорій витрат"
-            dataMap={expByCat}
-            labels={categories}
-            totalIncome={totalInc}
-          />
+          <TopList title="Топ-10 категорій витрат" items={topExpenseCategories} />
 
-          <PieChart
-            title="Всі категорії витрат"
-            data={expByCat}
-            labels={categories}
-          />
+          <PieChart title="Всі категорії витрат" items={expensesByCategory} />
 
-          <TopList
-            title="Топ-10 категорій доходів"
-            dataMap={incByCat}
-            labels={categories}
-            totalIncome={totalInc}
-          />
+          <TopList title="Топ-10 категорій доходів" items={topIncomeCategories} />
 
-          <PieChart
-            title="Всі категорії доходів"
-            data={incByCat}
-            labels={categories}
-          />
+          <PieChart title="Всі категорії доходів" items={incomesByCategory} />
 
-          <PieChart
-            title="Розподіл витрат за рахунками"
-            data={expByAcc}
-            labels={accounts}
-          />
-          {maxExpense && (
-            <TopTransactionCard
-              transaction={maxExpense}
-              category={categories[maxExpense.categoryId]}
-              account={accounts[maxExpense.accountFrom]}
-              currency={currencies[maxExpense.currencyId]}
-            />
+          <PieChart title="Розподіл витрат за рахунками" items={expensesByAccount} />
+          {topExpenseTransaction && (
+            <TopTransactionCard transaction={topExpenseTransaction} />
           )}
         </div>
       </div>
@@ -163,3 +115,16 @@ const MonthlyReport = () => {
 };
 
 export default MonthlyReport;
+// Expected model from API_ENDPOINTS.monthlyReport(start,end):
+// {
+//   totalExp: number,
+//   totalInc: number,
+//   balance: number,
+//   defaultCurrency: string,
+//   topExpenseCategories: [{ label: string, amount: number, percent: string }],
+//   topIncomeCategories: [{ label: string, amount: number, percent: string }],
+//   expensesByCategory: [{ label: string, value: number }],
+//   incomesByCategory: [{ label: string, value: number }],
+//   expensesByAccount: [{ label: string, value: number }],
+//   topExpenseTransaction: { title: string, amount: number, currencySymbol: string, categoryTitle: string, accountTitle: string, date: string, description?: string }
+// }

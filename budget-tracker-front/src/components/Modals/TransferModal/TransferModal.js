@@ -28,23 +28,12 @@ const TransferModal = ({ isOpen, onClose }) => {
 
     const fetchData = async () => {
       try {
-        const [currenciesRes, accountsRes, categoriesRes] = await Promise.all([
-          fetch(API_ENDPOINTS.currencies),
-          fetch(API_ENDPOINTS.accounts),
-          fetch(API_ENDPOINTS.categoriesTransfers),
-        ]);
-
-        if (!currenciesRes.ok || !accountsRes.ok || !categoriesRes.ok) {
-          throw new Error("Помилка завантаження даних");
-        }
-
-        const accountsData = await accountsRes.json();
-        const categoriesData = await categoriesRes.json();
-        const currenciesData = await currenciesRes.json();
-
-        setCategories(categoriesData);
-        setCurrencies(currenciesData);
-        setAccounts(accountsData);
+        const res = await fetch(API_ENDPOINTS.transferModal);
+        if (!res.ok) throw new Error("Помилка завантаження даних");
+        const data = await res.json();
+        setCategories(data.categories);
+        setCurrencies(data.currencies);
+        setAccounts(data.accounts);
       } catch (error) {
         setError(error.message);
       }
@@ -202,3 +191,4 @@ const TransferModal = ({ isOpen, onClose }) => {
 };
 
 export default TransferModal;
+// Expected model from API_ENDPOINTS.transferModal: { currencies, accounts, categories }

@@ -16,29 +16,24 @@ const palette = [
 
 const format = (n) => n.toLocaleString("uk-UA", { minimumFractionDigits: 2 });
 
-const TopList = ({ title, dataMap, labels, totalIncome }) => {
-  const entries = Object.entries(dataMap)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 10);
+const TopList = ({ title, items }) => {
 
   return (
     <div className={styles["toplist-card"]}>
       <h4>{title}</h4>
-      {entries.length === 0 ? (
+      {items.length === 0 ? (
         <p className={styles.empty}>Немає даних</p>
       ) : (
         <ul className={styles.toplist}>
-          {entries.map(([id, sum], i) => (
-            <li key={id}>
+          {items.map((it, i) => (
+            <li key={i}>
               <span
                 className={styles["color-dot"]}
                 style={{ background: palette[i % palette.length] }}
               />
-              <span className={styles.name}>{labels[id] || "—"}</span>
-              <span className={styles.amount}>{format(sum)}</span>
-              <span className={styles.percent}>
-                {((sum / totalIncome) * 100).toFixed(1)} %
-              </span>
+              <span className={styles.name}>{it.label}</span>
+              <span className={styles.amount}>{format(it.amount)}</span>
+              <span className={styles.percent}>{it.percent}</span>
             </li>
           ))}
         </ul>

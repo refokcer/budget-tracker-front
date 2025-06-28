@@ -16,10 +16,6 @@ const BudgetPlanPage = () => {
   const [plans, setPlans] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [planItems, setPlanItems] = useState([]);
-  const [transactions, setTransactions] = useState([]);
-
-  const [categoryMap, setCategoryMap] = useState({});
-  const [currencyMap, setCurrencyMap] = useState({});
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -56,30 +52,13 @@ const BudgetPlanPage = () => {
       try {
         setLoading(true);
         setError(null);
-        const [planRes, itemsRes] = await Promise.all([
-          fetch(API_ENDPOINTS.budgetPlanById(planIdFromQuery)),
-          fetch(API_ENDPOINTS.budgetPlanItemsByPlan(planIdFromQuery)),
-        ]);
-        if (!planRes.ok || !itemsRes.ok)
-          throw new Error("Ошибка при загрузке плана");
-        setSelectedPlan(await planRes.json());
-        setPlanItems(await itemsRes.json());
-
-        const trx = await fetch(
-          API_ENDPOINTS.transactionsByPlan(planIdFromQuery)
-        ).then((r) => r.json());
-        setTransactions(trx);
-
-        const [cats, curs] = await Promise.all([
-          fetch(API_ENDPOINTS.categories).then((r) => r.json()),
-          fetch(API_ENDPOINTS.currencies).then((r) => r.json()),
-        ]);
-        const cm = {};
-        cats.forEach((c) => (cm[c.id] = c.title));
-        const curm = {};
-        curs.forEach((c) => (curm[c.id] = c.symbol));
-        setCategoryMap(cm);
-        setCurrencyMap(curm);
+        const res = await fetch(
+          API_ENDPOINTS.budgetPlanPage(planIdFromQuery)
+        );
+        if (!res.ok) throw new Error("Ошибка при загрузке плана");
+        const data = await res.json();
+        setSelectedPlan(data.plan);
+        setPlanItems(data.items);
       } catch (e) {
         setError(e.message);
       } finally {
@@ -88,33 +67,7 @@ const BudgetPlanPage = () => {
     })();
   }, [planIdFromQuery]);
 
-  /* 3. вычисление таблицы */
-  const expenseTrx = transactions.filter((t) => t.type === 2);
-  const spentMap = expenseTrx.reduce((acc, t) => {
-    acc[t.categoryId] = (acc[t.categoryId] || 0) + t.amount;
-    return acc;
-  }, {});
-  const itemsExt = planItems.map((i) => ({
-    ...i,
-    spent: spentMap[i.categoryId] || 0,
-    remaining: i.amount - (spentMap[i.categoryId] || 0),
-  }));
-  const categoriesInPlan = new Set(planItems.map((i) => i.categoryId));
-  const spentOther = expenseTrx
-    .filter((t) => !categoriesInPlan.has(t.categoryId))
-    .reduce((s, t) => s + t.amount, 0);
-  if (spentOther > 0) {
-    itemsExt.push({
-      id: "other",
-      categoryId: "other",
-      amount: "-",
-      currencyId: planItems[0]?.currencyId || 1,
-      spent: spentOther,
-      remaining: "-",
-      description: "не вошедшие категории",
-    });
-    categoryMap.other = "Остальное";
-  }
+  /* данные уже приходят з беку в готовому вигляді */
 
   const deletePlan = async () => {
     if (!selectedPlan) return;
@@ -158,11 +111,7 @@ const BudgetPlanPage = () => {
       {selectedPlan && (
         <div className={styles["content"]}>
           <PlanDetails plan={selectedPlan} />
-          <PlanItemsTable
-            items={itemsExt}
-            categoryMap={categoryMap}
-            currencyMap={currencyMap}
-          />
+          <PlanItemsTable items={planItems} />
 
           {/* ——— действия над планом ——— */}
           <div className={styles["plan-actions"]}>
@@ -200,8 +149,6 @@ const BudgetPlanPage = () => {
         onClose={() => setEditOpen(false)}
         plan={selectedPlan}
         items={planItems}
-        categories={categoryMap}
-        currencies={currencyMap}
         onSaved={() => window.location.reload()}
       />
     </div>
@@ -209,3 +156,18 @@ const BudgetPlanPage = () => {
 };
 
 export default BudgetPlanPage;
+// Expected model from API_ENDPOINTS.budgetPlanPage(planId):
+// {
+//   plan: { id, title, startDate, endDate, type, description },
+//   items: [
+//     {
+//       id: number,
+//       categoryTitle: string,
+//       amount: number,
+//       currencySymbol: string,
+//       spent: number,
+//       remaining: number,
+//       description?: string
+//     }
+//   ]
+// }

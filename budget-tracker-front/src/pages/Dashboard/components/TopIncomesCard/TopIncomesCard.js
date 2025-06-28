@@ -1,10 +1,10 @@
 import React from "react";
 import styles from "../../DashboardPage/Dashboard.module.css";
 
-const TopIncomesCard = ({ incByCat, categories, totalInc, percent }) => (
+const TopIncomesCard = ({ items }) => (
   <div className={styles["db-card"]}>
     <h3 className={styles["db-title"]}>Top 10 Incomes</h3>
-    {incByCat.length === 0 ? (
+    {items.length === 0 ? (
       <p className={styles["db-empty"]}>Немає даних</p>
     ) : (
       <table className={styles["db-small-table"]}>
@@ -16,11 +16,11 @@ const TopIncomesCard = ({ incByCat, categories, totalInc, percent }) => (
           </tr>
         </thead>
         <tbody>
-          {incByCat.map(([id, sum]) => (
-            <tr key={id}>
-              <td>{categories[id] || "—"}</td>
-              <td>{sum.toFixed(2)}</td>
-              <td>{percent(sum, totalInc)}</td>
+          {items.map((it, i) => (
+            <tr key={i}>
+              <td>{it.categoryTitle}</td>
+              <td>{it.amount.toFixed(2)}</td>
+              <td>{it.percent}</td>
             </tr>
           ))}
         </tbody>
