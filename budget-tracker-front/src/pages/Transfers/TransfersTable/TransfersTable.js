@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import API_ENDPOINTS from '../../../config/apiConfig';
 import DataTable from '../../../components/DataTable/DataTable';
 
-const TransfersTable = ({ startDate, endDate }) => {
+const TransfersTable = ({ month, year }) => {
   const [rows, setRows] = useState([]);
   const [loading, setLoad] = useState(true);
   const [error, setErr] = useState(null);
@@ -12,7 +12,7 @@ const TransfersTable = ({ startDate, endDate }) => {
     const load = async () => {
       setLoad(true); setErr(null);
       try {
-        const url = API_ENDPOINTS.transfersTable(startDate, endDate);
+        const url = API_ENDPOINTS.transfersTable(month, year);
         const res = await fetch(url);
         if (!res.ok) throw new Error('Помилка завантаження');
         const data = await res.json();
@@ -21,7 +21,7 @@ const TransfersTable = ({ startDate, endDate }) => {
       finally { setLoad(false); }
     };
     load();
-  }, [startDate, endDate]);
+  }, [month, year]);
 
   const del = async (id) => {
     if (!window.confirm('Видалити?')) return;

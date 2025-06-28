@@ -5,34 +5,27 @@ import styles from "./TransfersPage.module.css";
 
 const TransfersPage = () => {
   const [monthDate, setMonthDate] = useState(new Date());
-
-  const jump = (d) => {
-    const tmp = new Date(monthDate);
-    tmp.setMonth(tmp.getMonth() + d);
-    setMonthDate(tmp);
-  };
-
-  const fmt = (d) =>
-    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
-      d.getDate()
-    ).padStart(2, "0")}`;
-
-  const start = fmt(new Date(monthDate.getFullYear(), monthDate.getMonth(), 1));
-  const end = fmt(
-    new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 1)
-  ); // початок наступного місяця
-
-  const label = monthDate.toLocaleString("uk", {
-    month: "long",
-    year: "numeric",
-  });
-
-  return (
+    
+      const changeMonth = (delta) => {
+        const d = new Date(monthDate);
+        d.setMonth(d.getMonth() + delta);
+        setMonthDate(d);
+      };
+    
+      const monthLabel = monthDate.toLocaleString("uk-UA", {
+        month: "long",
+        year: "numeric",
+      });
+    
+      const month = monthDate.getMonth() + 1;
+      const year = monthDate.getFullYear();
+    
+      return (
     <div className={styles.container}>
-      <MonthSelector label={label} onJump={jump} />
+      <MonthSelector label={monthLabel} onJump={changeMonth} />
 
       <div className={styles.content}>
-        <TransfersTable startDate={start} endDate={end} />
+        <TransfersTable month={month} year={year} />
       </div>
     </div>
   );

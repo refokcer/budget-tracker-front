@@ -84,10 +84,10 @@ export const API_ENDPOINTS = {
   budgetPlanPage: (planId) => `${API_BASE_URL}/pages/BudgetPlanPage/${planId}`,
   expensesTable: (month, year) =>
     `${API_BASE_URL}/pages/expensesByMonth/${month}?year=${year}`,
-  incomesTable: (start, end) =>
-    `${API_BASE_URL}/pages/IncomesTable?start=${start}&end=${end}`,
-  transfersTable: (start, end) =>
-    `${API_BASE_URL}/pages/TransfersTable?start=${start}&end=${end}`,
+  incomesTable: (month, year) =>
+    `${API_BASE_URL}/pages/incomesByMonth/${month}?year=${year}`,
+  transfersTable: (month, year) =>
+    `${API_BASE_URL}/pages/transfersByMonth/${month}?year=${year}`,
   dashboardPage: (start, end) =>
     `${API_BASE_URL}/pages/Dashboard?start=${start}&end=${end}`,
   monthlyReport: (start, end) =>

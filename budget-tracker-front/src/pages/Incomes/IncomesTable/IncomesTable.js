@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import API_ENDPOINTS from '../../../config/apiConfig';
 import DataTable from '../../../components/DataTable/DataTable';
 
-const IncomesTable = ({ startDate, endDate }) => {
+const IncomesTable = ({ month, year }) => {
   const [transactions, setTransactions] = useState([]);
   const [loading,      setLoading]      = useState(true);
   const [error,        setError]        = useState(null);
@@ -13,7 +13,7 @@ const IncomesTable = ({ startDate, endDate }) => {
     const fetchData = async ()=>{
       setLoading(true); setError(null);
       try{
-        const url = API_ENDPOINTS.incomesTable(startDate, endDate);
+        const url = API_ENDPOINTS.incomesTable(month, year);
         const res = await fetch(url);
         if(!res.ok) throw new Error('Помилка завантаження');
         const data = await res.json();
@@ -22,7 +22,7 @@ const IncomesTable = ({ startDate, endDate }) => {
       finally{ setLoading(false); }
     };
     fetchData();
-  },[startDate,endDate]);
+  },[month,year]);
 
   const rows = transactions;
 
