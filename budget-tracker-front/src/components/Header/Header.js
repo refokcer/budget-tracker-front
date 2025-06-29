@@ -7,17 +7,7 @@ import ExpenseModal from "../Modals/ExpenseModal/ExpenseModal";
 import IncomeModal from "../Modals/IncomeModal/IncomeModal";
 import TransferModal from "../Modals/TransferModal/TransferModal";
 import API_ENDPOINTS from "../../config/apiConfig";
-
-const pageTitles = {
-  "/": "Home",
-  "/dashboard": "Dashboard",
-  "/budget-plans": "Budget Plans",
-  "/expenses": "Expenses",
-  "/incomes": "Incomes",
-  "/transfers": "Transfers",
-  "/settings": "Settings",
-  "/report": "Monthly Report",
-};
+import { pageTitles } from "../../constants";
 
 const Header = () => {
   const location = useLocation();
