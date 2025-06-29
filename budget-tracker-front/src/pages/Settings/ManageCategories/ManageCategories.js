@@ -183,4 +183,3 @@ const ManageCategories = ({ isOpen, onClose }) => {
 };
 
 export default ManageCategories;
-// Expected model from API_ENDPOINTS.manageCategories(type): { categories }

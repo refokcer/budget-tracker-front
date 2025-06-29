@@ -293,4 +293,3 @@ const EditPlanModal = ({
 };
 
 export default EditPlanModal;
-// Expected model from API_ENDPOINTS.editPlanModal: { categories, currencies }

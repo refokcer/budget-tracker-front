@@ -9,7 +9,7 @@ import BudgetPlanPage from "./pages/BudgetPlan/BudgetPlanPage/BudgetPlanPage";
 import styles from "./App.module.css";
 import TransfersPage from "./pages/Transfers/TransfersPage/TransfersPage";
 import SettingsPage from "./pages/Settings/SettingsPage/SettingsPage";
-import MonthlyReport from "./pages/MonthlyReport/MonthlyReport"; // Adjust the path if needed
+import MonthlyReport from "./pages/MonthlyReport/MonthlyReport";
 
 const App = () => {
   return (
@@ -28,7 +28,6 @@ const App = () => {
               <Route path="/transfers" element={<TransfersPage />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/report" element={<MonthlyReport />} />
-              {/* Добавьте маршруты для других страниц */}
             </Routes>
           </main>
         </div>

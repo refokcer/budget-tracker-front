@@ -1,12 +1,10 @@
-// src/pages/BudgetPlanPage/CreateBudgetPlanModal.js
-
 import React, { useState } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./CreateBudgetPlanModal.module.css";
 
 const CreateBudgetPlanModal = ({ isOpen, onClose, onPlanCreated }) => {
   const [title, setTitle] = useState("");
-  const [type, setType] = useState("0"); // Пример: 0 = "None", 1="Some type", ... зависит от вашего enum
+  const [type, setType] = useState("0");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [description, setDescription] = useState("");
@@ -86,7 +84,6 @@ const CreateBudgetPlanModal = ({ isOpen, onClose, onPlanCreated }) => {
           <option value="0">None</option>
           <option value="1">Type1</option>
           <option value="2">Type2</option>
-          {/* Дополните реальными типами (BudgetPlanType) */}
         </select>
 
         <label>Описание:</label>

@@ -103,16 +103,3 @@ const MonthlyReport = () => {
 };
 
 export default MonthlyReport;
-// Expected model from API_ENDPOINTS.monthlyReport(start,end):
-// {
-//   totalExp: number,
-//   totalInc: number,
-//   balance: number,
-//   defaultCurrency: string,
-//   topExpenseCategories: [{ label: string, amount: number, percent: string }],
-//   topIncomeCategories: [{ label: string, amount: number, percent: string }],
-//   expensesByCategory: [{ label: string, value: number }],
-//   incomesByCategory: [{ label: string, value: number }],
-//   expensesByAccount: [{ label: string, value: number }],
-//   topExpenseTransaction: { title: string, amount: number, currencySymbol: string, categoryTitle: string, accountTitle: string, date: string, description?: string }
-// }

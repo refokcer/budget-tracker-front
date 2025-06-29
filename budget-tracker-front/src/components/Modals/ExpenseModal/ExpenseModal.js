@@ -19,12 +19,6 @@ const ExpenseModal = ({ isOpen, onClose }) => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const fetchJson = async (url) => {
-    const r = await fetch(url);
-    if (!r.ok) throw new Error(`Помилка при запиті ${url}: ${r.status}`);
-    return r.json();
-  };
-
   useEffect(() => {
     if (!isOpen) return;
 
@@ -185,4 +179,3 @@ const ExpenseModal = ({ isOpen, onClose }) => {
 };
 
 export default ExpenseModal;
-// Expected model from API_ENDPOINTS.expenseModal: { currencies, categories, accounts, plans }

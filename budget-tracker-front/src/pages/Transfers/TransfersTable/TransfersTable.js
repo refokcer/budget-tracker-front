@@ -50,21 +50,4 @@ const TransfersTable = ({ month, year }) => {
 };
 
 export default TransfersTable;
-// Expected model from API_ENDPOINTS.transfersTable(start,end):
-// {
-//   start: string,
-//   end: string,
-//   transactions: [
-//     {
-//       id: number,
-//       title: string,
-//       amount: number,
-//       currencySymbol: string,
-//       accountFromTitle: string,
-//       accountToTitle: string,
-//       date: string,
-//       description?: string
-//     }
-//   ]
-// }
 

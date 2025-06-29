@@ -136,4 +136,3 @@ const Header = () => {
 };
 
 export default Header;
-// Expected model from API_ENDPOINTS.header: { plans }

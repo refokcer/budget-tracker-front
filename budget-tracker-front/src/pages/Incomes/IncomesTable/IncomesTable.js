@@ -56,20 +56,3 @@ const IncomesTable = ({ month, year }) => {
 };
 
 export default IncomesTable;
-// Expected model from API_ENDPOINTS.incomesTable(start,end):
-// {
-//   start: string,
-//   end: string,
-//   transactions: [
-//     {
-//       id: number,
-//       title: string,
-//       amount: number,
-//       currencySymbol: string,
-//       categoryTitle: string,
-//       accountTitle: string,
-//       date: string,
-//       description?: string
-//     }
-//   ]
-// }

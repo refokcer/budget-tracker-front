@@ -156,18 +156,3 @@ const BudgetPlanPage = () => {
 };
 
 export default BudgetPlanPage;
-// Expected model from API_ENDPOINTS.budgetPlanPage(planId):
-// {
-//   plan: { id, title, startDate, endDate, type, description },
-//   items: [
-//     {
-//       id: number,
-//       categoryTitle: string,
-//       amount: number,
-//       currencySymbol: string,
-//       spent: number,
-//       remaining: number,
-//       description?: string
-//     }
-//   ]
-// }
