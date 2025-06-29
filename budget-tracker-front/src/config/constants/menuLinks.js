@@ -1,5 +1,5 @@
-import starIcon from '../data/Star.svg';
-import dashboardIcon from '../data/dashboards.png';
+import starIcon from '../../data/Star.svg';
+import dashboardIcon from '../../data/dashboards.png';
 
 export const menuLinks = [
   { to: '/dashboard', label: 'Dashboard', icon: dashboardIcon },

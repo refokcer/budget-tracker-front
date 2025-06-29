@@ -1,1 +1,1 @@
-export { default } from './MonthlyReport';
+export { default } from './MonthlyReportPage/MonthlyReportPage';

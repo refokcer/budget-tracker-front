@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./Header.module.css";
 
@@ -7,7 +7,7 @@ import ExpenseModal from "../Modals/ExpenseModal/ExpenseModal";
 import IncomeModal from "../Modals/IncomeModal/IncomeModal";
 import TransferModal from "../Modals/TransferModal/TransferModal";
 import API_ENDPOINTS from "../../config/apiConfig";
-import { pageTitles } from "../../constants";
+import { pageTitles } from "../../config/constants";
 
 const Header = () => {
   const location = useLocation();

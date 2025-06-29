@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import API_ENDPOINTS from "../../config/apiConfig";
-import MonthSelector from "../../components/MonthSelector/MonthSelector";
+import API_ENDPOINTS from "../../../config/apiConfig";
+import MonthSelector from "../../../components/MonthSelector/MonthSelector";
 
-import SummaryCards from "./components/SummaryCards/SummaryCards";
-import PieChart from "./components/PieChart/PieChart";
-import TopList from "./components/TopList/TopList";
-import TopTransactionCard from "./components/TopTransactionCard/TopTransactionCard";
+import SummaryCards from "../components/SummaryCards/SummaryCards";
+import PieChart from "../components/PieChart/PieChart";
+import TopList from "../components/TopList/TopList";
+import TopTransactionCard from "../components/TopTransactionCard/TopTransactionCard";
 
-import styles from "./MonthlyReport.module.css";
+import styles from "./MonthlyReportPage.module.css";
 
-const MonthlyReport = () => {
+const MonthlyReportPage = () => {
   /* ───────── вибір місяця ───────── */
   const [monthDate, setMonthDate] = useState(() => new Date()); // сьогодні
   const jumpMonth = (delta) => {
@@ -102,4 +102,4 @@ const MonthlyReport = () => {
   );
 };
 
-export default MonthlyReport;
+export default MonthlyReportPage;
