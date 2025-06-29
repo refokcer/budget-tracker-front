@@ -80,11 +80,7 @@ const CreateBudgetPlanModal = ({ isOpen, onClose, onPlanCreated }) => {
         />
 
         <label>Тип плана:</label>
-        <select value={type} onChange={(e) => setType(e.target.value)}>
-          <option value="0">None</option>
-          <option value="1">Type1</option>
-          <option value="2">Type2</option>
-        </select>
+        <select value={type} onChange={(e) => setType(e.target.value)}></select>
 
         <label>Описание:</label>
         <textarea

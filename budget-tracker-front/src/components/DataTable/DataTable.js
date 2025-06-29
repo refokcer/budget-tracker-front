@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import styles from "./DataTable.module.css";
 
 const DataTable = ({ columns, rows, onDelete, deletingId }) => {

@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./MonthSelector.module.css";
 
 const MonthSelector = ({ label, onJump }) => (
