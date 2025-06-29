@@ -160,4 +160,3 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
 };
 
 export default ManageAccounts;
-// Expected model from API_ENDPOINTS.manageAccounts: { accounts }

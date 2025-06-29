@@ -1,4 +1,3 @@
-// src/pages/Dashboard/Dashboard.js
 import React, { useState, useEffect } from "react";
 import { API_ENDPOINTS } from "../../../config/apiConfig";
 import AccountsCard from "../components/AccountsCard/AccountsCard";
@@ -59,11 +58,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-// Expected model from API_ENDPOINTS.dashboardPage(start,end):
-// {
-//   accounts: [{ id, title, amount, currencySymbol }],
-//   totalBalance: number,
-//   topExpenses: [{ categoryTitle, amount, percent }],
-//   topIncomes: [{ categoryTitle, amount, percent }],
-//   biggestTransaction: { title, amount, currencySymbol, date }
-// }

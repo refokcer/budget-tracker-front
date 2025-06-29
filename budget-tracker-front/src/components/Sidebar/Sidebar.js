@@ -1,9 +1,8 @@
-// src/components/Sidebar.js
 import React from "react";
 import { Link } from "react-router-dom";
 import styles from "./Sidebar.module.css";
-import starIcon from "../../data/Star.svg"; // Подключаем иконку
-import dasbordIcon from "../../data/dashboards.png"; // Подключаем иконку
+import starIcon from "../../data/Star.svg";
+import dasbordIcon from "../../data/dashboards.png";
 
 const menuLinks = [
   { to: "/dashboard", label: "Dashboard", icon: dasbordIcon },

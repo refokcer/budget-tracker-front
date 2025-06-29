@@ -1,4 +1,3 @@
-// src/components/IncomeModal/IncomeModal.js
 import React, { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./IncomeModal.module.css";
@@ -69,8 +68,6 @@ const IncomeModal = ({ isOpen, onClose }) => {
     };
 
     try {
-      console.log(JSON.stringify(newTransaction, null, 2));
-
       const response = await fetch(API_ENDPOINTS.createIncome, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -170,4 +167,3 @@ const IncomeModal = ({ isOpen, onClose }) => {
 };
 
 export default IncomeModal;
-// Expected model from API_ENDPOINTS.incomeModal: { currencies, categories, accounts }

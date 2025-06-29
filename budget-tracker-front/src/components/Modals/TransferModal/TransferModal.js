@@ -1,4 +1,3 @@
-// filepath: d:\Programming\Projects\budget-tracker\budget-tracker-front\budget-tracker-front\src\components\Modals\TransferModal\TransferModal.js
 import React, { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./TransferModal.module.css";
@@ -78,8 +77,6 @@ const TransferModal = ({ isOpen, onClose }) => {
     }
 
     try {
-      console.log(JSON.stringify(newTransfer, null, 2));
-
       const response = await fetch(API_ENDPOINTS.createTransfer, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -190,4 +187,3 @@ const TransferModal = ({ isOpen, onClose }) => {
 };
 
 export default TransferModal;
-// Expected model from API_ENDPOINTS.transferModal: { currencies, accounts, categories }

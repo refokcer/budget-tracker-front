@@ -51,20 +51,3 @@ const ExpensesTable = ({ month, year }) => {
 };
 
 export default ExpensesTable;
-// Expected model from API_ENDPOINTS.expensesTable(start,end):
-// {
-//   start: string,
-//   end: string,
-//   transactions: [
-//     {
-//       id: number,
-//       title: string,
-//       amount: number,
-//       currencySymbol: string,
-//       categoryTitle: string,
-//       accountTitle: string,
-//       date: string,
-//       description?: string
-//     }
-//   ]
-// }

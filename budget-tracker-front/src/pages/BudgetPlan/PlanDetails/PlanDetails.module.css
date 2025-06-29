@@ -1,5 +1,3 @@
-/* Допустим, в файле PlanDetails.css или BudgetPlanPage.css */
-
 /* Контейнер, где всё в одну строку */
 .plan-details-inline {
   display: flex;
