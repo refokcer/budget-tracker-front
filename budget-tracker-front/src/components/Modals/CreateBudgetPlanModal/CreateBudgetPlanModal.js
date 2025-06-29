@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./CreateBudgetPlanModal.module.css";
 

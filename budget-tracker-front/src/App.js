@@ -2,14 +2,14 @@ import React from "react";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Header from "./components/Header/Header";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Dashboard from "./pages/Dashboard/DashboardPage/Dashboard";
-import Expenses from "./pages/Expenses/ExpensesPage/Expenses";
-import Incomes from "./pages/Incomes/IncomesPage/Incomes";
-import BudgetPlanPage from "./pages/BudgetPlan/BudgetPlanPage/BudgetPlanPage";
+import Dashboard from "./pages/Dashboard";
+import Expenses from "./pages/Expenses";
+import Incomes from "./pages/Incomes";
+import BudgetPlanPage from "./pages/BudgetPlan";
 import styles from "./App.module.css";
-import TransfersPage from "./pages/Transfers/TransfersPage/TransfersPage";
-import SettingsPage from "./pages/Settings/SettingsPage/SettingsPage";
-import MonthlyReport from "./pages/MonthlyReport/MonthlyReport";
+import TransfersPage from "./pages/Transfers";
+import SettingsPage from "./pages/Settings";
+import MonthlyReport from "./pages/MonthlyReport";
 
 const App = () => {
   return (

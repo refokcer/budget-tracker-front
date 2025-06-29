@@ -2,16 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styles from "./Sidebar.module.css";
 import starIcon from "../../data/Star.svg";
-import dasbordIcon from "../../data/dashboards.png";
-
-const menuLinks = [
-  { to: "/dashboard", label: "Dashboard", icon: dasbordIcon },
-  { to: "/expenses", label: "Expenses", icon: starIcon },
-  { to: "/incomes", label: "Incomes", icon: starIcon },
-  { to: "/transfers", label: "Transfers", icon: starIcon },
-  { to: "/budget-plans", label: "Budget Plans", icon: starIcon },
-  { to: "/report", label: "Monthly Report", icon: starIcon },
-];
+import { menuLinks } from "../../config/constants";
 
 const Sidebar = () => (
   <div className={styles.sidebar}>

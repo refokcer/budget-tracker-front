@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./ExpenseModal.module.css";
 
