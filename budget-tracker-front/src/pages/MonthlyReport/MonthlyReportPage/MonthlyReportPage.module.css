@@ -1,4 +1,3 @@
-/* Стили контейнера и селектора месяца взяты из ExpensesPage */
 .container {
   display: flex;
   align-items: center;
@@ -20,8 +19,8 @@
   width: 80%;
   margin: 30px auto 0;
   color: #fff;
-  height: 100%; /* fit viewport like other pages */
-  overflow-y: auto; /* scroll if needed */
+  height: 100%; 
+  overflow-y: auto;
 }
 .period-label {
   text-align: center;
@@ -38,7 +37,6 @@
   text-align: center;
 }
 
-/* центруємо title у всіх картках звіту */
 .pie-card h4,
 .toplist-card h4,
 .top-transaction h4,

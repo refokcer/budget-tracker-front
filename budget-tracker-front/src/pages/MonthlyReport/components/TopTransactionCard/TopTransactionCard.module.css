@@ -1,4 +1,3 @@
-/* ───── картка цілком ───── */
 .toptx-card {
   position: relative;
   background: #2e2e3d;
@@ -11,7 +10,6 @@
   gap: 10px;
 }
 
-/* верхня кольорова смуга */
 .toptx-card .accent-bar {
   position: absolute;
   left: 0;
@@ -22,7 +20,6 @@
   background: linear-gradient(90deg, #ff7043, #ffa726);
 }
 
-/* заголовок картки */
 .toptx-card .card-title {
   text-align: center;
   margin: 0;
@@ -31,7 +28,6 @@
   letter-spacing: 0.4px;
 }
 
-/* назва транзакції */
 .toptx-card .tx-name {
   font-size: 1.3rem;
   font-weight: 600;
@@ -39,7 +35,6 @@
   margin: 4px 0;
 }
 
-/* сума */
 .toptx-card .amount {
   font-size: 1.6rem;
   font-weight: 700;
@@ -48,7 +43,6 @@
   margin: 4px 0 10px 0;
 }
 
-/* сітка деталей */
 .toptx-card .info-grid {
   display: grid;
   grid-template-columns: 110px 1fr;
@@ -67,7 +61,6 @@
   font-size: 1.1rem;
 }
 
-/* опис */
 .toptx-card .description {
   font-size: 0.9rem;
   opacity: 0.9;

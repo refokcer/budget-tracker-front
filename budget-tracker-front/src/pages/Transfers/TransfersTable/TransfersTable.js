@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import API_ENDPOINTS from '../../../config/apiConfig';
 import DataTable from '../../../components/DataTable/DataTable';
 
@@ -38,12 +38,12 @@ const TransfersTable = ({ month, year }) => {
   if (error)   return <p className="error">Помилка: {error}</p>;
 
   const columns = [
-    { key: 'title',       label: 'Назва',       sortable: true },
-    { key: 'amount',      label: 'Сума',        sortable: true, render: (v,r) => `${r.currencySymbol} ${v.toFixed(2)}` },
+    { key: 'title',            label: 'Назва',       sortable: true },
+    { key: 'amount',           label: 'Сума',        sortable: true, render: (v,r) => `${r.currencySymbol} ${v.toFixed(2)}` },
     { key: 'accountFromTitle', label: 'З рахунку',   sortable: true },
     { key: 'accountToTitle',   label: 'На рахунок',  sortable: true },
-    { key: 'date',        label: 'Дата',        sortable: true, render: v => new Date(v).toLocaleDateString() },
-    { key: 'description', label: 'Опис',                       render: v => v || '-' },
+    { key: 'date',             label: 'Дата',        sortable: true, render: v => new Date(v).toLocaleDateString() },
+    { key: 'description',      label: 'Опис',                        render: v => v || '-' },
   ];
 
   return <DataTable columns={columns} rows={rows} onDelete={del} deletingId={busyId} />;

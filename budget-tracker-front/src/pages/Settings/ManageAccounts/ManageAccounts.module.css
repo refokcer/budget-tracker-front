@@ -36,7 +36,6 @@
   padding: 6px;
   border: 1px solid #777;
   border-radius: 4px;
-  /* background:#414154; color:#fff; */
 }
 
 .modal-overlay {
@@ -156,9 +155,8 @@
   height: 70%;
 }
 
-/* обёртка вокруг таблицы: вертикальный скролл, фикс. высота */
 .acc-table-wrapper {
-  max-height: 300px; /* при необходимости скорректируйте */
+  max-height: 300px;
   overflow-y: auto;
   margin-bottom: 12px;
 }

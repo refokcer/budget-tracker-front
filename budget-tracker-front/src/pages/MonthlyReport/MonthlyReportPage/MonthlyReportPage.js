@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import MonthSelector from "../../../components/MonthSelector/MonthSelector";
 
@@ -10,23 +10,20 @@ import TopTransactionCard from "../components/TopTransactionCard/TopTransactionC
 import styles from "./MonthlyReportPage.module.css";
 
 const MonthlyReportPage = () => {
-  /* ───────── вибір місяця ───────── */
-  const [monthDate, setMonthDate] = useState(() => new Date()); // сьогодні
+  const [monthDate, setMonthDate] = useState(() => new Date()); 
   const jumpMonth = (delta) => {
     const copy = new Date(monthDate);
     copy.setMonth(copy.getMonth() + delta);
     setMonthDate(copy);
   };
 
-  const month = monthDate.getMonth() + 1; // 1-based
+  const month = monthDate.getMonth() + 1; 
   const year = monthDate.getFullYear();
 
-  /* ───────── стани даних ───────── */
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [report, setReport] = useState(null);
 
-  /* ───────── fetch on month change ───────── */
   useEffect(() => {
     const load = async () => {
       setLoading(true);
@@ -72,7 +69,6 @@ const MonthlyReportPage = () => {
 
   return (
     <div className={styles.container}>
-      {/* селектор місяця */}
       <MonthSelector label={monthLabel} onJump={jumpMonth} />
 
       <div className={styles.content}>

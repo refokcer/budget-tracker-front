@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import API_ENDPOINTS from "../../../config/apiConfig";
 
@@ -16,7 +16,6 @@ const BudgetPlanPage = () => {
   const [plans, setPlans] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [planItems, setPlanItems] = useState([]);
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -24,50 +23,58 @@ const BudgetPlanPage = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [busyDel, setBusyDel] = useState(false);
 
-  /* 1. список планов */
+  // Загрузка списка планов
   useEffect(() => {
+    let ignore = false;
     (async () => {
       try {
         const r = await fetch(API_ENDPOINTS.budgetPlans);
         if (!r.ok) throw new Error("Ошибка при загрузке планов");
         const data = await r.json();
-        setPlans(data);
-        if (!planIdFromQuery && data.length)
-          setSearchParams({ planId: data[0].id });
+        if (!ignore) {
+          setPlans(data);
+          if (!planIdFromQuery && data.length)
+            setSearchParams({ planId: data[0].id });
+        }
       } catch (e) {
-        setError(e.message);
+        if (!ignore) setError(e.message);
       }
     })();
+    return () => {
+      ignore = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* 2. данные по выбранному плану */
+  // Загрузка выбранного плана
   useEffect(() => {
     if (!planIdFromQuery) {
       setSelectedPlan(null);
+      setPlanItems([]);
       return;
     }
-
+    let ignore = false;
     (async () => {
       try {
         setLoading(true);
         setError(null);
-        const res = await fetch(
-          API_ENDPOINTS.budgetPlanPage(planIdFromQuery)
-        );
+        const res = await fetch(API_ENDPOINTS.budgetPlanPage(planIdFromQuery));
         if (!res.ok) throw new Error("Ошибка при загрузке плана");
         const data = await res.json();
-        setSelectedPlan(data.plan);
-        setPlanItems(data.items);
+        if (!ignore) {
+          setSelectedPlan(data.plan);
+          setPlanItems(data.items);
+        }
       } catch (e) {
-        setError(e.message);
+        if (!ignore) setError(e.message);
       } finally {
-        setLoading(false);
+        if (!ignore) setLoading(false);
       }
     })();
+    return () => {
+      ignore = true;
+    };
   }, [planIdFromQuery]);
-
-  /* данные уже приходят з беку в готовому вигляді */
 
   const deletePlan = async () => {
     if (!selectedPlan) return;
@@ -78,7 +85,6 @@ const BudgetPlanPage = () => {
         method: "DELETE",
       });
       if (!r.ok) throw new Error("Ошибка удаления плана");
-      // убираем из списка и сбрасываем выбор
       setPlans((p) => p.filter((pl) => pl.id !== selectedPlan.id));
       setSelectedPlan(null);
       setPlanItems([]);
@@ -90,12 +96,11 @@ const BudgetPlanPage = () => {
     }
   };
 
-  /* 4. рендер */
   if (loading) return <p className={styles.loading}>Загрузка...</p>;
   if (error) return <p className={styles.error}>{error}</p>;
 
   return (
-    <div className={styles["container"]}>
+    <div className={styles.container}>
       {!plans.length && (
         <>
           <button
@@ -109,11 +114,9 @@ const BudgetPlanPage = () => {
       )}
 
       {selectedPlan && (
-        <div className={styles["content"]}>
+        <div className={styles.content}>
           <PlanDetails plan={selectedPlan} />
           <PlanItemsTable items={planItems} />
-
-          {/* ——— действия над планом ——— */}
           <div className={styles["plan-actions"]}>
             <button
               className={styles["edit-btn"]}
@@ -138,7 +141,6 @@ const BudgetPlanPage = () => {
         </div>
       )}
 
-      {/* модалки */}
       <CreatePlanModal
         isOpen={createOpen}
         onClose={() => setCreateOpen(false)}

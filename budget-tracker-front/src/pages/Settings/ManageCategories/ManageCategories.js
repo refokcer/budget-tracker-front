@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./ManageCategories.module.css";
 
@@ -30,7 +30,6 @@ const ManageCategories = ({ isOpen, onClose }) => {
   const [error, setError] = useState(null);
   const [busyId, setBusyId] = useState(null);
 
-  /* завантаження при відкритті або зміні вкладки */
   useEffect(() => {
     if (!isOpen) return;
 
@@ -54,7 +53,6 @@ const ManageCategories = ({ isOpen, onClose }) => {
     load();
   }, [isOpen, activeTab]);
 
-  /* додавання нової категорії */
   const addCategory = async () => {
     if (!title) return alert("Введіть назву");
     const { type } = tabs.find((t) => t.key === activeTab);
@@ -70,8 +68,8 @@ const ManageCategories = ({ isOpen, onClose }) => {
       });
       if (!res.ok) throw new Error("Помилка створення");
 
-      const newCat = await res.json(); /* отримуємо об'єкт */
-      setCategories((c) => [...c, newCat]); /* додаємо його */
+      const newCat = await res.json();
+      setCategories((c) => [...c, newCat]);
 
       setTitle("");
       setDescr("");
@@ -82,7 +80,6 @@ const ManageCategories = ({ isOpen, onClose }) => {
     }
   };
 
-  /* видалення */
   const del = async (id) => {
     if (!window.confirm("Видалити категорію?")) return;
     try {
