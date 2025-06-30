@@ -23,58 +23,47 @@ const BudgetPlanPage = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [busyDel, setBusyDel] = useState(false);
 
-  // Загрузка списка планов
-  useEffect(() => {
-    let ignore = false;
-    (async () => {
-      try {
-        const r = await fetch(API_ENDPOINTS.budgetPlans);
-        if (!r.ok) throw new Error("Ошибка при загрузке планов");
-        const data = await r.json();
-        if (!ignore) {
-          setPlans(data);
-          if (!planIdFromQuery && data.length)
-            setSearchParams({ planId: data[0].id });
-        }
-      } catch (e) {
-        if (!ignore) setError(e.message);
-      }
-    })();
-    return () => {
-      ignore = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Загрузка выбранного плана
-  useEffect(() => {
-    if (!planIdFromQuery) {
-      setSelectedPlan(null);
-      setPlanItems([]);
-      return;
+useEffect(() => {
+  const controller = new AbortController();
+  (async () => {
+    try {
+      const r = await fetch(API_ENDPOINTS.budgetPlans, { signal: controller.signal });
+      if (!r.ok) throw new Error("Ошибка при загрузке планов");
+      const data = await r.json();
+      setPlans(data);
+      if (!planIdFromQuery && data.length)
+        setSearchParams({ planId: data[0].id });
+    } catch (e) {
+      if (e.name !== "AbortError") setError(e.message);
     }
-    let ignore = false;
-    (async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const res = await fetch(API_ENDPOINTS.budgetPlanPage(planIdFromQuery));
-        if (!res.ok) throw new Error("Ошибка при загрузке плана");
-        const data = await res.json();
-        if (!ignore) {
-          setSelectedPlan(data.plan);
-          setPlanItems(data.items);
-        }
-      } catch (e) {
-        if (!ignore) setError(e.message);
-      } finally {
-        if (!ignore) setLoading(false);
-      }
-    })();
-    return () => {
-      ignore = true;
-    };
-  }, [planIdFromQuery]);
+  })();
+  return () => controller.abort();
+}, [planIdFromQuery, setSearchParams]);
+
+useEffect(() => {
+  if (!planIdFromQuery) {
+    setSelectedPlan(null);
+    setPlanItems([]);
+    return;
+  }
+  const controller = new AbortController();
+  (async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await fetch(API_ENDPOINTS.budgetPlanPage(planIdFromQuery), { signal: controller.signal });
+      if (!res.ok) throw new Error("Ошибка при загрузке плана");
+      const data = await res.json();
+      setSelectedPlan(data.plan);
+      setPlanItems(data.items);
+    } catch (e) {
+      if (e.name !== "AbortError") setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  })();
+  return () => controller.abort();
+}, [planIdFromQuery]);
 
   const deletePlan = async () => {
     if (!selectedPlan) return;
