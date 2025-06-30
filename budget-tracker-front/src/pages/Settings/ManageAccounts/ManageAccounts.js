@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./ManageAccounts.module.css";
 
@@ -11,7 +11,6 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
   const [error, setError] = useState(null);
   const [busyId, setBusyId] = useState(null);
 
-  /* ── завантаження при відкритті ── */
   useEffect(() => {
     if (!isOpen) return;
 
@@ -33,7 +32,6 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
     load();
   }, [isOpen]);
 
-  /* ── додавання ── */
   const addAccount = async () => {
     if (!title || !amount) return alert("Введіть назву та суму");
     try {
@@ -63,7 +61,6 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
     }
   };
 
-  /* ── видалення ── */
   const del = async (id) => {
     if (!window.confirm("Видалити акаунт?")) return;
     try {
@@ -92,7 +89,6 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
 
         {!loading && (
           <>
-            {/* обгортка з прокруткою */}
             <div className={styles["acc-table-wrapper"]}>
               <table className={styles["acc-table"]}>
                 <thead>

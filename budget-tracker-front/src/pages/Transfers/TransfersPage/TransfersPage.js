@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import TransfersTable from "../TransfersTable/TransfersTable";
 import MonthSelector from "../../../components/MonthSelector/MonthSelector";
 import styles from "./TransfersPage.module.css";

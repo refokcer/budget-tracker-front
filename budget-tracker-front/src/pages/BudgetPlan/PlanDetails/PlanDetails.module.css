@@ -1,33 +1,27 @@
-/* Контейнер, где всё в одну строку */
 .plan-details-inline {
   display: flex;
-  gap: 80px; /* Отступы между элементами */
+  gap: 80px;
   align-items: baseline;
-  justify-content: center; /* Элементы растягиваются по ширине */
-  flex-wrap: wrap; /* Если окно станет узким, пойдёт перенос, но аккуратно */
-  margin-bottom: 15px; /* Отступ перед таблицей */
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
 }
 
-/* Название – чуть больше шрифтом, выделим */
 .plan-title {
   font-size: 1.2rem;
   font-weight: 600;
-  color: var(--color-white); /* если фон тёмный */
+  color: var(--color-white);
   margin-right: 10px;
 }
 
 .plan-period,
 .plan-type,
 .plan-description {
-  color: var(
-    --color-gray-lightest
-  ); /* Чтобы смотрелось не так ярко, но читабельно */
+  color: var(--color-gray-lightest);
   font-size: 1rem;
 }
 .plan-period strong,
 .plan-type strong,
 .plan-description strong {
-  color: var(
-    --color-white
-  ); /* Подпись "Период:", "Тип:", "Описание:" чуть ярче */
+  color: var(--color-white);
 }

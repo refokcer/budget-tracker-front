@@ -1,4 +1,3 @@
-/* ───────────── контейнер ───────────── */
 .sc-wrapper {
   display: flex;
   gap: 20px;
@@ -6,9 +5,8 @@
   flex-wrap: wrap;
 }
 
-/* ───────────── картка ───────────── */
 .sc-card {
-  flex: 1 1 220px; /* мінімум 220 px, далі росте */
+  flex: 1 1 220px;
   min-width: 220px;
   background: #2e2e3d;
   border-radius: 10px;
@@ -22,7 +20,6 @@
   overflow: hidden;
 }
 
-/* кольорова акцент-смуга зверху */
 .sc-card::before {
   content: "";
   position: absolute;
@@ -32,7 +29,6 @@
   width: 100%;
 }
 
-/* ───────────── акцентні кольори ───────────── */
 .sc-red::before {
   background: linear-gradient(90deg, #d32f2f, #ef5350);
 }
@@ -43,7 +39,6 @@
   background: linear-gradient(90deg, #1565c0, #42a5f5);
 }
 
-/* ───────────── текст ───────────── */
 .sc-label {
   font-size: 1.1rem;
   color: var(--color-light);

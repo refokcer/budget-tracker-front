@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import ExpensesTable from "../ExpensesTable/ExpensesTable";
 import MonthSelector from "../../../components/MonthSelector/MonthSelector";
 import styles from "./Expenses.module.css";

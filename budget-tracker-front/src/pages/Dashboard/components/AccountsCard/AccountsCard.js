@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "../../DashboardPage/Dashboard.module.css";
 
 const AccountsCard = ({ accounts, totalBalance }) => (

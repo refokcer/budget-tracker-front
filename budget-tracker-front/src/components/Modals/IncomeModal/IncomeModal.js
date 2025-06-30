@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./IncomeModal.module.css";
 
@@ -63,7 +63,6 @@ const IncomeModal = ({ isOpen, onClose }) => {
       categoryId: parseInt(categoryId),
       date: new Date().toISOString(),
       accountTo: parseInt(accountTo),
-      type: 1, // Income
       description,
     };
 

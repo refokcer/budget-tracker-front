@@ -6,9 +6,8 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
   const [title, setTitle] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [type, setType] = useState("0"); // рядок '0' | '1'
+  const [type, setType] = useState("0");
   const [description, setDescription] = useState("");
-
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -17,8 +16,9 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") onClose();
     };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown, { passive: true });
+    return () =>
+      document.removeEventListener("keydown", handleKeyDown, { passive: true });
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
@@ -33,12 +33,13 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
       title,
       startDate,
       endDate,
-      type: Number(type), // надсилаємо 0 або 1
+      type: Number(type),
       description,
     };
 
     try {
       setLoading(true);
+      setError(null);
       const res = await fetch(API_ENDPOINTS.createBudgetPlan, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

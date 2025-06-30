@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./SummaryCards.module.css";
 
 const format = (n) => n.toLocaleString("uk-UA", { minimumFractionDigits: 2 });

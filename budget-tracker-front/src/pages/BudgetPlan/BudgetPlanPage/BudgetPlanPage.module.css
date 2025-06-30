@@ -1,5 +1,3 @@
-/* Стили контейнера и селектора месяца взяты из ExpensesPage */
-
 .content {
   width: 85%;
   display: flex;
@@ -18,7 +16,7 @@
 .plan-actions {
   margin-top: 16px;
   display: flex;
-  justify-content: flex-end; /* кнопки прижаты вправо */
+  justify-content: flex-end;
   gap: 12px;
 }
 
@@ -42,8 +40,6 @@
   cursor: default;
 }
 
-/* кнопки уже существуют: .create-btn и .edit-btn */
-/* при необходимости можно подправить одинаковую высоту */
 .create-btn,
 .edit-btn {
   padding: 6px 14px;
@@ -79,18 +75,14 @@
   opacity: 0.85;
 }
 
-/* Убираем тёмно-серую подложку
-   и делаем обычный текстовый блок */
 .plan-details-wrapper {
-  /* Больше не делаем фон и тени */
   padding: 0;
   margin: 0 auto;
   width: 100%;
 }
 
-/* Инфа о плане */
 .plan-info {
-  color: var(--color-white); /* или другой, если фон остаётся темным */
+  color: var(--color-white);
   margin-bottom: 20px;
 }
 
@@ -108,7 +100,6 @@
 
 /* Таблица */
 .plan-items-table-container {
-  /* если нужно ограничить ширину */
   margin-top: 10px;
 }
 
@@ -116,7 +107,7 @@
   width: 100%;
   border-collapse: collapse;
   color: var(--color-gray-lightest);
-  background-color: var(--table-bg-color); /* Можно оставить тёмную таблицу */
+  background-color: var(--table-bg-color);
   font-size: 0.95rem;
 }
 

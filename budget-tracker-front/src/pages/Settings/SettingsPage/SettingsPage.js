@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styles from "./SettingsPage.module.css";
 
 import ManageAccountsModal from "../ManageAccounts/ManageAccounts";
@@ -11,7 +11,6 @@ const Settings = () => {
   return (
     <div className={styles["settings-container"]}>
       <div className={styles["settings-grid"]}>
-        {/* ───── Manage ───── */}
         <section className={styles["settings-card"]}>
           <h3>Manage</h3>
 
@@ -30,14 +29,12 @@ const Settings = () => {
           </button>
         </section>
 
-        {/* ───── Import ───── */}
         <section className={styles["settings-card"]}>
           <h3>Import</h3>
           <button className={styles["settings-btn"]}>Import statement</button>
         </section>
       </div>
 
-      {/* модалки */}
       <ManageAccountsModal isOpen={accOpen} onClose={() => setAccOpen(false)} />
 
       <ManageCategoriesModal

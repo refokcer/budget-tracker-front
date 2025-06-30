@@ -56,16 +56,20 @@
 }
 
 .modal-content input,
-.modal-content textarea {
+.modal-content textarea,
+.modal-content select {
   padding: 10px;
   margin: 8px 0;
   border: 1px solid var(--color-gray-lightest);
   border-radius: 6px;
   font-size: 0.95rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .modal-content textarea {
-  resize: vertical;
+  resize: none;
+  height: 50px;
 }
 
 .modal-content input[type="date"],
@@ -115,13 +119,11 @@
   width: 600px;
 }
 
-/* — новая обёртка, только вертикальный скролл — */
 .table-scroll {
   max-height: 300px;
   overflow-y: auto;
 }
 
-/* обычная таблица, больше никаких display:block */
 .edit-table {
   width: 100%;
   border-collapse: collapse;
@@ -157,19 +159,4 @@
   padding: 6px 10px;
   margin: 8px 0;
   cursor: pointer;
-}
-
-.modal-content select {
-  padding: 10px;
-  margin: 8px 0;
-  border: 1px solid var(--color-gray-lightest);
-  border-radius: 6px;
-  font-size: 0.95rem;
-  width: 100%;
-}
-
-.modal-content textarea {
-  resize: none; /* Можно растягивать по вертикали */
-  width: 96%;
-  height: 50px; /* Установите нужную высоту */
 }
