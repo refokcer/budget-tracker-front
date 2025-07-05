@@ -30,7 +30,21 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
     setEndDate(plan.endDate.substring(0, 10));
     setType(String(plan.type));
     setDesc(plan.description || "");
-    setRows(items.map((i) => ({ ...i, _status: "old" })));
+    // Ensure that row objects contain direct references to categoryId and
+    // currencyId so the corresponding selects show correct values when the
+    // modal opens. Some API responses may omit these fields or use different
+    // casing, therefore fallback checks are added.
+    setRows(
+      items.map((i) => ({
+        id: i.id,
+        budgetPlanId: i.budgetPlanId,
+        categoryId: i.categoryId ?? i.categoryID ?? i.category?.id ?? "",
+        amount: i.amount,
+        currencyId: i.currencyId ?? i.currencyID ?? i.currency?.id ?? "",
+        description: i.description ?? "",
+        _status: "old",
+      }))
+    );
     (async () => {
       try {
         const res = await fetch(API_ENDPOINTS.editPlanModal);
