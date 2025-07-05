@@ -25,35 +25,58 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
 
   useEffect(() => {
     if (!isOpen || !plan) return;
+    let ignore = false;
     setTitle(plan.title);
     setStartDate(plan.startDate.substring(0, 10));
     setEndDate(plan.endDate.substring(0, 10));
     setType(String(plan.type));
     setDesc(plan.description || "");
-    // Ensure that row objects contain direct references to categoryId and
-    // currencyId so the corresponding selects show correct values when the
-    // modal opens. Some API responses may omit these fields or use different
-    // casing, therefore fallback checks are added.
-    setRows(
-      items.map((i) => ({
-        id: i.id,
-        budgetPlanId: i.budgetPlanId,
-        categoryId: i.categoryId ?? i.categoryID ?? i.category?.id ?? "",
-        amount: i.amount,
-        currencyId: i.currencyId ?? i.currencyID ?? i.currency?.id ?? "",
-        description: i.description ?? "",
-        _status: "old",
-      }))
-    );
+
     (async () => {
       try {
         const res = await fetch(API_ENDPOINTS.editPlanModal);
         if (!res.ok) throw new Error();
         const data = await res.json();
+        if (ignore) return;
         setAllCats(data.categories);
         setAllCur(data.currencies);
-      } catch {}
+        setRows(
+          items.map((i) => ({
+            id: i.id,
+            budgetPlanId: i.budgetPlanId,
+            categoryId:
+              i.categoryId ??
+              data.categories.find((c) => c.title === i.categoryTitle)?.id ??
+              "",
+            amount: i.amount,
+            currencyId:
+              i.currencyId ??
+              data.currencies.find((c) => c.symbol === i.currencySymbol)?.id ??
+              "",
+            description: i.description ?? "",
+            _status: "old",
+          }))
+        );
+      } catch {
+        if (!ignore) {
+          setRows(
+            items.map((i) => ({
+              id: i.id,
+              budgetPlanId: i.budgetPlanId,
+              categoryId: i.categoryId ?? "",
+              amount: i.amount,
+              currencyId: i.currencyId ?? "",
+              description: i.description ?? "",
+              _status: "old",
+            }))
+          );
+        }
+      }
     })();
+
+    return () => {
+      ignore = true;
+    };
   }, [isOpen, plan, items]);
 
   if (!isOpen) return null;
