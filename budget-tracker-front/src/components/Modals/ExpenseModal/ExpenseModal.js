@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./ExpenseModal.module.css";
 
-const ExpenseModal = ({ isOpen, onClose }) => {
+const ExpenseModal = ({ isOpen, onClose, transaction = null, onSaved }) => {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [currencyId, setCurrencyId] = useState("");
@@ -45,6 +45,27 @@ const ExpenseModal = ({ isOpen, onClose }) => {
     return () => document.removeEventListener("keydown", handleEsc);
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    if (transaction) {
+      setTitle(transaction.title || "");
+      setAmount(transaction.amount);
+      setCurrencyId(String(transaction.currencyId || ""));
+      setCategoryId(String(transaction.categoryId || ""));
+      setAccountFrom(String(transaction.accountFrom || transaction.accountFromId || ""));
+      setBudgetPlanId(String(transaction.budgetPlanId || ""));
+      setDescription(transaction.description || "");
+    } else {
+      setTitle("");
+      setAmount("");
+      setCurrencyId("");
+      setCategoryId("");
+      setAccountFrom("");
+      setBudgetPlanId("");
+      setDescription("");
+    }
+  }, [isOpen, transaction]);
+
   const handleSubmit = async () => {
     if (
       !title ||
@@ -65,20 +86,20 @@ const ExpenseModal = ({ isOpen, onClose }) => {
       budgetPlanId: parseInt(budgetPlanId),
       currencyId: parseInt(currencyId),
       categoryId: parseInt(categoryId),
-      date: new Date().toISOString(),
+      date: transaction ? transaction.date : new Date().toISOString(),
       description,
     };
 
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(API_ENDPOINTS.createExpense, {
-        method: "POST",
+      const res = await fetch(transaction ? API_ENDPOINTS.updateTransaction : API_ENDPOINTS.createExpense, {
+        method: transaction ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newTransaction),
+        body: JSON.stringify(transaction ? { ...newTransaction, id: transaction.id } : newTransaction),
       });
       if (!res.ok) throw new Error(`Статус ${res.status}`);
-      alert("Done!");
+      if (onSaved) onSaved({ ...newTransaction, id: transaction ? transaction.id : undefined });
       onClose();
     } catch (e) {
       setError(e.message);
@@ -92,7 +113,7 @@ const ExpenseModal = ({ isOpen, onClose }) => {
   return (
     <div className={styles["modal-overlay"]}>
       <div className={styles["modal-content"]}>
-        <h3>Добавить расход</h3>
+        <h3>{transaction ? 'Редагувати витрату' : 'Добавить расход'}</h3>
         {error && <p className={styles.error}>{error}</p>}
 
         <input
@@ -168,7 +189,13 @@ const ExpenseModal = ({ isOpen, onClose }) => {
           disabled={loading}
           className={styles["submit-button"]}
         >
-          {loading ? "Creating..." : "Створити транзакцію"}
+          {loading
+            ? transaction
+              ? "Saving..."
+              : "Creating..."
+            : transaction
+            ? "Зберегти"
+            : "Створити транзакцію"}
         </button>
         <button onClick={onClose} className={styles["close-button"]}>
           Відмінити

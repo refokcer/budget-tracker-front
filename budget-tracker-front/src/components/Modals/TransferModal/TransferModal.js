@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./TransferModal.module.css";
 
-const TransferModal = ({ isOpen, onClose }) => {
+const TransferModal = ({ isOpen, onClose, transaction = null, onSaved }) => {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [currencyId, setCurrencyId] = useState("");
@@ -47,6 +47,27 @@ const TransferModal = ({ isOpen, onClose }) => {
     };
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    if (transaction) {
+      setTitle(transaction.title || "");
+      setAmount(transaction.amount);
+      setCurrencyId(String(transaction.currencyId || ""));
+      setAccountFrom(String(transaction.accountFrom || transaction.accountFromId || ""));
+      setAccountTo(String(transaction.accountTo || transaction.accountToId || ""));
+      setCategoryId(String(transaction.categoryId || ""));
+      setDescription(transaction.description || "");
+    } else {
+      setTitle("");
+      setAmount("");
+      setCurrencyId("");
+      setAccountFrom("");
+      setAccountTo("");
+      setCategoryId("");
+      setDescription("");
+    }
+  }, [isOpen, transaction]);
+
   const handleSubmit = async () => {
     if (!title || !amount || !currencyId || !accountFrom || !accountTo) {
       alert("Заповніть всі поля!");
@@ -67,7 +88,7 @@ const TransferModal = ({ isOpen, onClose }) => {
       accountTo: parseInt(accountTo),
       currencyId: parseInt(currencyId),
       categoryId: parseInt(categoryId),
-      date: new Date().toISOString(),
+      date: transaction ? transaction.date : new Date().toISOString(),
       description,
     };
 
@@ -77,17 +98,22 @@ const TransferModal = ({ isOpen, onClose }) => {
     }
 
     try {
-      const response = await fetch(API_ENDPOINTS.createTransfer, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newTransfer),
-      });
+      const response = await fetch(
+        transaction ? API_ENDPOINTS.updateTransaction : API_ENDPOINTS.createTransfer,
+        {
+          method: transaction ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(
+            transaction ? { ...newTransfer, id: transaction.id } : newTransfer
+          ),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Помилка при створенні переказу");
       }
 
-      alert("Переказ успішно виконано!");
+      if (onSaved) onSaved({ ...newTransfer, id: transaction ? transaction.id : undefined });
       onClose();
     } catch (error) {
       setError(error.message);
@@ -101,7 +127,7 @@ const TransferModal = ({ isOpen, onClose }) => {
   return (
     <div className={styles["modal-overlay"]}>
       <div className={styles["modal-content"]}>
-        <h3>Створити переказ</h3>
+        <h3>{transaction ? 'Редагувати переказ' : 'Створити переказ'}</h3>
         {error && <p className={styles.error}>{error}</p>}
 
         <input
@@ -176,7 +202,13 @@ const TransferModal = ({ isOpen, onClose }) => {
           disabled={loading}
           className={styles["submit-button"]}
         >
-          {loading ? "Створення..." : "Створити переказ"}
+          {loading
+            ? transaction
+              ? "Saving..."
+              : "Створення..."
+            : transaction
+            ? "Зберегти"
+            : "Створити переказ"}
         </button>
         <button onClick={onClose} className={styles["close-button"]}>
           Скасувати

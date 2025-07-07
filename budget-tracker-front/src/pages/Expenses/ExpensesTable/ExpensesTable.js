@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { API_ENDPOINTS } from '../../../config/apiConfig';
 import DataTable from '../../../components/DataTable/DataTable';
+import ExpenseModal from '../../../components/Modals/ExpenseModal/ExpenseModal';
 
 const ExpensesTable = ({ month, year }) => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [busyId, setBusyId] = useState(null);
+  const [editTx, setEditTx] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,6 +43,13 @@ const ExpensesTable = ({ month, year }) => {
     }
   };
 
+  const handleEdit = (tx) => setEditTx(tx);
+
+  const handleSaved = (tx) => {
+    setTransactions((prev) => prev.map((t) => (t.id === tx.id ? { ...t, ...tx } : t)));
+    setEditTx(null);
+  };
+
   if (loading) return <p>Завантаження...</p>;
   if (error) return <p className="error">Помилка: {error}</p>;
 
@@ -54,12 +63,23 @@ const ExpensesTable = ({ month, year }) => {
   ];
 
   return (
-    <DataTable
-      columns={columns}
-      rows={transactions}
-      onDelete={handleDelete}
-      deletingId={busyId}
-    />
+    <>
+      <DataTable
+        columns={columns}
+        rows={transactions}
+        onDelete={handleDelete}
+        onEdit={handleEdit}
+        deletingId={busyId}
+      />
+      {editTx && (
+        <ExpenseModal
+          isOpen={!!editTx}
+          onClose={() => setEditTx(null)}
+          transaction={editTx}
+          onSaved={handleSaved}
+        />
+      )}
+    </>
   );
 };
 

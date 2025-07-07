@@ -67,3 +67,23 @@
   opacity: 0.6;
   cursor: default;
 }
+
+.edit-btn {
+  background: #1e88e5;
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--border-radius-small);
+  padding: 2px 8px;
+  cursor: pointer;
+  margin-right: 6px;
+  transition: filter 0.2s ease;
+}
+
+.edit-btn:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.edit-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

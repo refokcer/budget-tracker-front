@@ -1,7 +1,14 @@
 import { useState, useMemo } from "react";
 import styles from "./DataTable.module.css";
 
-const DataTable = ({ columns, rows, onDelete, deletingId }) => {
+const DataTable = ({
+  columns,
+  rows,
+  onDelete,
+  deletingId,
+  onEdit,
+  editingId,
+}) => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
   const handleSort = (key) => {
@@ -47,7 +54,7 @@ const DataTable = ({ columns, rows, onDelete, deletingId }) => {
                   : ""}
               </th>
             ))}
-            {onDelete && <th></th>}
+            {(onDelete || onEdit) && <th></th>}
           </tr>
         </thead>
         <tbody>
@@ -58,15 +65,26 @@ const DataTable = ({ columns, rows, onDelete, deletingId }) => {
                   {col.render ? col.render(row[col.key], row) : row[col.key]}
                 </td>
               ))}
-              {onDelete && (
+              {(onEdit || onDelete) && (
                 <td>
-                  <button
-                    className={styles["del-btn"]}
-                    disabled={deletingId === row.id}
-                    onClick={() => onDelete(row.id)}
-                  >
-                    {deletingId === row.id ? "…" : "✕"}
-                  </button>
+                  {onEdit && (
+                    <button
+                      className={styles["edit-btn"]}
+                      disabled={editingId === row.id}
+                      onClick={() => onEdit(row)}
+                    >
+                      {editingId === row.id ? "…" : "✎"}
+                    </button>
+                  )}
+                  {onDelete && (
+                    <button
+                      className={styles["del-btn"]}
+                      disabled={deletingId === row.id}
+                      onClick={() => onDelete(row.id)}
+                    >
+                      {deletingId === row.id ? "…" : "✕"}
+                    </button>
+                  )}
                 </td>
               )}
             </tr>

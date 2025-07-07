@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import API_ENDPOINTS from '../../../config/apiConfig';
 import DataTable from '../../../components/DataTable/DataTable';
+import TransferModal from '../../../components/Modals/TransferModal/TransferModal';
 
 const TransfersTable = ({ month, year }) => {
   const [rows, setRows] = useState([]);
   const [loading, setLoad] = useState(true);
   const [error, setErr] = useState(null);
   const [busyId, setBusy] = useState(null);
+  const [editTx, setEditTx] = useState(null);
 
   useEffect(() => {
     const load = async () => {
@@ -34,6 +36,13 @@ const TransfersTable = ({ month, year }) => {
     finally { setBusy(null); }
   };
 
+  const handleEdit = (tx) => setEditTx(tx);
+
+  const handleSaved = (tx) => {
+    setRows(p => p.map(x => (x.id === tx.id ? { ...x, ...tx } : x)));
+    setEditTx(null);
+  };
+
   if (loading) return <p>Завантаження...</p>;
   if (error)   return <p className="error">Помилка: {error}</p>;
 
@@ -46,7 +55,25 @@ const TransfersTable = ({ month, year }) => {
     { key: 'description',      label: 'Опис',                        render: v => v || '-' },
   ];
 
-  return <DataTable columns={columns} rows={rows} onDelete={del} deletingId={busyId} />;
+  return (
+    <>
+      <DataTable
+        columns={columns}
+        rows={rows}
+        onDelete={del}
+        onEdit={handleEdit}
+        deletingId={busyId}
+      />
+      {editTx && (
+        <TransferModal
+          isOpen={!!editTx}
+          onClose={() => setEditTx(null)}
+          transaction={editTx}
+          onSaved={handleSaved}
+        />
+      )}
+    </>
+  );
 };
 
 export default TransfersTable;

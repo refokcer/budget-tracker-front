@@ -4,6 +4,7 @@ import API_ENDPOINTS from "../../../config/apiConfig";
 
 import PlanDetails from "../PlanDetails/PlanDetails";
 import PlanItemsTable from "../PlanItemsTable/PlanItemsTable";
+import PlanTransactionsTable from "../PlanTransactionsTable";
 import CreatePlanModal from "../CreatePlanModal/CreatePlanModal";
 import EditPlanModal from "../EditPlanModal/EditPlanModal";
 
@@ -106,6 +107,7 @@ useEffect(() => {
         <div className={styles.content}>
           <PlanDetails plan={selectedPlan} />
           <PlanItemsTable items={planItems} />
+          <PlanTransactionsTable planId={selectedPlan.id} />
           <div className={styles["plan-actions"]}>
             <button
               className={styles["edit-btn"]}

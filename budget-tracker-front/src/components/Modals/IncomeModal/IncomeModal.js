@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./IncomeModal.module.css";
 
-const IncomeModal = ({ isOpen, onClose }) => {
+const IncomeModal = ({ isOpen, onClose, transaction = null, onSaved }) => {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [currencyId, setCurrencyId] = useState("");
@@ -47,6 +47,25 @@ const IncomeModal = ({ isOpen, onClose }) => {
     };
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    if (transaction) {
+      setTitle(transaction.title || "");
+      setAmount(transaction.amount);
+      setCurrencyId(String(transaction.currencyId || ""));
+      setCategoryId(String(transaction.categoryId || ""));
+      setAccountTo(String(transaction.accountTo || transaction.accountToId || ""));
+      setDescription(transaction.description || "");
+    } else {
+      setTitle("");
+      setAmount("");
+      setCurrencyId("");
+      setCategoryId("");
+      setAccountTo("");
+      setDescription("");
+    }
+  }, [isOpen, transaction]);
+
   const handleSubmit = async () => {
     if (!title || !amount || !currencyId || !categoryId || !accountTo) {
       alert("Заповніть всі поля!");
@@ -61,23 +80,28 @@ const IncomeModal = ({ isOpen, onClose }) => {
       amount: parseFloat(amount),
       currencyId: parseInt(currencyId),
       categoryId: parseInt(categoryId),
-      date: new Date().toISOString(),
+      date: transaction ? transaction.date : new Date().toISOString(),
       accountTo: parseInt(accountTo),
       description,
     };
 
     try {
-      const response = await fetch(API_ENDPOINTS.createIncome, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newTransaction),
-      });
+      const response = await fetch(
+        transaction ? API_ENDPOINTS.updateTransaction : API_ENDPOINTS.createIncome,
+        {
+          method: transaction ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(
+            transaction ? { ...newTransaction, id: transaction.id } : newTransaction
+          ),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Помилка при створенні транзакції");
       }
 
-      alert("Транзакцію успішно додано!");
+      if (onSaved) onSaved({ ...newTransaction, id: transaction ? transaction.id : undefined });
       onClose();
     } catch (error) {
       setError(error.message);
@@ -91,7 +115,7 @@ const IncomeModal = ({ isOpen, onClose }) => {
   return (
     <div className={styles["modal-overlay"]}>
       <div className={styles["modal-content"]}>
-        <h3>Додати дохід</h3>
+        <h3>{transaction ? 'Редагувати дохід' : 'Додати дохід'}</h3>
         {error && <p className={styles.error}>{error}</p>}
 
         <input
@@ -155,7 +179,13 @@ const IncomeModal = ({ isOpen, onClose }) => {
           disabled={loading}
           className={styles["submit-button"]}
         >
-          {loading ? "Створення..." : "Створити транзакцію"}
+          {loading
+            ? transaction
+              ? "Saving..."
+              : "Створення..."
+            : transaction
+            ? "Зберегти"
+            : "Створити транзакцію"}
         </button>
         <button onClick={onClose} className={styles["close-button"]}>
           Скасувати
