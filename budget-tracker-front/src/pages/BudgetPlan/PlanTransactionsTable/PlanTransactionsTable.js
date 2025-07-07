@@ -51,22 +51,76 @@ const PlanTransactionsTable = ({ planId }) => {
 
   const columns = [
     { key: 'title', label: 'Назва', sortable: true },
-    { key: 'amount', label: 'Сума', sortable: true, render: (v,r) => `${r.currencySymbol} ${Number(v).toFixed(2)}` },
-    { key: 'categoryTitle', label: 'Категорія', sortable: true },
-    { key: 'accountTitle', label: 'Рахунок', sortable: true },
-    { key: 'accountFromTitle', label: 'З рахунку', sortable: true },
-    { key: 'accountToTitle', label: 'На рахунок', sortable: true },
-    { key: 'date', label: 'Дата', sortable: true, render: v => new Date(v).toLocaleDateString() },
-    { key: 'description', label: 'Опис', render: v => v || '-' },
+    {
+      key: 'amount',
+      label: 'Сума',
+      sortable: true,
+      render: (v, r) => `${r.currencySymbol} ${Number(v).toFixed(2)}`,
+    },
+    {
+      key: 'categoryTitle',
+      label: 'Категорія',
+      sortable: true,
+      render: (v) => v || '-',
+    },
+    {
+      key: 'accountTitle',
+      label: 'Рахунок',
+      sortable: true,
+      render: (v, r) => v || r.accountFromTitle || r.accountToTitle || '-',
+    },
+    {
+      key: 'accountFromTitle',
+      label: 'З рахунку',
+      sortable: true,
+      render: (v) => v || '-',
+    },
+    {
+      key: 'accountToTitle',
+      label: 'На рахунок',
+      sortable: true,
+      render: (v) => v || '-',
+    },
+    {
+      key: 'date',
+      label: 'Дата',
+      sortable: true,
+      render: (v) => new Date(v).toLocaleDateString(),
+    },
+    { key: 'description', label: 'Опис', render: (v) => v || '-' },
   ];
 
   const renderModal = () => {
     if (!editTx) return null;
-    if (editTx.accountFromTitle && editTx.accountToTitle)
-      return <TransferModal isOpen={true} onClose={() => setEditTx(null)} transaction={editTx} onSaved={handleSaved} />;
-    if (editTx.accountFromTitle || editTx.accountFrom)
-      return <ExpenseModal isOpen={true} onClose={() => setEditTx(null)} transaction={editTx} onSaved={handleSaved} />;
-    return <IncomeModal isOpen={true} onClose={() => setEditTx(null)} transaction={editTx} onSaved={handleSaved} />;
+    // determine type based on available account fields
+    if (editTx.accountFromTitle && editTx.accountToTitle) {
+      return (
+        <TransferModal
+          isOpen={true}
+          onClose={() => setEditTx(null)}
+          transaction={editTx}
+          onSaved={handleSaved}
+        />
+      );
+    }
+    if (editTx.accountFromTitle) {
+      return (
+        <ExpenseModal
+          isOpen={true}
+          onClose={() => setEditTx(null)}
+          transaction={editTx}
+          onSaved={handleSaved}
+        />
+      );
+    }
+    return (
+      <IncomeModal
+        isOpen={true}
+        onClose={() => setEditTx(null)}
+        transaction={editTx}
+        onSaved={handleSaved}
+      />
+    );
   };
 
   return (
