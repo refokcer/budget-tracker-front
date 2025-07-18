@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import styles from "./DataTable.module.css";
 
-const DataTable = ({ columns, rows, onDelete, deletingId }) => {
+const DataTable = ({ columns, rows, onDelete, deletingId, onEdit }) => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
   const handleSort = (key) => {
@@ -47,6 +47,7 @@ const DataTable = ({ columns, rows, onDelete, deletingId }) => {
                   : ""}
               </th>
             ))}
+            {onEdit && <th></th>}
             {onDelete && <th></th>}
           </tr>
         </thead>
@@ -58,6 +59,16 @@ const DataTable = ({ columns, rows, onDelete, deletingId }) => {
                   {col.render ? col.render(row[col.key], row) : row[col.key]}
                 </td>
               ))}
+              {onEdit && (
+                <td>
+                  <button
+                    className={styles["edit-btn"]}
+                    onClick={() => onEdit(row.id)}
+                  >
+                    ✎
+                  </button>
+                </td>
+              )}
               {onDelete && (
                 <td>
                   <button

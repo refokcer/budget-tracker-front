@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./TransferModal.module.css";
 
-const TransferModal = ({ isOpen, onClose }) => {
+const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [currencyId, setCurrencyId] = useState("");
@@ -10,6 +10,7 @@ const TransferModal = ({ isOpen, onClose }) => {
   const [accountTo, setAccountTo] = useState("");
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
+  const [date, setDate] = useState("");
   const [currencies, setCurrencies] = useState([]);
   const [accounts, setAccounts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -39,13 +40,32 @@ const TransferModal = ({ isOpen, onClose }) => {
     };
 
     fetchData();
+    if (transaction) {
+      setTitle(transaction.title || "");
+      setAmount(transaction.amount ? String(transaction.amount) : "");
+      setCurrencyId(transaction.currencyId ? String(transaction.currencyId) : "");
+      setAccountFrom(transaction.accountFrom ? String(transaction.accountFrom) : "");
+      setAccountTo(transaction.accountTo ? String(transaction.accountTo) : "");
+      setCategoryId(transaction.categoryId ? String(transaction.categoryId) : "");
+      setDescription(transaction.description || "");
+      setDate(transaction.date || "");
+    } else {
+      setTitle("");
+      setAmount("");
+      setCurrencyId("");
+      setAccountFrom("");
+      setAccountTo("");
+      setCategoryId("");
+      setDescription("");
+      setDate("");
+    }
 
     document.addEventListener("keydown", handleKeyDown);
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, transaction]);
 
   const handleSubmit = async () => {
     if (!title || !amount || !currencyId || !accountFrom || !accountTo) {
@@ -60,34 +80,40 @@ const TransferModal = ({ isOpen, onClose }) => {
 
     setLoading(true);
     setError(null);
-    const newTransfer = {
+    const payload = {
       title,
       amount: parseFloat(amount),
       accountFrom: parseInt(accountFrom),
       accountTo: parseInt(accountTo),
       currencyId: parseInt(currencyId),
       categoryId: parseInt(categoryId),
-      date: new Date().toISOString(),
+      date: transaction ? date : new Date().toISOString(),
       description,
+      id: transaction ? transaction.id : undefined,
     };
 
-    if (!newTransfer.categoryId) {
+    if (!payload.categoryId) {
       alert("Оберіть категорію!");
       return;
     }
 
     try {
-      const response = await fetch(API_ENDPOINTS.createTransfer, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newTransfer),
-      });
+      const response = await fetch(
+        transaction ? API_ENDPOINTS.updateTransaction : API_ENDPOINTS.createTransfer,
+        {
+          method: transaction ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Помилка при створенні переказу");
+        throw new Error(
+          transaction ? "Помилка при оновленні" : "Помилка при створенні переказу"
+        );
       }
 
-      alert("Переказ успішно виконано!");
+      onSaved && onSaved();
       onClose();
     } catch (error) {
       setError(error.message);
@@ -101,7 +127,7 @@ const TransferModal = ({ isOpen, onClose }) => {
   return (
     <div className={styles["modal-overlay"]}>
       <div className={styles["modal-content"]}>
-        <h3>Створити переказ</h3>
+        <h3>{transaction ? "Редагувати переказ" : "Створити переказ"}</h3>
         {error && <p className={styles.error}>{error}</p>}
 
         <input
@@ -176,7 +202,13 @@ const TransferModal = ({ isOpen, onClose }) => {
           disabled={loading}
           className={styles["submit-button"]}
         >
-          {loading ? "Створення..." : "Створити переказ"}
+          {loading
+            ? transaction
+              ? "Збереження..."
+              : "Створення..."
+            : transaction
+            ? "Зберегти"
+            : "Створити переказ"}
         </button>
         <button onClick={onClose} className={styles["close-button"]}>
           Скасувати

@@ -1,12 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import API_ENDPOINTS from '../../../config/apiConfig';
 import DataTable from '../../../components/DataTable/DataTable';
+import IncomeModal from '../../../components/Modals/IncomeModal/IncomeModal';
 
 const IncomesTable = ({ month, year }) => {
   const [transactions, setTransactions] = useState([]);
   const [loading,      setLoading]      = useState(true);
   const [error,        setError]        = useState(null);
   const [busyId,       setBusyId]       = useState(null);
+  const [editTx, setEditTx] = useState(null);
+  const [editOpen, setEditOpen] = useState(false);
+  const reloadRef = useRef(() => {});
 
   useEffect(()=>{
     const fetchData = async ()=>{
@@ -21,6 +25,7 @@ const IncomesTable = ({ month, year }) => {
       finally{ setLoading(false); }
     };
     fetchData();
+    reloadRef.current = fetchData;
   },[month,year]);
 
   const rows = transactions;
@@ -36,6 +41,17 @@ const IncomesTable = ({ month, year }) => {
     finally{ setBusyId(null); }
   };
 
+  const handleEdit = async (id) => {
+    try {
+      const res = await fetch(API_ENDPOINTS.transactionById(id));
+      if (!res.ok) throw new Error('Помилка завантаження');
+      setEditTx(await res.json());
+      setEditOpen(true);
+    } catch (e) {
+      alert(e.message);
+    }
+  };
+
   if(loading) return <p>Завантаження...</p>;
   if(error)   return <p className="error">Помилка: {error}</p>;
 
@@ -49,7 +65,21 @@ const IncomesTable = ({ month, year }) => {
   ];
 
   return (
-    <DataTable columns={columns} rows={rows} onDelete={del} deletingId={busyId} />
+    <>
+      <DataTable
+        columns={columns}
+        rows={rows}
+        onDelete={del}
+        deletingId={busyId}
+        onEdit={handleEdit}
+      />
+      <IncomeModal
+        isOpen={editOpen}
+        onClose={() => setEditOpen(false)}
+        transaction={editTx}
+        onSaved={() => reloadRef.current()}
+      />
+    </>
   );
 };
 

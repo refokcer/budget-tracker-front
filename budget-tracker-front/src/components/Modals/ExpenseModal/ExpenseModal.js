@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./ExpenseModal.module.css";
 
-const ExpenseModal = ({ isOpen, onClose }) => {
+const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [currencyId, setCurrencyId] = useState("");
@@ -10,6 +10,7 @@ const ExpenseModal = ({ isOpen, onClose }) => {
   const [accountFrom, setAccountFrom] = useState("");
   const [budgetPlanId, setBudgetPlanId] = useState("");
   const [description, setDescription] = useState("");
+  const [date, setDate] = useState("");
 
   const [currencies, setCurrencies] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -41,9 +42,28 @@ const ExpenseModal = ({ isOpen, onClose }) => {
     };
 
     load();
+    if (transaction) {
+      setTitle(transaction.title || "");
+      setAmount(transaction.amount ? String(transaction.amount) : "");
+      setCurrencyId(transaction.currencyId ? String(transaction.currencyId) : "");
+      setCategoryId(transaction.categoryId ? String(transaction.categoryId) : "");
+      setAccountFrom(transaction.accountFrom ? String(transaction.accountFrom) : "");
+      setBudgetPlanId(transaction.budgetPlanId ? String(transaction.budgetPlanId) : "");
+      setDescription(transaction.description || "");
+      setDate(transaction.date || "");
+    } else {
+      setTitle("");
+      setAmount("");
+      setCurrencyId("");
+      setCategoryId("");
+      setAccountFrom("");
+      setBudgetPlanId("");
+      setDescription("");
+      setDate("");
+    }
     document.addEventListener("keydown", handleEsc);
     return () => document.removeEventListener("keydown", handleEsc);
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, transaction]);
 
   const handleSubmit = async () => {
     if (
@@ -58,27 +78,31 @@ const ExpenseModal = ({ isOpen, onClose }) => {
       return;
     }
 
-    const newTransaction = {
+    const payload = {
       title,
       amount: parseFloat(amount),
       accountFrom: parseInt(accountFrom),
       budgetPlanId: parseInt(budgetPlanId),
       currencyId: parseInt(currencyId),
       categoryId: parseInt(categoryId),
-      date: new Date().toISOString(),
+      date: transaction ? date : new Date().toISOString(),
       description,
+      id: transaction ? transaction.id : undefined,
     };
 
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(API_ENDPOINTS.createExpense, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newTransaction),
-      });
+      const res = await fetch(
+        transaction ? API_ENDPOINTS.updateTransaction : API_ENDPOINTS.createExpense,
+        {
+          method: transaction ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
       if (!res.ok) throw new Error(`Статус ${res.status}`);
-      alert("Done!");
+      onSaved && onSaved();
       onClose();
     } catch (e) {
       setError(e.message);
@@ -92,7 +116,7 @@ const ExpenseModal = ({ isOpen, onClose }) => {
   return (
     <div className={styles["modal-overlay"]}>
       <div className={styles["modal-content"]}>
-        <h3>Добавить расход</h3>
+        <h3>{transaction ? "Редагувати витрату" : "Добавить расход"}</h3>
         {error && <p className={styles.error}>{error}</p>}
 
         <input
@@ -168,7 +192,7 @@ const ExpenseModal = ({ isOpen, onClose }) => {
           disabled={loading}
           className={styles["submit-button"]}
         >
-          {loading ? "Creating..." : "Створити транзакцію"}
+          {loading ? (transaction ? "Збереження..." : "Creating...") : transaction ? "Зберегти" : "Створити транзакцію"}
         </button>
         <button onClick={onClose} className={styles["close-button"]}>
           Відмінити
