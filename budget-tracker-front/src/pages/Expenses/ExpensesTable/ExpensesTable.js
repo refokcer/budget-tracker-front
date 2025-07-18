@@ -1,12 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { API_ENDPOINTS } from '../../../config/apiConfig';
 import DataTable from '../../../components/DataTable/DataTable';
+import ExpenseModal from '../../../components/Modals/ExpenseModal/ExpenseModal';
 
 const ExpensesTable = ({ month, year }) => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [busyId, setBusyId] = useState(null);
+  const [editTx, setEditTx] = useState(null);
+  const [editOpen, setEditOpen] = useState(false);
+  const reloadRef = useRef(() => {});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,6 +29,8 @@ const ExpensesTable = ({ month, year }) => {
       }
     };
     fetchData();
+    // store for later reload
+    reloadRef.current = fetchData;
   }, [month, year]);
 
   const handleDelete = async (id) => {
@@ -41,6 +47,17 @@ const ExpensesTable = ({ month, year }) => {
     }
   };
 
+  const handleEdit = async (id) => {
+    try {
+      const res = await fetch(API_ENDPOINTS.transactionById(id));
+      if (!res.ok) throw new Error('Помилка завантаження');
+      setEditTx(await res.json());
+      setEditOpen(true);
+    } catch (e) {
+      alert(e.message);
+    }
+  };
+
   if (loading) return <p>Завантаження...</p>;
   if (error) return <p className="error">Помилка: {error}</p>;
 
@@ -54,12 +71,21 @@ const ExpensesTable = ({ month, year }) => {
   ];
 
   return (
-    <DataTable
-      columns={columns}
-      rows={transactions}
-      onDelete={handleDelete}
-      deletingId={busyId}
-    />
+    <>
+      <DataTable
+        columns={columns}
+        rows={transactions}
+        onDelete={handleDelete}
+        deletingId={busyId}
+        onEdit={handleEdit}
+      />
+      <ExpenseModal
+        isOpen={editOpen}
+        onClose={() => setEditOpen(false)}
+        transaction={editTx}
+        onSaved={() => reloadRef.current()}
+      />
+    </>
   );
 };
 

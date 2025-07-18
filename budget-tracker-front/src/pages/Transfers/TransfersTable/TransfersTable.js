@@ -1,12 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import API_ENDPOINTS from '../../../config/apiConfig';
 import DataTable from '../../../components/DataTable/DataTable';
+import TransferModal from '../../../components/Modals/TransferModal/TransferModal';
 
 const TransfersTable = ({ month, year }) => {
   const [rows, setRows] = useState([]);
   const [loading, setLoad] = useState(true);
   const [error, setErr] = useState(null);
   const [busyId, setBusy] = useState(null);
+  const [editTx, setEditTx] = useState(null);
+  const [editOpen, setEditOpen] = useState(false);
+  const reloadRef = useRef(() => {});
 
   useEffect(() => {
     const load = async () => {
@@ -21,6 +25,7 @@ const TransfersTable = ({ month, year }) => {
       finally { setLoad(false); }
     };
     load();
+    reloadRef.current = load;
   }, [month, year]);
 
   const del = async (id) => {
@@ -32,6 +37,17 @@ const TransfersTable = ({ month, year }) => {
       setRows(p => p.filter(x => x.id !== id));
     } catch (e) { alert(e.message); }
     finally { setBusy(null); }
+  };
+
+  const handleEdit = async (id) => {
+    try {
+      const r = await fetch(API_ENDPOINTS.transactionById(id));
+      if (!r.ok) throw new Error('Помилка завантаження');
+      setEditTx(await r.json());
+      setEditOpen(true);
+    } catch (e) {
+      alert(e.message);
+    }
   };
 
   if (loading) return <p>Завантаження...</p>;
@@ -46,7 +62,23 @@ const TransfersTable = ({ month, year }) => {
     { key: 'description',      label: 'Опис',                        render: v => v || '-' },
   ];
 
-  return <DataTable columns={columns} rows={rows} onDelete={del} deletingId={busyId} />;
+  return (
+    <>
+      <DataTable
+        columns={columns}
+        rows={rows}
+        onDelete={del}
+        deletingId={busyId}
+        onEdit={handleEdit}
+      />
+      <TransferModal
+        isOpen={editOpen}
+        onClose={() => setEditOpen(false)}
+        transaction={editTx}
+        onSaved={() => reloadRef.current()}
+      />
+    </>
+  );
 };
 
 export default TransfersTable;

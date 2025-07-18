@@ -2,13 +2,14 @@ import { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./IncomeModal.module.css";
 
-const IncomeModal = ({ isOpen, onClose }) => {
+const IncomeModal = ({ isOpen, onClose, transaction, onSaved }) => {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [currencyId, setCurrencyId] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [accountTo, setAccountTo] = useState("");
   const [description, setDescription] = useState("");
+  const [date, setDate] = useState("");
   const [currencies, setCurrencies] = useState([]);
   const [categories, setCategories] = useState([]);
   const [accounts, setAccounts] = useState([]);
@@ -38,6 +39,23 @@ const IncomeModal = ({ isOpen, onClose }) => {
     };
 
     fetchData();
+    if (transaction) {
+      setTitle(transaction.title || "");
+      setAmount(transaction.amount ? String(transaction.amount) : "");
+      setCurrencyId(transaction.currencyId ? String(transaction.currencyId) : "");
+      setCategoryId(transaction.categoryId ? String(transaction.categoryId) : "");
+      setAccountTo(transaction.accountTo ? String(transaction.accountTo) : "");
+      setDescription(transaction.description || "");
+      setDate(transaction.date || "");
+    } else {
+      setTitle("");
+      setAmount("");
+      setCurrencyId("");
+      setCategoryId("");
+      setAccountTo("");
+      setDescription("");
+      setDate("");
+    }
 
     document.addEventListener("keydown", handleKeyDown);
 
@@ -45,7 +63,7 @@ const IncomeModal = ({ isOpen, onClose }) => {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, transaction]);
 
   const handleSubmit = async () => {
     if (!title || !amount || !currencyId || !categoryId || !accountTo) {
@@ -56,28 +74,32 @@ const IncomeModal = ({ isOpen, onClose }) => {
     setLoading(true);
     setError(null);
 
-    const newTransaction = {
+    const payload = {
       title,
       amount: parseFloat(amount),
       currencyId: parseInt(currencyId),
       categoryId: parseInt(categoryId),
-      date: new Date().toISOString(),
+      date: transaction ? date : new Date().toISOString(),
       accountTo: parseInt(accountTo),
       description,
+      id: transaction ? transaction.id : undefined,
     };
 
     try {
-      const response = await fetch(API_ENDPOINTS.createIncome, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newTransaction),
-      });
+      const response = await fetch(
+        transaction ? API_ENDPOINTS.updateTransaction : API_ENDPOINTS.createIncome,
+        {
+          method: transaction ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Помилка при створенні транзакції");
+        throw new Error(transaction ? "Помилка при оновленні" : "Помилка при створенні транзакції");
       }
 
-      alert("Транзакцію успішно додано!");
+      onSaved && onSaved();
       onClose();
     } catch (error) {
       setError(error.message);
@@ -91,7 +113,7 @@ const IncomeModal = ({ isOpen, onClose }) => {
   return (
     <div className={styles["modal-overlay"]}>
       <div className={styles["modal-content"]}>
-        <h3>Додати дохід</h3>
+        <h3>{transaction ? "Редагувати дохід" : "Додати дохід"}</h3>
         {error && <p className={styles.error}>{error}</p>}
 
         <input
@@ -155,7 +177,13 @@ const IncomeModal = ({ isOpen, onClose }) => {
           disabled={loading}
           className={styles["submit-button"]}
         >
-          {loading ? "Створення..." : "Створити транзакцію"}
+          {loading
+            ? transaction
+              ? "Збереження..."
+              : "Створення..."
+            : transaction
+            ? "Зберегти"
+            : "Створити транзакцію"}
         </button>
         <button onClick={onClose} className={styles["close-button"]}>
           Скасувати
