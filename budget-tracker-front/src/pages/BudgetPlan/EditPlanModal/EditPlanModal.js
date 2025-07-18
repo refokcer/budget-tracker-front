@@ -31,7 +31,6 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
     setEndDate(plan.endDate.substring(0, 10));
     setType(String(plan.type));
     setDesc(plan.description || "");
-
     (async () => {
       try {
         const res = await fetch(API_ENDPOINTS.editPlanModal);
