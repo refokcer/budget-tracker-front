@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import API_ENDPOINTS from '../../../config/apiConfig';
 import DataTable from '../../../components/DataTable/DataTable';
-import TransferModal from '../../../components/Modals/TransferModal/TransferModal';
+import EditTransferModal from '../../../components/Modals/EditTransferModal/EditTransferModal';
 
 const TransfersTable = ({ month, year }) => {
   const [rows, setRows] = useState([]);
@@ -71,7 +71,7 @@ const TransfersTable = ({ month, year }) => {
         deletingId={busyId}
         onEdit={handleEdit}
       />
-      <TransferModal
+      <EditTransferModal
         isOpen={editOpen}
         onClose={() => setEditOpen(false)}
         transaction={editTx}

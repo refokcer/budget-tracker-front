@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { API_ENDPOINTS } from '../../../config/apiConfig';
 import DataTable from '../../../components/DataTable/DataTable';
-import ExpenseModal from '../../../components/Modals/ExpenseModal/ExpenseModal';
+import EditExpenseModal from '../../../components/Modals/EditExpenseModal/EditExpenseModal';
 
 const ExpensesTable = ({ month, year }) => {
   const [transactions, setTransactions] = useState([]);
@@ -79,7 +79,7 @@ const ExpensesTable = ({ month, year }) => {
         deletingId={busyId}
         onEdit={handleEdit}
       />
-      <ExpenseModal
+      <EditExpenseModal
         isOpen={editOpen}
         onClose={() => setEditOpen(false)}
         transaction={editTx}
