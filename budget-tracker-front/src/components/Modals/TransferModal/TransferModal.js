@@ -29,7 +29,7 @@ const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
     const fetchData = async () => {
       try {
         const res = await fetch(API_ENDPOINTS.transferModal);
-        if (!res.ok) throw new Error("Не вдалося завантажити дані");
+        if (!res.ok) throw new Error("Failed to load data");
         const data = await res.json();
         setCategories(data.categories);
         setCurrencies(data.currencies);
@@ -69,12 +69,12 @@ const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
 
   const handleSubmit = async () => {
     if (!title || !amount || !currencyId || !accountFrom || !accountTo) {
-      alert("Заповніть всі поля!");
+      alert("Please fill in all fields!");
       return;
     }
 
     if (accountFrom === accountTo) {
-      alert("Рахунок відправника та одержувача не можуть співпадати!");
+      alert("Sender and receiver accounts can't be the same!");
       return;
     }
 
@@ -93,7 +93,7 @@ const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
     };
 
     if (!payload.categoryId) {
-      alert("Оберіть категорію!");
+      alert("Please select a category!");
       return;
     }
 
@@ -109,7 +109,7 @@ const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
 
       if (!response.ok) {
         throw new Error(
-          transaction ? "Помилка при оновленні" : "Помилка при створенні переказу"
+          transaction ? "Update failed" : "Creation failed"
         );
       }
 

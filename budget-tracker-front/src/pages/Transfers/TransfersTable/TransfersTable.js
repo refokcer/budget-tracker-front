@@ -18,7 +18,7 @@ const TransfersTable = ({ month, year }) => {
       try {
         const url = API_ENDPOINTS.transfersTable(month, year);
         const res = await fetch(url);
-        if (!res.ok) throw new Error('Помилка завантаження');
+        if (!res.ok) throw new Error('Failed to load data');
         const data = await res.json();
         setRows(data.transactions);
       } catch (e) { setErr(e.message); }
@@ -29,11 +29,11 @@ const TransfersTable = ({ month, year }) => {
   }, [month, year]);
 
   const del = async (id) => {
-    if (!window.confirm('Видалити?')) return;
+    if (!window.confirm('Delete?')) return;
     try {
       setBusy(id);
       const r = await fetch(API_ENDPOINTS.deleteTransaction(id), { method: 'DELETE' });
-      if (!r.ok) throw new Error('Помилка видалення');
+      if (!r.ok) throw new Error('Delete error');
       setRows(p => p.filter(x => x.id !== id));
     } catch (e) { alert(e.message); }
     finally { setBusy(null); }
@@ -42,7 +42,7 @@ const TransfersTable = ({ month, year }) => {
   const handleEdit = async (id) => {
     try {
       const r = await fetch(API_ENDPOINTS.transactionById(id));
-      if (!r.ok) throw new Error('Помилка завантаження');
+      if (!r.ok) throw new Error('Failed to load data');
       setEditTx(await r.json());
       setEditOpen(true);
     } catch (e) {
@@ -50,8 +50,8 @@ const TransfersTable = ({ month, year }) => {
     }
   };
 
-  if (loading) return <p>Завантаження...</p>;
-  if (error)   return <p className="error">Помилка: {error}</p>;
+  if (loading) return <p>Loading...</p>;
+  if (error)   return <p className="error">Error: {error}</p>;
 
   const columns = [
     { key: 'title',            label: 'Назва',       sortable: true },

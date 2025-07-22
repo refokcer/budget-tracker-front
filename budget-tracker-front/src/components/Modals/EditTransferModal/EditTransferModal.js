@@ -29,7 +29,7 @@ const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
     const fetchData = async () => {
       try {
         const res = await fetch(API_ENDPOINTS.transferModal);
-        if (!res.ok) throw new Error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u0437\u0430\u0432\u0430\u043D\u0442\u0430\u0436\u0435\u043D\u043D\u044F \u0434\u0430\u043D\u0438\u0445");
+        if (!res.ok) throw new Error("Failed to load data");
         const data = await res.json();
         setCategories(data.categories);
         setCurrencies(data.currencies);
@@ -59,12 +59,12 @@ const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
 
   const handleSubmit = async () => {
     if (!title || !amount || !currencyId || !accountFrom || !accountTo) {
-      alert("\u0417\u0430\u043F\u043E\u0432\u043D\u0456\u0442\u044C \u0432\u0441\u0456 \u043F\u043E\u043B\u044F!");
+      alert("Please fill in all fields!");
       return;
     }
 
     if (accountFrom === accountTo) {
-      alert("\u0420\u0430\u0445\u0443\u043D\u043E\u043A \u0432\u0456\u0434\u043F\u0440\u0430\u0432\u043D\u0438\u043A\u0430 \u0442\u0430 \u043E\u0434\u0435\u0440\u0436\u0443\u0432\u0430\u0447\u0430 \u043D\u0435 \u043C\u043E\u0436\u0443\u0442\u044C \u0441\u043F\u0456\u0432\u043F\u0430\u0434\u0430\u0442\u0438!");
+      alert("Sender and receiver accounts can't match!");
       return;
     }
 
@@ -84,7 +84,7 @@ const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
     };
 
     if (!payload.categoryId) {
-      alert("\u041E\u0431\u0435\u0440\u0456\u0442\u044C \u043A\u0430\u0442\u0435\u0433\u043E\u0440\u0456\u044E!");
+      alert("Please select a category!");
       return;
     }
 
@@ -96,7 +96,7 @@ const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
       });
 
       if (!response.ok) {
-        throw new Error("\u041F\u043E\u043C\u0438\u043B\u043A\u0430 \u043F\u0440\u0438 \u043E\u043D\u043E\u0432\u043B\u0435\u043D\u043D\u0456");
+        throw new Error("Update failed");
       }
 
       onSaved && onSaved();
@@ -113,25 +113,25 @@ const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
   return (
     <div className={styles["modal-overlay"]}>
       <div className={styles["modal-content"]}>
-        <h3>\u0420\u0435\u0434\u0430\u0433\u0443\u0432\u0430\u0442\u0438 \u043F\u0435\u0440\u0435\u043A\u0430\u0437</h3>
+        <h3>Edit Transfer</h3>
         {error && <p className={styles.error}>{error}</p>}
 
         <input
           type="text"
-          placeholder="\u041D\u0430\u0437\u0432\u0430"
+          placeholder="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
 
         <input
           type="number"
-          placeholder="\u0421\u0443\u043C\u0430"
+          placeholder="Amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
         />
 
         <select value={currencyId} onChange={(e) => setCurrencyId(e.target.value)}>
-          <option value="">\u041E\u0431\u0435\u0440\u0456\u0442\u044C \u0432\u0430\u043B\u044E\u0442\u0443</option>
+          <option value="">Select currency</option>
           {currencies.map((c) => (
             <option key={c.id} value={c.id}>
               {c.symbol} ({c.name})
@@ -140,7 +140,7 @@ const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
         </select>
 
         <select value={accountFrom} onChange={(e) => setAccountFrom(e.target.value)}>
-          <option value="">\u041E\u0431\u0435\u0440\u0456\u0442\u044C \u0440\u0430\u0445\u0443\u043D\u043E\u043A \u0432\u0456\u0434\u043F\u0440\u0430\u0432\u043D\u0438\u043A\u0430</option>
+          <option value="">Select sender account</option>
           {accounts.map((acc) => (
             <option key={acc.id} value={acc.id}>
               {acc.title}
@@ -149,7 +149,7 @@ const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
         </select>
 
         <select value={accountTo} onChange={(e) => setAccountTo(e.target.value)}>
-          <option value="">\u041E\u0431\u0435\u0440\u0456\u0442\u044C \u0440\u0430\u0445\u0443\u043D\u043E\u043A \u043E\u0434\u0435\u0440\u0436\u0443\u0432\u0430\u0447\u0430</option>
+          <option value="">Select receiver account</option>
           {accounts.map((acc) => (
             <option key={acc.id} value={acc.id}>
               {acc.title}
@@ -157,7 +157,7 @@ const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
           ))}
         </select>
         <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
-          <option value="">\u041E\u0431\u0435\u0440\u0456\u0442\u044C \u043A\u0430\u0442\u0435\u0433\u043E\u0440\u0456\u044E</option>
+          <option value="">Select category</option>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.id}>
               {cat.title}
@@ -166,16 +166,16 @@ const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
         </select>
 
         <textarea
-          placeholder="\u041E\u043F\u0438\u0441"
+          placeholder="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
 
         <button onClick={handleSubmit} disabled={loading} className={styles["submit-button"]}>
-          {loading ? "\u0417\u0431\u0435\u0440\u0435\u0436\u0435\u043D\u043D\u044F..." : "\u0417\u0431\u0435\u0440\u0435\u0433\u0442\u0438"}
+          {loading ? "Saving..." : "Save"}
         </button>
         <button onClick={onClose} className={styles["close-button"]}>
-          \u0421\u043A\u0430\u0441\u0443\u0432\u0430\u0442\u0438
+          Cancel
         </button>
       </div>
     </div>

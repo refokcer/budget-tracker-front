@@ -19,7 +19,7 @@ const ExpensesTable = ({ month, year }) => {
       try {
         const url = API_ENDPOINTS.expensesTable(month, year);
         const res = await fetch(url);
-        if (!res.ok) throw new Error('Не вдалося завантажити дані');
+        if (!res.ok) throw new Error('Failed to load data');
         const data = await res.json();
         setTransactions(data.transactions);
       } catch (e) {
@@ -34,11 +34,11 @@ const ExpensesTable = ({ month, year }) => {
   }, [month, year]);
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Видалити транзакцію?')) return;
+    if (!window.confirm('Delete transaction?')) return;
     try {
       setBusyId(id);
       const res = await fetch(API_ENDPOINTS.deleteTransaction(id), { method: 'DELETE' });
-      if (!res.ok) throw new Error('Помилка видалення');
+      if (!res.ok) throw new Error('Delete error');
       setTransactions(prev => prev.filter(t => t.id !== id));
     } catch (e) {
       alert(e.message);
@@ -50,7 +50,7 @@ const ExpensesTable = ({ month, year }) => {
   const handleEdit = async (id) => {
     try {
       const res = await fetch(API_ENDPOINTS.transactionById(id));
-      if (!res.ok) throw new Error('Помилка завантаження');
+      if (!res.ok) throw new Error('Failed to load data');
       setEditTx(await res.json());
       setEditOpen(true);
     } catch (e) {
@@ -58,8 +58,8 @@ const ExpensesTable = ({ month, year }) => {
     }
   };
 
-  if (loading) return <p>Завантаження...</p>;
-  if (error) return <p className="error">Помилка: {error}</p>;
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p className="error">Error: {error}</p>;
 
   const columns = [
     { key: 'title',         label: 'Назва',            sortable: true },

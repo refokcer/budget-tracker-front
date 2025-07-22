@@ -28,7 +28,7 @@ const IncomeModal = ({ isOpen, onClose, transaction, onSaved }) => {
     const fetchData = async () => {
       try {
         const res = await fetch(API_ENDPOINTS.incomeModal);
-        if (!res.ok) throw new Error("Не вдалося завантажити дані");
+        if (!res.ok) throw new Error("Failed to load data");
         const data = await res.json();
         setCurrencies(data.currencies);
         setCategories(data.categories);
@@ -67,7 +67,7 @@ const IncomeModal = ({ isOpen, onClose, transaction, onSaved }) => {
 
   const handleSubmit = async () => {
     if (!title || !amount || !currencyId || !categoryId || !accountTo) {
-      alert("Заповніть всі поля!");
+      alert("Please fill in all fields!");
       return;
     }
 

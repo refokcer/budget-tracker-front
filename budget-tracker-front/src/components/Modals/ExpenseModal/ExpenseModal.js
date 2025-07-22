@@ -30,7 +30,7 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
     const load = async () => {
       try {
         const res = await fetch(API_ENDPOINTS.expenseModal);
-        if (!res.ok) throw new Error("Не вдалося завантажити дані");
+        if (!res.ok) throw new Error("Failed to load data");
         const data = await res.json();
         setCurrencies(data.currencies);
         setCategories(data.categories);
@@ -74,7 +74,7 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
       !accountFrom ||
       !budgetPlanId
     ) {
-      alert("Заповніть усі поля!");
+      alert("Please fill in all fields!");
       return;
     }
 
