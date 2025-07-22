@@ -19,7 +19,7 @@ const ExpensesTable = ({ month, year }) => {
       try {
         const url = API_ENDPOINTS.expensesTable(month, year);
         const res = await fetch(url);
-        if (!res.ok) throw new Error('Помилка завантаження даних');
+        if (!res.ok) throw new Error('Не вдалося завантажити дані');
         const data = await res.json();
         setTransactions(data.transactions);
       } catch (e) {

@@ -30,7 +30,7 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
     const load = async () => {
       try {
         const res = await fetch(API_ENDPOINTS.expenseModal);
-        if (!res.ok) throw new Error("Помилка завантаження даних");
+        if (!res.ok) throw new Error("Не вдалося завантажити дані");
         const data = await res.json();
         setCurrencies(data.currencies);
         setCategories(data.categories);

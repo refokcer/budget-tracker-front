@@ -32,7 +32,7 @@ const MonthlyReportPage = () => {
         const res = await fetch(
           `${API_ENDPOINTS.monthlyReport(month, year)}`
         );
-        if (!res.ok) throw new Error("Помилка завантаження даних");
+        if (!res.ok) throw new Error("Не вдалося завантажити дані");
         const data = await res.json();
         setReport(data);
       } catch (e) {

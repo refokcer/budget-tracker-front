@@ -29,7 +29,7 @@ const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
     const fetchData = async () => {
       try {
         const res = await fetch(API_ENDPOINTS.transferModal);
-        if (!res.ok) throw new Error("Помилка завантаження даних");
+        if (!res.ok) throw new Error("Не вдалося завантажити дані");
         const data = await res.json();
         setCategories(data.categories);
         setCurrencies(data.currencies);
