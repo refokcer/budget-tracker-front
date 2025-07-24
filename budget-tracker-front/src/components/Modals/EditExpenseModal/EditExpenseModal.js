@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
-import styles from "./ExpenseModal.module.css";
+import styles from "./EditExpenseModal.module.css";
 
-const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
+const EditExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [currencyId, setCurrencyId] = useState("");
@@ -51,15 +51,6 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
       setBudgetPlanId(transaction.budgetPlanId ? String(transaction.budgetPlanId) : "");
       setDescription(transaction.description || "");
       setDate(transaction.date || "");
-    } else {
-      setTitle("");
-      setAmount("");
-      setCurrencyId("");
-      setCategoryId("");
-      setAccountFrom("");
-      setBudgetPlanId("");
-      setDescription("");
-      setDate("");
     }
     document.addEventListener("keydown", handleEsc);
     return () => document.removeEventListener("keydown", handleEsc);
@@ -79,29 +70,27 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
     }
 
     const payload = {
+      id: transaction.id,
       title,
       amount: parseFloat(amount),
       accountFrom: parseInt(accountFrom),
       budgetPlanId: parseInt(budgetPlanId),
       currencyId: parseInt(currencyId),
       categoryId: parseInt(categoryId),
-      date: transaction ? date : new Date().toISOString(),
+      date,
       description,
-      id: transaction ? transaction.id : undefined,
+      type: 2,
     };
 
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(
-        transaction ? API_ENDPOINTS.updateTransaction : API_ENDPOINTS.createExpense,
-        {
-          method: transaction ? "PUT" : "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
-      );
-      if (!res.ok) throw new Error(`Статус ${res.status}`);
+      const res = await fetch(API_ENDPOINTS.updateTransaction, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(`Status ${res.status}`);
       onSaved && onSaved();
       onClose();
     } catch (e) {
@@ -116,28 +105,25 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
   return (
     <div className={styles["modal-overlay"]}>
       <div className={styles["modal-content"]}>
-        <h3>{transaction ? "Редагувати витрату" : "Добавить расход"}</h3>
+        <h3>Edit Expense</h3>
         {error && <p className={styles.error}>{error}</p>}
 
         <input
           type="text"
-          placeholder="Назва"
+          placeholder="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
 
         <input
           type="number"
-          placeholder="Сума"
+          placeholder="Amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
         />
 
-        <select
-          value={currencyId}
-          onChange={(e) => setCurrencyId(e.target.value)}
-        >
-          <option value="">Оберіть валюту</option>
+        <select value={currencyId} onChange={(e) => setCurrencyId(e.target.value)}>
+          <option value="">Select currency</option>
           {currencies.map((c) => (
             <option key={c.id} value={c.id}>
               {c.symbol} ({c.name})
@@ -145,11 +131,8 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
           ))}
         </select>
 
-        <select
-          value={categoryId}
-          onChange={(e) => setCategoryId(e.target.value)}
-        >
-          <option value="">Оберіть категорію</option>
+        <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
+          <option value="">Select category</option>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.id}>
               {cat.title}
@@ -157,11 +140,8 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
           ))}
         </select>
 
-        <select
-          value={accountFrom}
-          onChange={(e) => setAccountFrom(e.target.value)}
-        >
-          <option value="">Оберіть рахунок</option>
+        <select value={accountFrom} onChange={(e) => setAccountFrom(e.target.value)}>
+          <option value="">Select account</option>
           {accounts.map((acc) => (
             <option key={acc.id} value={acc.id}>
               {acc.title}
@@ -169,11 +149,8 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
           ))}
         </select>
 
-        <select
-          value={budgetPlanId}
-          onChange={(e) => setBudgetPlanId(e.target.value)}
-        >
-          <option value="">Оберіть план</option>
+        <select value={budgetPlanId} onChange={(e) => setBudgetPlanId(e.target.value)}>
+          <option value="">Select plan</option>
           {plans.map((pl) => (
             <option key={pl.id} value={pl.id}>
               {pl.title}
@@ -182,24 +159,20 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
         </select>
 
         <textarea
-          placeholder="Опис"
+          placeholder="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
 
-        <button
-          onClick={handleSubmit}
-          disabled={loading}
-          className={styles["submit-button"]}
-        >
-          {loading ? (transaction ? "Збереження..." : "Creating...") : transaction ? "Зберегти" : "Створити транзакцію"}
+        <button onClick={handleSubmit} disabled={loading} className={styles["submit-button"]}>
+          {loading ? "Saving..." : "Save"}
         </button>
         <button onClick={onClose} className={styles["close-button"]}>
-          Відмінити
+          Cancel
         </button>
       </div>
     </div>
   );
 };
 
-export default ExpenseModal;
+export default EditExpenseModal;

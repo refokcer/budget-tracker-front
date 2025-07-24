@@ -32,7 +32,7 @@ const MonthlyReportPage = () => {
         const res = await fetch(
           `${API_ENDPOINTS.monthlyReport(month, year)}`
         );
-        if (!res.ok) throw new Error("Помилка завантаження даних");
+        if (!res.ok) throw new Error("Failed to load data");
         const data = await res.json();
         setReport(data);
       } catch (e) {
@@ -44,7 +44,7 @@ const MonthlyReportPage = () => {
     load();
   }, [month, year]);
 
-  if (!report) return <p className={styles.loading}>Завантаження…</p>;
+  if (!report) return <p className={styles.loading}>Loading…</p>;
 
   const {
     totalExp,
@@ -59,7 +59,7 @@ const MonthlyReportPage = () => {
     topExpenseTransaction,
   } = report;
 
-  if (loading) return <p className={styles.loading}>Завантаження…</p>;
+  if (loading) return <p className={styles.loading}>Loading…</p>;
   if (error) return <p className={styles.error}>{error}</p>;
 
   const monthLabel = monthDate.toLocaleString("default", {
