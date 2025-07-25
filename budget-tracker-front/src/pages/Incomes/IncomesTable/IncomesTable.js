@@ -3,7 +3,7 @@ import API_ENDPOINTS from '../../../config/apiConfig';
 import DataTable from '../../../components/DataTable/DataTable';
 import EditIncomeModal from '../../../components/Modals/EditIncomeModal/EditIncomeModal';
 
-const IncomesTable = ({ month, year }) => {
+const IncomesTable = ({ start, end }) => {
   const [transactions, setTransactions] = useState([]);
   const [loading,      setLoading]      = useState(true);
   const [error,        setError]        = useState(null);
@@ -16,7 +16,7 @@ const IncomesTable = ({ month, year }) => {
     const fetchData = async ()=>{
       setLoading(true); setError(null);
       try{
-        const url = API_ENDPOINTS.incomesTable(month, year);
+        const url = API_ENDPOINTS.transactionsByFilter({ start, end, type: 1 });
         const res = await fetch(url);
         if(!res.ok) throw new Error('Failed to load data');
         const data = await res.json();
@@ -26,7 +26,7 @@ const IncomesTable = ({ month, year }) => {
     };
     fetchData();
     reloadRef.current = fetchData;
-  },[month,year]);
+  },[start, end]);
 
   const rows = transactions;
 

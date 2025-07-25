@@ -3,7 +3,7 @@ import API_ENDPOINTS from '../../../config/apiConfig';
 import DataTable from '../../../components/DataTable/DataTable';
 import EditTransferModal from '../../../components/Modals/EditTransferModal/EditTransferModal';
 
-const TransfersTable = ({ month, year }) => {
+const TransfersTable = ({ start, end }) => {
   const [rows, setRows] = useState([]);
   const [loading, setLoad] = useState(true);
   const [error, setErr] = useState(null);
@@ -16,7 +16,7 @@ const TransfersTable = ({ month, year }) => {
     const load = async () => {
       setLoad(true); setErr(null);
       try {
-        const url = API_ENDPOINTS.transfersTable(month, year);
+        const url = API_ENDPOINTS.transactionsByFilter({ start, end, type: 0 });
         const res = await fetch(url);
         if (!res.ok) throw new Error('Failed to load data');
         const data = await res.json();
@@ -26,7 +26,7 @@ const TransfersTable = ({ month, year }) => {
     };
     load();
     reloadRef.current = load;
-  }, [month, year]);
+  }, [start, end]);
 
   const del = async (id) => {
     if (!window.confirm('Delete?')) return;
