@@ -3,7 +3,7 @@ import { API_ENDPOINTS } from '../../../config/apiConfig';
 import DataTable from '../../../components/DataTable/DataTable';
 import EditExpenseModal from '../../../components/Modals/EditExpenseModal/EditExpenseModal';
 
-const ExpensesTable = ({ month, year }) => {
+const ExpensesTable = ({ start, end }) => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -17,7 +17,7 @@ const ExpensesTable = ({ month, year }) => {
       setLoading(true);
       setError(null);
       try {
-        const url = API_ENDPOINTS.expensesTable(month, year);
+        const url = API_ENDPOINTS.transactionsByFilter({ start, end, type: 2 });
         const res = await fetch(url);
         if (!res.ok) throw new Error('Failed to load data');
         const data = await res.json();
@@ -31,7 +31,7 @@ const ExpensesTable = ({ month, year }) => {
     fetchData();
     // store for later reload
     reloadRef.current = fetchData;
-  }, [month, year]);
+  }, [start, end]);
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete transaction?')) return;

@@ -17,14 +17,18 @@ const Expenses = () => {
     year: "numeric",
   });
 
-  const month = monthDate.getMonth() + 1;
+  // вычисляем границы месяца на основе monthDate
   const year = monthDate.getFullYear();
+  const month = monthDate.getMonth();
+
+  const start = new Date(Date.UTC(year, month, 1));
+  const end = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59, 999));
 
   return (
     <div className={styles.container}>
       <MonthSelector label={monthLabel} onJump={changeMonth} />
       <div className={styles.content}>
-        <ExpensesTable month={month} year={year} />
+        <ExpensesTable start={start} end={end} />
       </div>
     </div>
   );

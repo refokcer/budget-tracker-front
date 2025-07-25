@@ -72,6 +72,30 @@ export const API_ENDPOINTS = {
     `${API_BASE_URL}/Transactions/byEvent/${eventId}`,
   transactionsByPlan: (planId) =>
     `${API_BASE_URL}/Transactions/byPlan/${planId}`,
+  transactionsByFilter: (params = {}) => {
+    const query = Object.entries(params)
+      .filter(([_, v]) => v !== undefined && v !== null)
+      .map(
+        ([k, v]) =>
+          `${encodeURIComponent(k)}=${encodeURIComponent(
+            v instanceof Date ? v.toISOString() : v
+          )}`
+      )
+      .join("&");
+    return `${API_BASE_URL}/Transactions/filter${query ? "?" + query : ""}`;
+  },
+
+// Пример использования:
+// Получить транзакции с типом 2:
+// import API_ENDPOINTS from 'src/config/apiConfig';
+// const url = API_ENDPOINTS.transactionsByFilter({ type: 2 });
+
+// Пример использования с датами от начала текущего месяца до конца:
+// import API_ENDPOINTS from 'src/config/apiConfig';
+// const now = new Date();
+// const start = new Date(now.getFullYear(), now.getMonth(), 1);
+// const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+// const url = API_ENDPOINTS.transactionsByFilter({ start, end });
 
   // Transfers
   transfers: `${API_BASE_URL}/Transfers`,
