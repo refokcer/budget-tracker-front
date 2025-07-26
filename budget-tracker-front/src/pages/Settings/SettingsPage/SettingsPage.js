@@ -3,10 +3,12 @@ import styles from "./SettingsPage.module.css";
 
 import ManageAccountsModal from "../ManageAccounts/ManageAccounts";
 import ManageCategoriesModal from "../ManageCategories/ManageCategories";
+import ImportStatementModal from "../../../components/Modals/ImportStatementModal/ImportStatementModal";
 
 const Settings = () => {
   const [accOpen, setAccOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
+  const [stmtOpen, setStmtOpen] = useState(false);
 
   return (
     <div className={styles["settings-container"]}>
@@ -31,7 +33,12 @@ const Settings = () => {
 
         <section className={styles["settings-card"]}>
           <h3>Import</h3>
-          <button className={styles["settings-btn"]}>Import statement</button>
+          <button
+            className={styles["settings-btn"]}
+            onClick={() => setStmtOpen(true)}
+          >
+            Import statement
+          </button>
         </section>
       </div>
 
@@ -40,6 +47,10 @@ const Settings = () => {
       <ManageCategoriesModal
         isOpen={catOpen}
         onClose={() => setCatOpen(false)}
+      />
+      <ImportStatementModal
+        isOpen={stmtOpen}
+        onClose={() => setStmtOpen(false)}
       />
     </div>
   );
