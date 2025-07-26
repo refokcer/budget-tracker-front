@@ -43,6 +43,14 @@ function firstNonDigitWord(str) {
   return tokens.find((t) => /\D/.test(t)) || "";
 }
 
+function typeFromWord(word) {
+  const w = word.toLowerCase();
+  if (w === "переказ") return 0;
+  if (w === "зарахування") return 1;
+  if (w === "комісія" || w === "оплата") return 2;
+  return 2;
+}
+
 function parseAll(lines) {
   const res = [];
   let i = 0;
@@ -149,20 +157,24 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
       }
 
       const lines = normalize(fullText);
-      const ops = parseAll(lines).map((op, idx) => ({
-        id: idx + 1,
-        title: op.name,
-        amount: op.amount,
-        currency: op.currency,
-        currencyId:
-          options.currencies.find((c) => c.symbol === op.currency)?.id || "",
-        categoryId: "",
-        budgetPlanId: "",
-        accountId: "",
-        date: op.date.split(".").reverse().join("-"),
-        description: op.name,
-        type: 2,
-      }));
+      const ops = parseAll(lines).map((op, idx) => {
+        const t = typeFromWord(op.type);
+        const cleanTitle = op.name.replace(new RegExp(`^${op.type}\s*`, "i"), "").trim();
+        return {
+          id: idx + 1,
+          title: cleanTitle,
+          amount: op.amount,
+          currency: op.currency,
+          currencyId:
+            options.currencies.find((c) => c.symbol === op.currency)?.id || "",
+          categoryId: "",
+          budgetPlanId: "",
+          accountId: "",
+          date: op.date.split(".").reverse().join("-"),
+          description: op.name,
+          type: t,
+        };
+      });
       setOperations(ops);
     } catch (e) {
       setError(e.message);
