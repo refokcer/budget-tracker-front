@@ -22,7 +22,8 @@ const normalize = (text) =>
     .filter(Boolean);
 
 const dateRe = /^\d{2}\.\d{2}\.\d{4}$/;
-const currencyRe = /^(UAH|USD|EUR|PLN|GBP|CHF|CAD|AUD|JPY|CZK|HUF|NOK|SEK|DKK|RON|TRY|RUB)$/i;
+const currencyRe =
+  /^(UAH|USD|EUR|PLN|GBP|CHF|CAD|AUD|JPY|CZK|HUF|NOK|SEK|DKK|RON|TRY|RUB)$/i;
 const amountRe = /^-?\d{1,3}(?:[\s\u202f]\d{3})*(?:[.,]\d+)?$/;
 
 const cleanAmount = (s) =>
@@ -58,7 +59,10 @@ function parseAll(lines) {
 
     const descParts = [];
     while (k < lines.length && !currencyRe.test(lines[k])) {
-      if (/^(Операції|Поточні блокування|Виписка|Дані по рахунку)/i.test(lines[k])) break;
+      if (
+        /^(Операції|Поточні блокування|Виписка|Дані по рахунку)/i.test(lines[k])
+      )
+        break;
       descParts.push(lines[k]);
       k++;
     }
@@ -91,7 +95,12 @@ function parseAll(lines) {
 const ImportStatementModal = ({ isOpen, onClose }) => {
   const [bank, setBank] = useState("");
   const [operations, setOperations] = useState([]);
-  const [options, setOptions] = useState({ categories: [], accounts: [], plans: [], currencies: [] });
+  const [options, setOptions] = useState({
+    categories: [],
+    accounts: [],
+    plans: [],
+    currencies: [],
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -123,7 +132,9 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
     setLoading(true);
     setError(null);
     try {
-      const pdfjsLib = await import("https://cdn.jsdelivr.net/npm/pdfjs-dist@4.5.136/build/pdf.mjs");
+      const pdfjsLib = await import(
+        "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.5.136/build/pdf.mjs"
+      );
       pdfjsLib.GlobalWorkerOptions.workerSrc =
         "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.5.136/build/pdf.worker.mjs";
 
@@ -161,7 +172,9 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
   };
 
   const updateRow = (id, field, value) => {
-    setOperations((ops) => ops.map((o) => (o.id === id ? { ...o, [field]: value } : o)));
+    setOperations((ops) =>
+      ops.map((o) => (o.id === id ? { ...o, [field]: value } : o)),
+    );
   };
 
   const removeRow = (id) => {
@@ -207,21 +220,31 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
       key: "title",
       label: "Название",
       render: (v, r) => (
-        <input value={r.title} onChange={(e) => updateRow(r.id, "title", e.target.value)} />
+        <input
+          value={r.title}
+          onChange={(e) => updateRow(r.id, "title", e.target.value)}
+        />
       ),
     },
     {
       key: "amount",
       label: "Сумма",
       render: (v, r) => (
-        <input type="number" value={r.amount} onChange={(e) => updateRow(r.id, "amount", e.target.value)} />
+        <input
+          type="number"
+          value={r.amount}
+          onChange={(e) => updateRow(r.id, "amount", e.target.value)}
+        />
       ),
     },
     {
       key: "currencyId",
       label: "Валюта",
       render: (v, r) => (
-        <select value={r.currencyId} onChange={(e) => updateRow(r.id, "currencyId", e.target.value)}>
+        <select
+          value={r.currencyId}
+          onChange={(e) => updateRow(r.id, "currencyId", e.target.value)}
+        >
           <option value="">-</option>
           {options.currencies.map((c) => (
             <option key={c.id} value={c.id}>
@@ -235,7 +258,10 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
       key: "categoryId",
       label: "Категория",
       render: (v, r) => (
-        <select value={r.categoryId} onChange={(e) => updateRow(r.id, "categoryId", e.target.value)}>
+        <select
+          value={r.categoryId}
+          onChange={(e) => updateRow(r.id, "categoryId", e.target.value)}
+        >
           <option value="">-</option>
           {options.categories.map((c) => (
             <option key={c.id} value={c.id}>
@@ -249,7 +275,10 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
       key: "budgetPlanId",
       label: "План",
       render: (v, r) => (
-        <select value={r.budgetPlanId} onChange={(e) => updateRow(r.id, "budgetPlanId", e.target.value)}>
+        <select
+          value={r.budgetPlanId}
+          onChange={(e) => updateRow(r.id, "budgetPlanId", e.target.value)}
+        >
           <option value="">-</option>
           {options.plans.map((p) => (
             <option key={p.id} value={p.id}>
@@ -263,7 +292,10 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
       key: "accountId",
       label: "Рахунок",
       render: (v, r) => (
-        <select value={r.accountId} onChange={(e) => updateRow(r.id, "accountId", e.target.value)}>
+        <select
+          value={r.accountId}
+          onChange={(e) => updateRow(r.id, "accountId", e.target.value)}
+        >
           <option value="">-</option>
           {options.accounts.map((a) => (
             <option key={a.id} value={a.id}>
@@ -277,21 +309,31 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
       key: "date",
       label: "Дата",
       render: (v, r) => (
-        <input type="date" value={r.date} onChange={(e) => updateRow(r.id, "date", e.target.value)} />
+        <input
+          type="date"
+          value={r.date}
+          onChange={(e) => updateRow(r.id, "date", e.target.value)}
+        />
       ),
     },
     {
       key: "description",
       label: "Описание",
       render: (v, r) => (
-        <input value={r.description} onChange={(e) => updateRow(r.id, "description", e.target.value)} />
+        <input
+          value={r.description}
+          onChange={(e) => updateRow(r.id, "description", e.target.value)}
+        />
       ),
     },
     {
       key: "type",
       label: "Тип",
       render: (v, r) => (
-        <select value={r.type} onChange={(e) => updateRow(r.id, "type", e.target.value)}>
+        <select
+          value={r.type}
+          onChange={(e) => updateRow(r.id, "type", e.target.value)}
+        >
           {typeOptions.map((t) => (
             <option key={t.value} value={t.value}>
               {t.label}
@@ -308,7 +350,11 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
         <h3>Import statement</h3>
         {error && <p className={styles.error}>{error}</p>}
         <label>Банк:</label>
-        <select value={bank} onChange={(e) => setBank(e.target.value)}>
+        <select
+          value={bank}
+          onChange={(e) => setBank(e.target.value)}
+          className={styles["bank-select"]}
+        >
           <option value="">Выберите банк</option>
           {banks.map((b) => (
             <option key={b.value} value={b.value}>
@@ -317,14 +363,23 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
           ))}
         </select>
         {bank === "ukrsib" && (
-          <input type="file" accept="application/pdf" onChange={handleFile} />
+          <input
+            type="file"
+            accept="application/pdf"
+            onChange={handleFile}
+            className={styles["file-input"]}
+          />
         )}
         {loading && <p>Loading...</p>}
         {operations.length > 0 && (
           <DataTable columns={columns} rows={operations} onDelete={removeRow} />
         )}
         {operations.length > 0 && (
-          <button onClick={handleSave} disabled={loading} className={styles["submit-button"]}>
+          <button
+            onClick={handleSave}
+            disabled={loading}
+            className={styles["submit-button"]}
+          >
             Сохранить
           </button>
         )}
