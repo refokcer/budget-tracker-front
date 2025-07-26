@@ -6,6 +6,7 @@ import PlanDetails from "../PlanDetails/PlanDetails";
 import PlanItemsTable from "../PlanItemsTable/PlanItemsTable";
 import CreatePlanModal from "../CreatePlanModal/CreatePlanModal";
 import EditPlanModal from "../EditPlanModal/EditPlanModal";
+import BudgetPlanExpensesTable from "../BudgetPlanExpensesTable/BudgetPlanExpensesTable";
 
 import styles from "./BudgetPlanPage.module.css";
 
@@ -129,6 +130,8 @@ useEffect(() => {
           </div>
         </div>
       )}
+
+      <BudgetPlanExpensesTable budgetPlanId={selectedPlan ? selectedPlan.id : planIdFromQuery} />
 
       <CreatePlanModal
         isOpen={createOpen}
