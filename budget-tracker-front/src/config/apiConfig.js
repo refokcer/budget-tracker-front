@@ -85,6 +85,8 @@ export const API_ENDPOINTS = {
     return `${API_BASE_URL}/Transactions/filter${query ? "?" + query : ""}`;
   },
 
+  prepareTransactions: `${API_BASE_URL}/Transactions/prepare`,
+
 // Пример использования:
 // Получить транзакции с типом 2:
 // import API_ENDPOINTS from 'src/config/apiConfig';

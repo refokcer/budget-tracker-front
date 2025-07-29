@@ -1,6 +1,6 @@
 .modal-content.large {
-  width: 90%;
-  max-width: 800px;
+  width: 80%;
+  /* max-width: 800px; */
 }
 
 .modal-overlay {

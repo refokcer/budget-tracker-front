@@ -59,7 +59,7 @@ const IncomesTable = ({ start, end }) => {
     { key: 'title',         label: 'Назва',            sortable: true },
     { key: 'amount',        label: 'Сума',             sortable: true, render: (v,r) => `${r.currencySymbol} ${v.toFixed(2)}` },
     { key: 'categoryTitle', label: 'Категорія',        sortable: true },
-    { key: 'accountTitle',  label: 'Рахунок',          sortable: true },
+    { key: 'accountToTitle',label: 'Рахунок',          sortable: true },
     { key: 'date',          label: 'Дата',             sortable: true, render: v => new Date(v).toLocaleDateString() },
     { key: 'description',   label: 'Опис',             render: v => v || '-' },
   ];
