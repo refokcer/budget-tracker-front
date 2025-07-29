@@ -94,6 +94,7 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
         budgetPlanId: op.budgetPlanId ? String(op.budgetPlanId) : "",
         accountFrom: op.accountFrom ? String(op.accountFrom) : "",
         accountTo: op.accountTo ? String(op.accountTo) : "",
+        authCode: op.authCode || "",
         date: op.date ? op.date.split("T")[0] : "",
         description: op.description || "",
         type: String(op.type),
@@ -131,6 +132,7 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
           budgetPlanId: op.budgetPlanId ? parseInt(op.budgetPlanId) : undefined,
           description: op.description,
           date: new Date(op.date).toISOString(),
+          authCode: op.authCode || "",
         };
         let url = API_ENDPOINTS.createExpense;
         if (String(op.type) === "1") url = API_ENDPOINTS.createIncome;
@@ -276,6 +278,16 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
         <input
           value={r.description}
           onChange={(e) => updateRow(r.id, "description", e.target.value)}
+        />
+      ),
+    },
+    {
+      key: "authCode",
+      label: "Auth Code",
+      render: (v, r) => (
+        <input
+          value={r.authCode}
+          onChange={(e) => updateRow(r.id, "authCode", e.target.value)}
         />
       ),
     },
