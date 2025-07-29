@@ -77,6 +77,11 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
       }
 
       const { operations: parsed } = parseAll(fullText);
+      if (parsed.length === 0) {
+        setError("Выписка не содержит транзакций");
+        return;
+      }
+
       const prepareModels = parsed.map(mapToPrepare);
       const res = await fetch(API_ENDPOINTS.prepareTransactions, {
         method: "POST",
@@ -85,6 +90,11 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
       });
       if (!res.ok) throw new Error("Failed to prepare data");
       const prepared = await res.json();
+      if (!prepared.length) {
+        setError("Все транзакции уже актуальные");
+        setOperations([]);
+        return;
+      }
       const ops = prepared.map((op, idx) => ({
         id: idx + 1,
         title: op.title,
@@ -278,16 +288,6 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
         <input
           value={r.description}
           onChange={(e) => updateRow(r.id, "description", e.target.value)}
-        />
-      ),
-    },
-    {
-      key: "authCode",
-      label: "Auth Code",
-      render: (v, r) => (
-        <input
-          value={r.authCode}
-          onChange={(e) => updateRow(r.id, "authCode", e.target.value)}
         />
       ),
     },
