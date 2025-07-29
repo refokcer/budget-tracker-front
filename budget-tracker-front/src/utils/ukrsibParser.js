@@ -1,11 +1,3 @@
-// ukrsibParser.js
-// result:
-// {
-//   sections: { debtInfo:{raw,status}, cardAcc:[], cardPay:[], holds:[] },
-//   operations: [ ... ]
-// }
-// операция: { date, currency, amount, name, authCode, card, address, type, title }
-
 const dateRe   = /^\d{2}\.\d{2}\.\d{4}$/;
 const currRe   = /^(UAH|USD|EUR|PLN|GBP|CHF|CAD|AUD|JPY|CZK|HUF|NOK|SEK|DKK|RON|TRY|RUB)$/i;
 const amountRe = /^-?\d{1,3}(?:[\s\u202F]\d{3})*(?:[.,]\d+)?$/;
@@ -20,7 +12,7 @@ const SEC_RE = {
 // ---------- helpers ----------
 const cleanAmount = s => parseFloat(String(s).replace(/\s/g, "").replace(",", "."));
 
-const extractAuthCode = str => (str.match(/^\s*(\d{3,})\b/) || [,""])[1];
+const extractAuthCode = str => (str.match(/^\s*(\d{3,})\b/) || ["", ""])[1];
 
 const stripLeadingDigits = str =>
   str.replace(/^\s*\d{3,}\b\s*/, "")
@@ -127,7 +119,7 @@ function extractType(text) {
     return { text: out, type, nameOverride };
   }
 
-  const reIB = /^(Оплата\s+послуг\s+за\s+допомогою\s+інтернет\s*\-\s*банкінгу)/i;
+  const reIB = /^(Оплата\s+послуг\s+за\s+допомогою\s+інтернет\s*-\s*банкінгу)/i;
   const mIB  = out.match(reIB);
   if (mIB) {
     type = mIB[1];
@@ -135,7 +127,7 @@ function extractType(text) {
     return { text: out, type, nameOverride };
   }
 
-  const reGig = /^(Виплата\s+винагороди\s+за\s+гіг\s*\-\s*контрактом\s+від\s+ТОВ\s+".+?")/i;
+  const reGig = /^(Виплата\s+винагороди\s+за\s+гіг\s*-\s*контрактом\s+від\s+ТОВ\s+".+?")/i;
   const mGig  = out.match(reGig);
   if (mGig) {
     type = mGig[1];
