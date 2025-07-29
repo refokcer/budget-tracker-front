@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import DataTable from "../../DataTable/DataTable";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./ImportStatementModal.module.css";
-import { parseUkrsib, mapUkrsibOperation } from "../../../utils/ukrsibParser";
+import { parseAll, mapToPrepare } from "../../../utils/pdfParser";
 
 const banks = [
   { value: "privat", label: "PrivatBank" },
@@ -50,6 +50,11 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
   }, [isOpen]);
 
   const handleFile = async (e) => {
+    if (bank !== "ukrsib") {
+      setError("Импорт поддерживается только для UkrsibBank");
+      return;
+    }
+
     const file = e.target.files[0];
     if (!file) return;
     setLoading(true);
@@ -71,22 +76,28 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
         fullText += txt.items.map((i) => i.str).join("\n") + "\n";
       }
 
-      const { operations: parsed } = parseUkrsib(fullText);
-      const ops = parsed.map((op, idx) => {
-        const model = mapUkrsibOperation(op, options.currencies);
-        return {
-          id: idx + 1,
-          title: model.title,
-          amount: model.amount,
-          currencyId: model.currency,
-          categoryId: "",
-          budgetPlanId: "",
-          accountId: "",
-          date: op.date.split(".").reverse().join("-"),
-          description: op.name,
-          type: model.type,
-        };
+      const { operations: parsed } = parseAll(fullText);
+      const prepareModels = parsed.map(mapToPrepare);
+      const res = await fetch(API_ENDPOINTS.prepareTransactions, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(prepareModels),
       });
+      if (!res.ok) throw new Error("Failed to prepare data");
+      const prepared = await res.json();
+      const ops = prepared.map((op, idx) => ({
+        id: idx + 1,
+        title: op.title,
+        amount: op.amount,
+        currencyId: op.currencyId ? String(op.currencyId) : "",
+        categoryId: op.categoryId ? String(op.categoryId) : "",
+        budgetPlanId: op.budgetPlanId ? String(op.budgetPlanId) : "",
+        accountFrom: op.accountFrom ? String(op.accountFrom) : "",
+        accountTo: op.accountTo ? String(op.accountTo) : "",
+        date: op.date ? op.date.split("T")[0] : "",
+        description: op.description || "",
+        type: String(op.type),
+      }));
       setOperations(ops);
     } catch (e) {
       setError(e.message);
@@ -115,7 +126,8 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
           amount: parseFloat(op.amount),
           currencyId: parseInt(op.currencyId),
           categoryId: op.categoryId ? parseInt(op.categoryId) : undefined,
-          accountFrom: parseInt(op.accountId || 0),
+          accountFrom: op.accountFrom ? parseInt(op.accountFrom) : undefined,
+          accountTo: op.accountTo ? parseInt(op.accountTo) : undefined,
           budgetPlanId: op.budgetPlanId ? parseInt(op.budgetPlanId) : undefined,
           description: op.description,
           date: new Date(op.date).toISOString(),
@@ -213,12 +225,29 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
       ),
     },
     {
-      key: "accountId",
-      label: "Рахунок",
+      key: "accountFrom",
+      label: "С рахунку",
       render: (v, r) => (
         <select
-          value={r.accountId}
-          onChange={(e) => updateRow(r.id, "accountId", e.target.value)}
+          value={r.accountFrom}
+          onChange={(e) => updateRow(r.id, "accountFrom", e.target.value)}
+        >
+          <option value="">-</option>
+          {options.accounts.map((a) => (
+            <option key={a.id} value={a.id}>
+              {a.title}
+            </option>
+          ))}
+        </select>
+      ),
+    },
+    {
+      key: "accountTo",
+      label: "На рахунок",
+      render: (v, r) => (
+        <select
+          value={r.accountTo}
+          onChange={(e) => updateRow(r.id, "accountTo", e.target.value)}
         >
           <option value="">-</option>
           {options.accounts.map((a) => (
