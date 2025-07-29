@@ -9,7 +9,7 @@ const EditIncomeModal = ({ isOpen, onClose, transaction, onSaved }) => {
   const [categoryId, setCategoryId] = useState("");
   const [accountTo, setAccountTo] = useState("");
   const [description, setDescription] = useState("");
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [currencies, setCurrencies] = useState([]);
   const [categories, setCategories] = useState([]);
   const [accounts, setAccounts] = useState([]);
@@ -46,7 +46,9 @@ const EditIncomeModal = ({ isOpen, onClose, transaction, onSaved }) => {
       setCategoryId(transaction.categoryId ? String(transaction.categoryId) : "");
       setAccountTo(transaction.accountTo ? String(transaction.accountTo) : "");
       setDescription(transaction.description || "");
-      setDate(transaction.date || "");
+      setDate(
+        transaction.date ? transaction.date.split("T")[0] : new Date().toISOString().split("T")[0]
+      );
     }
 
     document.addEventListener("keydown", handleKeyDown);
@@ -56,7 +58,7 @@ const EditIncomeModal = ({ isOpen, onClose, transaction, onSaved }) => {
   }, [isOpen, onClose, transaction]);
 
   const handleSubmit = async () => {
-    if (!title || !amount || !currencyId || !categoryId || !accountTo) {
+    if (!title || !amount || !currencyId || !categoryId || !accountTo || !date) {
       alert("Please fill in all fields!");
       return;
     }
@@ -70,7 +72,7 @@ const EditIncomeModal = ({ isOpen, onClose, transaction, onSaved }) => {
       amount: parseFloat(amount),
       currencyId: parseInt(currencyId),
       categoryId: parseInt(categoryId),
-      date,
+      date: new Date(date).toISOString(),
       accountTo: parseInt(accountTo),
       description,
       type: 1,
@@ -144,6 +146,12 @@ const EditIncomeModal = ({ isOpen, onClose, transaction, onSaved }) => {
             </option>
           ))}
         </select>
+
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
 
         <textarea
           placeholder="Description"

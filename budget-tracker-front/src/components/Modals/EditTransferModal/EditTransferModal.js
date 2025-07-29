@@ -10,7 +10,7 @@ const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
   const [accountTo, setAccountTo] = useState("");
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [currencies, setCurrencies] = useState([]);
   const [accounts, setAccounts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -48,7 +48,9 @@ const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
       setAccountTo(transaction.accountTo ? String(transaction.accountTo) : "");
       setCategoryId(transaction.categoryId ? String(transaction.categoryId) : "");
       setDescription(transaction.description || "");
-      setDate(transaction.date || "");
+      setDate(
+        transaction.date ? transaction.date.split("T")[0] : new Date().toISOString().split("T")[0]
+      );
     }
 
     document.addEventListener("keydown", handleKeyDown);
@@ -58,7 +60,7 @@ const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
   }, [isOpen, onClose, transaction]);
 
   const handleSubmit = async () => {
-    if (!title || !amount || !currencyId || !accountFrom || !accountTo) {
+    if (!title || !amount || !currencyId || !accountFrom || !accountTo || !date) {
       alert("Please fill in all fields!");
       return;
     }
@@ -78,7 +80,7 @@ const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
       accountTo: parseInt(accountTo),
       currencyId: parseInt(currencyId),
       categoryId: parseInt(categoryId),
-      date,
+      date: new Date(date).toISOString(),
       description,
       type: 0,
     };
@@ -164,6 +166,12 @@ const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
             </option>
           ))}
         </select>
+
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
 
         <textarea
           placeholder="Description"

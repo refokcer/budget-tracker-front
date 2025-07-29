@@ -10,7 +10,7 @@ const EditExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
   const [accountFrom, setAccountFrom] = useState("");
   const [budgetPlanId, setBudgetPlanId] = useState("");
   const [description, setDescription] = useState("");
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
 
   const [currencies, setCurrencies] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -50,7 +50,9 @@ const EditExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
       setAccountFrom(transaction.accountFrom ? String(transaction.accountFrom) : "");
       setBudgetPlanId(transaction.budgetPlanId ? String(transaction.budgetPlanId) : "");
       setDescription(transaction.description || "");
-      setDate(transaction.date || "");
+      setDate(
+        transaction.date ? transaction.date.split("T")[0] : new Date().toISOString().split("T")[0]
+      );
     }
     document.addEventListener("keydown", handleEsc);
     return () => document.removeEventListener("keydown", handleEsc);
@@ -63,7 +65,8 @@ const EditExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
       !currencyId ||
       !categoryId ||
       !accountFrom ||
-      !budgetPlanId
+      !budgetPlanId ||
+      !date
     ) {
       alert("Please fill in all fields!");
       return;
@@ -77,7 +80,7 @@ const EditExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
       budgetPlanId: parseInt(budgetPlanId),
       currencyId: parseInt(currencyId),
       categoryId: parseInt(categoryId),
-      date,
+      date: new Date(date).toISOString(),
       description,
       type: 2,
     };
@@ -157,6 +160,12 @@ const EditExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
             </option>
           ))}
         </select>
+
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
 
         <textarea
           placeholder="Description"
