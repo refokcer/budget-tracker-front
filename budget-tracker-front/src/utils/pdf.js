@@ -1,4 +1,4 @@
-// @js-nocheck
+// @ts-nocheck
 
 /**
  * @licstart The following is the entire license notice for the
