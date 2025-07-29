@@ -1,4 +1,4 @@
-// pdfParser.js
+// ukrsibParser.js
 // result:
 // {
 //   sections: { debtInfo:{raw,status}, cardAcc:[], cardPay:[], holds:[] },

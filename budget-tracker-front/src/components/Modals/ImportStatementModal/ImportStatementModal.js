@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import DataTable from "../../DataTable/DataTable";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./ImportStatementModal.module.css";
-import { parseAll, mapToPrepare } from "../../../utils/pdfParser";
+import { parseAll, mapToPrepare } from "../../../utils/ukrsibParser";
 
 const banks = [
   { value: "privat", label: "PrivatBank" },
