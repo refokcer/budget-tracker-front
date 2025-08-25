@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
 import API_ENDPOINTS, { BASE_URL } from "../config/apiConfig";
 
 const AuthContext = createContext(null);
@@ -11,9 +11,14 @@ export const AuthProvider = ({ children }) => {
     () => localStorage.getItem("refreshToken")
   );
 
+  const accessTokenRef = useRef(accessToken);
+  const refreshTokenRef = useRef(refreshToken);
+
   const saveTokens = ({ accessToken, refreshToken }) => {
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
+    accessTokenRef.current = accessToken;
+    refreshTokenRef.current = refreshToken;
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
   };
@@ -53,19 +58,23 @@ export const AuthProvider = ({ children }) => {
     }
     setAccessToken(null);
     setRefreshToken(null);
+    accessTokenRef.current = null;
+    refreshTokenRef.current = null;
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
   };
 
   const refresh = async () => {
-    if (!accessToken || !refreshToken) return null;
+    const currentAccess = accessTokenRef.current;
+    const currentRefresh = refreshTokenRef.current;
+    if (!currentAccess || !currentRefresh) return null;
     const res = await fetch(API_ENDPOINTS.auth.refresh, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${currentAccess}`,
       },
-      body: JSON.stringify({ accessToken, refreshToken }),
+      body: JSON.stringify({ accessToken: currentAccess, refreshToken: currentRefresh }),
     });
     if (res.ok) {
       const data = await res.json();
@@ -76,25 +85,25 @@ export const AuthProvider = ({ children }) => {
       return null;
     }
   };
-
   useEffect(() => {
     const originalFetch = window.fetch;
     window.fetch = async (input, init = {}) => {
       const url = typeof input === "string" ? input : input.url;
       const options = { ...init };
-      if (accessToken && url.startsWith(BASE_URL)) {
+      const token = accessTokenRef.current;
+      if (token && url.startsWith(BASE_URL)) {
         options.headers = {
           ...(options.headers || {}),
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${token}`,
         };
       }
       let response = await originalFetch(input, options);
-      if (response.status === 401 && refreshToken) {
+      if (response.status === 401 && refreshTokenRef.current) {
         const newToken = await refresh();
         if (newToken) {
           options.headers = {
             ...(options.headers || {}),
-            Authorization: `Bearer ${newToken}`,
+            Authorization: `Bearer ${accessTokenRef.current}`,
           };
           response = await originalFetch(input, options);
         }
@@ -104,7 +113,7 @@ export const AuthProvider = ({ children }) => {
     return () => {
       window.fetch = originalFetch;
     };
-  }, [accessToken, refreshToken]);
+  }, []);
 
   const value = {
     accessToken,
