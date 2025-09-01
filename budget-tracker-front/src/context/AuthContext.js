@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [refreshToken, setRefreshToken] = useState(
     () => localStorage.getItem("refreshToken")
   );
+  const [initializing, setInitializing] = useState(true);
 
   const accessTokenRef = useRef(accessToken);
   const refreshTokenRef = useRef(refreshToken);
@@ -85,6 +86,36 @@ export const AuthProvider = ({ children }) => {
       return null;
     }
   };
+  const parseJwt = (token) => {
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const json =
+        typeof window === "undefined"
+          ? Buffer.from(base64, "base64").toString("utf-8")
+          : window.atob(base64);
+      return JSON.parse(json);
+    } catch {
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const verify = async () => {
+      const token = accessTokenRef.current;
+      if (token) {
+        const payload = parseJwt(token);
+        if (!payload || payload.exp * 1000 <= Date.now()) {
+          const newToken = await refresh();
+          if (!newToken) {
+            await logout();
+          }
+        }
+      }
+      setInitializing(false);
+    };
+    verify();
+  }, []);
   useEffect(() => {
     const originalFetch = window.fetch;
     window.fetch = async (input, init = {}) => {
@@ -119,6 +150,7 @@ export const AuthProvider = ({ children }) => {
     accessToken,
     refreshToken,
     isAuthenticated: !!accessToken,
+    initializing,
     register,
     login,
     logout,

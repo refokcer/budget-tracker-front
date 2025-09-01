@@ -5,7 +5,8 @@ import styles from "../../App.module.css";
 import { useAuth } from "../../context/AuthContext";
 
 const ProtectedLayout = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, initializing } = useAuth();
+  if (initializing) return null;
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
