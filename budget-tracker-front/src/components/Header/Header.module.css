@@ -77,13 +77,49 @@
 }
 
 .header-right-avatar {
+  position: relative;
   height: 100%;
   display: flex;
   align-items: center;
 
+  .avatar-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+
   .avatar {
     height: 40px;
     border-radius: 50%;
+  }
+
+  .user-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    background: var(--background-color);
+    border: 1px solid var(--table-row-hover-bg);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-width: 140px;
+    z-index: 10;
+
+    button {
+      background: none;
+      border: none;
+      padding: 10px 15px;
+      color: var(--color-light);
+      text-align: left;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: var(--table-row-hover-bg);
+    }
   }
 }
 

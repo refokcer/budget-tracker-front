@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./Header.module.css";
 
@@ -8,15 +8,19 @@ import IncomeModal from "../Modals/IncomeModal/IncomeModal";
 import TransferModal from "../Modals/TransferModal/TransferModal";
 import API_ENDPOINTS from "../../config/apiConfig";
 import { pageTitles } from "../../config/constants";
+import { useAuth } from "../../context/AuthContext";
 
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const currentPageTitle = pageTitles[location.pathname] || "My App";
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isIncomeModalOpen, setIsIncomeModalOpen] = useState(false);
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const avatarRef = useRef(null);
 
   /* — планы — */
   const [plans, setPlans] = useState([]);
@@ -40,6 +44,21 @@ const Header = () => {
     setSelectedPlanId(e.target.value);
     navigate(`/budget-plans?planId=${e.target.value}`);
   };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (avatarRef.current && !avatarRef.current.contains(e.target)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header className={styles.header}>
@@ -103,8 +122,18 @@ const Header = () => {
             className={styles["bell-icon"]}
           />
         </div>
-        <div className={styles["header-right-avatar"]}>
-          <img src="favicon.ico" alt="User Avatar" className={styles.avatar} />
+        <div className={styles["header-right-avatar"]} ref={avatarRef}>
+          <button
+            className={styles["avatar-button"]}
+            onClick={() => setIsUserMenuOpen((o) => !o)}
+          >
+            <img src="favicon.ico" alt="User Avatar" className={styles.avatar} />
+          </button>
+          {isUserMenuOpen && (
+            <div className={styles["user-menu"]}>
+              <button onClick={handleLogout}>Logout</button>
+            </div>
+          )}
         </div>
       </div>
 

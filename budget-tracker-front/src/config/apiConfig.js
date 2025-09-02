@@ -1,8 +1,19 @@
 // src/config/apiConfig.js
 
-const API_BASE_URL = "https://localhost:7281/api";
+// base backend url
+export const BASE_URL = "https://localhost:7281";
+
+const API_BASE_URL = `${BASE_URL}/api`;
+const AUTH_BASE_URL = `${BASE_URL}/auth`;
 
 export const API_ENDPOINTS = {
+  // Auth
+  auth: {
+    register: `${AUTH_BASE_URL}/register`,
+    login: `${AUTH_BASE_URL}/login`,
+    logout: `${AUTH_BASE_URL}/logout`,
+    refresh: `${AUTH_BASE_URL}/refresh`,
+  },
   // Accounts
   accounts: `${API_BASE_URL}/Accounts`,
   createAccount: `${API_BASE_URL}/Accounts`,
