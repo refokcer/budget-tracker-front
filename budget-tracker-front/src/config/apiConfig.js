@@ -54,33 +54,21 @@ export const API_ENDPOINTS = {
   currencyById: (id) => `${API_BASE_URL}/Currencies/${id}`,
   deleteCurrency: (id) => `${API_BASE_URL}/Currencies/${id}`,
 
-  // Events
-  events: `${API_BASE_URL}/Events`,
-  createEvent: `${API_BASE_URL}/Events`,
-  updateEvent: `${API_BASE_URL}/Events`,
-  eventById: (id) => `${API_BASE_URL}/Events/${id}`,
-  deleteEvent: (id) => `${API_BASE_URL}/Events/${id}`,
-  eventWithTransactions: (id) => `${API_BASE_URL}/Events/${id}/withTransactions`,
-
   // Expenses
   expenses: `${API_BASE_URL}/Expenses`,
   createExpense: `${API_BASE_URL}/Expenses`,
   expensesByDate: (start, end) => `${API_BASE_URL}/Expenses/filter?start=${start}&end=${end}`,
-  expensesByEvent: (eventId) => `${API_BASE_URL}/Expenses/event/${eventId}`,
 
   // Incomes
   incomes: `${API_BASE_URL}/Income`,
   createIncome: `${API_BASE_URL}/Income`,
   incomesByDate: (start, end) => `${API_BASE_URL}/Income/filter?start=${start}&end=${end}`,
-  incomesByEvent: (eventId) => `${API_BASE_URL}/Income/event/${eventId}`,
 
   // Transactions
   transactions: `${API_BASE_URL}/Transactions`,
   updateTransaction: `${API_BASE_URL}/Transactions`,
   transactionById: (id) => `${API_BASE_URL}/Transactions/${id}`,
   deleteTransaction: (id) => `${API_BASE_URL}/Transactions/${id}`,
-  transactionsByEvent: (eventId) =>
-    `${API_BASE_URL}/Transactions/byEvent/${eventId}`,
   transactionsByPlan: (planId) =>
     `${API_BASE_URL}/Transactions/byPlan/${planId}`,
   transactionsByFilter: (params = {}) => {
@@ -115,7 +103,6 @@ export const API_ENDPOINTS = {
   createTransfer: `${API_BASE_URL}/Transfers`,
   transfersByDate: (start, end) =>
     `${API_BASE_URL}/Transfers/filter?start=${start}&end=${end}`,
-  transfersByEvent: (eventId) => `${API_BASE_URL}/Transfers/event/${eventId}`,
 
   // Aggregated models for pages
   budgetPlanPage: (planId) => `${API_BASE_URL}/pages/budgetPlanPage/${planId}`,
