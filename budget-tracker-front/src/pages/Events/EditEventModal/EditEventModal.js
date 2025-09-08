@@ -2,34 +2,81 @@ import React, { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./EditEventModal.module.css";
 
-const EditEventModal = ({ isOpen, onClose, event, onSaved }) => {
+const EditEventModal = ({ isOpen, onClose, event, items, onSaved }) => {
   const [title, setTitle] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [description, setDescription] = useState("");
+  const [description, setDesc] = useState("");
   const [parentId, setParentId] = useState("");
+  const [rows, setRows] = useState([]);
+  const [allCats, setAllCats] = useState([]);
+  const [allCur, setAllCur] = useState([]);
   const [months, setMonths] = useState([]);
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e) => {
       if (e.key === "Escape") onClose();
     };
-    document.addEventListener("keydown", handleKeyDown, { passive: true });
-    return () =>
-      document.removeEventListener("keydown", handleKeyDown, { passive: true });
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
   useEffect(() => {
     if (!isOpen || !event) return;
-    setTitle(event.title || "");
-    setStartDate(event.startDate ? event.startDate.substring(0, 10) : "");
-    setEndDate(event.endDate ? event.endDate.substring(0, 10) : "");
-    setDescription(event.description || "");
+    let ignore = false;
+    setTitle(event.title);
+    setStartDate(event.startDate.substring(0, 10));
+    setEndDate(event.endDate.substring(0, 10));
+    setDesc(event.description || "");
     setParentId(event.parentId ? String(event.parentId) : "");
-  }, [isOpen, event]);
+    (async () => {
+      try {
+        const res = await fetch(API_ENDPOINTS.editPlanModal);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        if (ignore) return;
+        setAllCats(data.categories);
+        setAllCur(data.currencies);
+        setRows(
+          items.map((i) => ({
+            id: i.id,
+            budgetPlanId: i.budgetPlanId,
+            categoryId:
+              i.categoryId ??
+              data.categories.find((c) => c.title === i.categoryTitle)?.id ??
+              "",
+            amount: i.amount,
+            currencyId:
+              i.currencyId ??
+              data.currencies.find((c) => c.symbol === i.currencySymbol)?.id ??
+              "",
+            description: i.description ?? "",
+            _status: "old",
+          }))
+        );
+      } catch {
+        if (!ignore) {
+          setRows(
+            items.map((i) => ({
+              id: i.id,
+              budgetPlanId: i.budgetPlanId,
+              categoryId: i.categoryId ?? "",
+              amount: i.amount,
+              currencyId: i.currencyId ?? "",
+              description: i.description ?? "",
+              _status: "old",
+            }))
+          );
+        }
+      }
+    })();
+    return () => {
+      ignore = true;
+    };
+  }, [isOpen, event, items]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -51,11 +98,37 @@ const EditEventModal = ({ isOpen, onClose, event, onSaved }) => {
 
   if (!isOpen) return null;
 
+  const addRow = () =>
+    setRows([
+      ...rows,
+      {
+        id: Date.now(),
+        budgetPlanId: event.id,
+        categoryId: "",
+        amount: "",
+        currencyId: "",
+        description: "",
+        _status: "new",
+      },
+    ]);
+
+  const updateRow = (idx, field, val) => {
+    const updated = [...rows];
+    updated[idx] = {
+      ...updated[idx],
+      [field]: val,
+      _status: updated[idx]._status || "new",
+    };
+    setRows(updated);
+  };
+
+  const deleteRow = (idx) => {
+    const updated = [...rows];
+    updated[idx]._status = updated[idx]._status === "new" ? "skip" : "delete";
+    setRows(updated);
+  };
+
   const handleSave = async () => {
-    if (!title || !startDate || !endDate) {
-      alert("Введите название и даты!");
-      return;
-    }
     try {
       setLoading(true);
       setError(null);
@@ -72,6 +145,33 @@ const EditEventModal = ({ isOpen, onClose, event, onSaved }) => {
           parentId: parentId ? Number(parentId) : null,
         }),
       });
+      for (const row of rows) {
+        if (row._status === "skip") continue;
+        const payload = {
+          budgetPlanId: event.id,
+          categoryId: Number(row.categoryId),
+          amount: Number(row.amount),
+          currencyId: Number(row.currencyId),
+          description: row.description,
+        };
+        if (row._status === "new") {
+          await fetch(API_ENDPOINTS.createBudgetPlanItem, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+        } else if (row._status === "delete") {
+          await fetch(API_ENDPOINTS.deleteBudgetPlanItem(row.id), {
+            method: "DELETE",
+          });
+        } else {
+          await fetch(API_ENDPOINTS.updateBudgetPlanItem, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...payload, id: row.id }),
+          });
+        }
+      }
       onSaved();
     } catch (e) {
       setError(e.message);
@@ -82,14 +182,13 @@ const EditEventModal = ({ isOpen, onClose, event, onSaved }) => {
 
   return (
     <div className={styles["modal-overlay"]}>
-      <div className={styles["modal-content"]}>
+      <div className={`${styles["modal-content"]} ${styles.large}`}>
         <h3>Редагувати подію</h3>
         {error && <p className={styles.error}>{error}</p>}
         <input
-          type="text"
+          placeholder="Назва"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Назва"
         />
         <label>Дата початку:</label>
         <input
@@ -97,7 +196,7 @@ const EditEventModal = ({ isOpen, onClose, event, onSaved }) => {
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
         />
-        <label>Дата закінчення:</label>
+        <label>Дата завершення:</label>
         <input
           type="date"
           value={endDate}
@@ -115,8 +214,87 @@ const EditEventModal = ({ isOpen, onClose, event, onSaved }) => {
         <textarea
           placeholder="Опис"
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={(e) => setDesc(e.target.value)}
         />
+        <div className={styles["table-scroll"]}>
+          <table className={styles["edit-table"]}>
+            <thead>
+              <tr>
+                <th>Категорія</th>
+                <th>Сума</th>
+                <th>Валюта</th>
+                <th>Опис</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows
+                .filter((r) => r._status !== "skip" && r._status !== "delete")
+                .map((r, idx) => (
+                  <tr key={r.id}>
+                    <td>
+                      <select
+                        value={r.categoryId}
+                        onChange={(e) =>
+                          updateRow(idx, "categoryId", e.target.value)
+                        }
+                      >
+                        <option value="">-</option>
+                        {allCats.map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {c.title}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        value={r.amount}
+                        onChange={(e) =>
+                          updateRow(idx, "amount", e.target.value)
+                        }
+                      />
+                    </td>
+                    <td>
+                      <select
+                        value={r.currencyId}
+                        onChange={(e) =>
+                          updateRow(idx, "currencyId", e.target.value)
+                        }
+                      >
+                        <option value="">-</option>
+                        {allCur.map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {c.symbol}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td>
+                      <input
+                        value={r.description}
+                        onChange={(e) =>
+                          updateRow(idx, "description", e.target.value)
+                        }
+                      />
+                    </td>
+                    <td>
+                      <button
+                        className={styles["del-row"]}
+                        onClick={() => deleteRow(idx)}
+                      >
+                        ✕
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+        <button className={styles["add-row"]} onClick={addRow}>
+          + рядок
+        </button>
         <button
           onClick={handleSave}
           disabled={loading}
@@ -133,3 +311,4 @@ const EditEventModal = ({ isOpen, onClose, event, onSaved }) => {
 };
 
 export default EditEventModal;
+

@@ -116,20 +116,6 @@ const EventsPage = () => {
         </>
       )}
 
-      {events.length > 0 && (
-        <select
-          className={styles["event-select"]}
-          value={eventIdFromQuery || ""}
-          onChange={(e) => setSearchParams({ eventId: e.target.value })}
-        >
-          {events.map((ev) => (
-            <option key={ev.id} value={ev.id}>
-              {ev.title}
-            </option>
-          ))}
-        </select>
-      )}
-
       {selectedEvent && (
         <div className={styles.content}>
           <PlanDetails plan={selectedEvent} />
@@ -171,6 +157,7 @@ const EventsPage = () => {
         isOpen={editOpen}
         onClose={() => setEditOpen(false)}
         event={selectedEvent}
+        items={planItems}
         onSaved={() => window.location.reload()}
       />
     </div>
