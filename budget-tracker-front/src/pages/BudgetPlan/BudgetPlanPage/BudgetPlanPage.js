@@ -161,16 +161,29 @@ const reload = () => fetchPlanData();
       </div>
 
       {includeEvents &&
-        events.map((ev) => (
-          <div key={ev.plan.id} className={styles["event-block"]}>
-            <PlanDetails plan={ev.plan} />
-            <PlanItemsTable items={ev.items} />
-            <BudgetPlanExpensesTable
-              transactions={ev.transactions}
-              onReload={reload}
-            />
-          </div>
-        ))}
+        events.map((ev) => {
+          const periodString = `${new Date(
+            ev.plan.startDate
+          ).toLocaleDateString()} – ${new Date(
+            ev.plan.endDate
+          ).toLocaleDateString()}`;
+          return (
+            <div key={ev.plan.id} className={styles["event-block"]}>
+              <div className={styles["event-details"]}>
+                <span className={styles["event-title"]}>
+                  <strong>Название:</strong> {ev.plan.title}
+                </span>
+                <span className={styles["event-period"]}>
+                  <strong>Период:</strong> {periodString}
+                </span>
+              </div>
+              <BudgetPlanExpensesTable
+                transactions={ev.transactions}
+                onReload={reload}
+              />
+            </div>
+          );
+        })}
 
       <CreatePlanModal
         isOpen={createOpen}

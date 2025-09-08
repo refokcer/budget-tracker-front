@@ -163,6 +163,30 @@
   margin-top: 20px;
 }
 
+.event-details {
+  display: flex;
+  gap: 80px;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.event-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--color-white);
+  margin-right: 10px;
+}
+
+.event-period {
+  color: var(--color-gray-lightest);
+}
+
+.event-period strong {
+  color: var(--color-white);
+}
+
 .plan-transactions {
   width: 100%;
   margin-top: 20px;
