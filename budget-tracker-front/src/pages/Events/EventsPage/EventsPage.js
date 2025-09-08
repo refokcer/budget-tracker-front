@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import API_ENDPOINTS from "../../../config/apiConfig";
 
-import EventDetails from "../EventDetails/EventDetails";
+import PlanDetails from "../../BudgetPlan/PlanDetails/PlanDetails";
+import PlanItemsTable from "../../BudgetPlan/PlanItemsTable/PlanItemsTable";
 import BudgetPlanExpensesTable from "../../BudgetPlan/BudgetPlanExpensesTable/BudgetPlanExpensesTable";
 import CreateEventModal from "../CreateEventModal/CreateEventModal";
 import EditEventModal from "../EditEventModal/EditEventModal";
@@ -15,6 +16,7 @@ const EventsPage = () => {
 
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [planItems, setPlanItems] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -43,17 +45,21 @@ const EventsPage = () => {
     async (signal) => {
       if (!eventIdFromQuery) {
         setSelectedEvent(null);
+        setPlanItems([]);
         setTransactions([]);
         return;
       }
       try {
         setLoading(true);
         setError(null);
-        const res = await fetch(API_ENDPOINTS.eventPage(eventIdFromQuery), signal ? { signal } : {});
+        const res = await fetch(
+          API_ENDPOINTS.eventPage(eventIdFromQuery),
+          signal ? { signal } : {}
+        );
         if (!res.ok) throw new Error("Ошибка при загрузке события");
         const data = await res.json();
-        const base = events.find((ev) => ev.id === data.id) || {};
-        setSelectedEvent({ ...base, ...data });
+        setSelectedEvent(data.plan);
+        setPlanItems(data.items || []);
         setTransactions(data.transactions || []);
       } catch (e) {
         if (e.name !== "AbortError") setError(e.message);
@@ -61,7 +67,7 @@ const EventsPage = () => {
         setLoading(false);
       }
     },
-    [eventIdFromQuery, events]
+    [eventIdFromQuery]
   );
 
   useEffect(() => {
@@ -83,6 +89,7 @@ const EventsPage = () => {
       if (!r.ok) throw new Error("Ошибка удаления события");
       setEvents((p) => p.filter((ev) => ev.id !== selectedEvent.id));
       setSelectedEvent(null);
+      setPlanItems([]);
       setTransactions([]);
       setSearchParams({});
     } catch (e) {
@@ -125,7 +132,8 @@ const EventsPage = () => {
 
       {selectedEvent && (
         <div className={styles.content}>
-          <EventDetails event={selectedEvent} />
+          <PlanDetails plan={selectedEvent} />
+          <PlanItemsTable items={planItems} />
           <div className={styles["plan-actions"]}>
             <button
               className={styles["edit-btn"]}
