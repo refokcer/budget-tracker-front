@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import API_ENDPOINTS from "../../../config/apiConfig";
 
@@ -17,6 +17,9 @@ const BudgetPlanPage = () => {
   const [plans, setPlans] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [planItems, setPlanItems] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [includeEvents, setIncludeEvents] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -41,30 +44,44 @@ useEffect(() => {
   return () => controller.abort();
 }, [planIdFromQuery, setSearchParams]);
 
-useEffect(() => {
-  if (!planIdFromQuery) {
-    setSelectedPlan(null);
-    setPlanItems([]);
-    return;
-  }
-  const controller = new AbortController();
-  (async () => {
+const fetchPlanData = useCallback(
+  async (signal) => {
+    if (!planIdFromQuery) {
+      setSelectedPlan(null);
+      setPlanItems([]);
+      setTransactions([]);
+      setEvents([]);
+      return;
+    }
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch(API_ENDPOINTS.budgetPlanPage(planIdFromQuery), { signal: controller.signal });
+      const res = await fetch(
+        API_ENDPOINTS.budgetPlanPage(planIdFromQuery, includeEvents),
+        signal ? { signal } : {}
+      );
       if (!res.ok) throw new Error("Ошибка при загрузке плана");
       const data = await res.json();
       setSelectedPlan(data.plan);
       setPlanItems(data.items);
+      setTransactions(data.transactions);
+      setEvents(data.events || []);
     } catch (e) {
       if (e.name !== "AbortError") setError(e.message);
     } finally {
       setLoading(false);
     }
-  })();
+  },
+  [planIdFromQuery, includeEvents]
+);
+
+useEffect(() => {
+  const controller = new AbortController();
+  fetchPlanData(controller.signal);
   return () => controller.abort();
-}, [planIdFromQuery]);
+}, [fetchPlanData]);
+
+const reload = () => fetchPlanData();
 
   const deletePlan = async () => {
     if (!selectedPlan) return;
@@ -131,7 +148,31 @@ useEffect(() => {
         </div>
       )}
 
-      <BudgetPlanExpensesTable budgetPlanId={selectedPlan ? selectedPlan.id : planIdFromQuery} />
+      {selectedPlan && (
+        <div className={styles["events-toggle"]}>
+          <label>
+            <input
+              type="checkbox"
+              checked={includeEvents}
+              onChange={(e) => setIncludeEvents(e.target.checked)}
+            />
+            <span> показывать события</span>
+          </label>
+        </div>
+      )}
+
+      <BudgetPlanExpensesTable transactions={transactions} onReload={reload} />
+
+      {includeEvents &&
+        events.map((ev) => (
+          <div key={ev.id} className={styles["event-block"]}>
+            <h3 className={styles["event-title"]}>{ev.title}</h3>
+            <BudgetPlanExpensesTable
+              transactions={ev.transactions}
+              onReload={reload}
+            />
+          </div>
+        ))}
 
       <CreatePlanModal
         isOpen={createOpen}

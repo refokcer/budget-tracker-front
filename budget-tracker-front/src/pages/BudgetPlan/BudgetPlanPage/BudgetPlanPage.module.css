@@ -126,3 +126,19 @@
 .plan-items-table tr:nth-child(even) {
   background-color: var(--table-row-even-bg);
 }
+
+.events-toggle {
+  margin: 20px 0;
+  color: var(--color-white);
+  align-self: flex-end;
+}
+
+.event-title {
+  margin-top: 20px;
+  color: var(--color-white);
+}
+
+.event-block {
+  width: 100%;
+  margin-top: 10px;
+}

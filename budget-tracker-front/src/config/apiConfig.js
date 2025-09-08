@@ -105,7 +105,8 @@ export const API_ENDPOINTS = {
     `${API_BASE_URL}/Transfers/filter?start=${start}&end=${end}`,
 
   // Aggregated models for pages
-  budgetPlanPage: (planId) => `${API_BASE_URL}/pages/budgetPlanPage/${planId}`,
+  budgetPlanPage: (planId, includeEvents = false) =>
+    `${API_BASE_URL}/pages/budgetPlanPage/${planId}?includeEvents=${includeEvents}`,
   expensesTable: (month, year) =>
     `${API_BASE_URL}/pages/expensesByMonth/${month}?year=${year}`,
   incomesTable: (month, year) =>
