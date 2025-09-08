@@ -63,7 +63,10 @@ const fetchPlanData = useCallback(
       if (!res.ok) throw new Error("Ошибка при загрузке плана");
       const data = await res.json();
       setSelectedPlan(data.plan);
-      setPlanItems(data.items);
+      // some backends may mix event summaries into items when events are included
+      // ensure only real plan items (with categoryTitle) are stored for editing
+      const baseItems = (data.items || []).filter((i) => i.categoryTitle !== undefined);
+      setPlanItems(baseItems);
       setTransactions(data.transactions);
       setEvents(data.events || []);
     } catch (e) {
