@@ -6,7 +6,6 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
   const [title, setTitle] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [type, setType] = useState("0");
   const [description, setDescription] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -33,7 +32,7 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
       title,
       startDate,
       endDate,
-      type: Number(type),
+      type: 0,
       description,
     };
 
@@ -81,12 +80,6 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
         />
-
-        <label>Тип плану:</label>
-        <select value={type} onChange={(e) => setType(e.target.value)}>
-          <option value="0">Місячний</option>
-          <option value="1">Подія</option>
-        </select>
 
         <textarea
           placeholder="Опис"

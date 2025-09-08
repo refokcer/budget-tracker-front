@@ -31,7 +31,7 @@ useEffect(() => {
   const controller = new AbortController();
   (async () => {
     try {
-      const r = await fetch(API_ENDPOINTS.budgetPlans, { signal: controller.signal });
+      const r = await fetch(API_ENDPOINTS.monthPlans, { signal: controller.signal });
       if (!r.ok) throw new Error("Ошибка при загрузке планов");
       const data = await r.json();
       setPlans(data);
@@ -162,8 +162,9 @@ const reload = () => fetchPlanData();
 
       {includeEvents &&
         events.map((ev) => (
-          <div key={ev.id} className={styles["event-block"]}>
-            <h3 className={styles["event-title"]}>{ev.title}</h3>
+          <div key={ev.plan.id} className={styles["event-block"]}>
+            <PlanDetails plan={ev.plan} />
+            <PlanItemsTable items={ev.items} />
             <BudgetPlanExpensesTable
               transactions={ev.transactions}
               onReload={reload}

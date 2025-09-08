@@ -36,14 +36,16 @@ const Header = () => {
     if (location.pathname !== "/budget-plans") return;
     (async () => {
       try {
-        const r = await fetch(API_ENDPOINTS.budgetPlans);
+        const r = await fetch(API_ENDPOINTS.monthPlans);
         if (!r.ok) throw new Error("Ошибка при загрузке планов");
         setPlans(await r.json());
       } catch (e) {
         setPlansError(e.message);
       }
     })();
-  }, [location.pathname]);
+    const params = new URLSearchParams(location.search);
+    setSelectedPlanId(params.get("planId") || "");
+  }, [location.pathname, location.search]);
 
   useEffect(() => {
     if (location.pathname !== "/events") return;

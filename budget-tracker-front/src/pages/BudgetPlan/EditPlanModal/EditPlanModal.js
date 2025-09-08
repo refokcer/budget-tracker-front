@@ -6,7 +6,6 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
   const [title, setTitle] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [type, setType] = useState("0");
   const [description, setDesc] = useState("");
   const [rows, setRows] = useState([]);
   const [allCats, setAllCats] = useState([]);
@@ -29,7 +28,6 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
     setTitle(plan.title);
     setStartDate(plan.startDate.substring(0, 10));
     setEndDate(plan.endDate.substring(0, 10));
-    setType(String(plan.type));
     setDesc(plan.description || "");
     (async () => {
       try {
@@ -122,7 +120,7 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
           title,
           startDate,
           endDate,
-          type: Number(type),
+          type: plan.type,
           description,
         }),
       });
@@ -183,11 +181,6 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
         />
-        <label>Тип плану:</label>
-        <select value={type} onChange={(e) => setType(e.target.value)}>
-          <option value="0">Monthly</option>
-          <option value="1">Event</option>
-        </select>
         <textarea
           placeholder="Опис"
           value={description}
