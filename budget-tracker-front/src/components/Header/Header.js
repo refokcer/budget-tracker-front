@@ -27,22 +27,49 @@ const Header = () => {
   const [plansError, setPlansError] = useState(null);
   const [selectedPlanId, setSelectedPlanId] = useState("");
 
+  /* — события — */
+  const [events, setEvents] = useState([]);
+  const [eventsError, setEventsError] = useState(null);
+  const [selectedEventId, setSelectedEventId] = useState("");
+
   useEffect(() => {
     if (location.pathname !== "/budget-plans") return;
     (async () => {
       try {
-        const r = await fetch(API_ENDPOINTS.budgetPlans);
+        const r = await fetch(API_ENDPOINTS.monthPlans);
         if (!r.ok) throw new Error("Ошибка при загрузке планов");
         setPlans(await r.json());
       } catch (e) {
         setPlansError(e.message);
       }
     })();
-  }, [location.pathname]);
+    const params = new URLSearchParams(location.search);
+    setSelectedPlanId(params.get("planId") || "");
+  }, [location.pathname, location.search]);
+
+  useEffect(() => {
+    if (location.pathname !== "/events") return;
+    (async () => {
+      try {
+        const r = await fetch(API_ENDPOINTS.eventPlans);
+        if (!r.ok) throw new Error("Ошибка при загрузке событий");
+        setEvents(await r.json());
+      } catch (e) {
+        setEventsError(e.message);
+      }
+    })();
+    const params = new URLSearchParams(location.search);
+    setSelectedEventId(params.get("eventId") || "");
+  }, [location.pathname, location.search]);
 
   const handlePlanChange = (e) => {
     setSelectedPlanId(e.target.value);
     navigate(`/budget-plans?planId=${e.target.value}`);
+  };
+
+  const handleEventChange = (e) => {
+    setSelectedEventId(e.target.value);
+    navigate(`/events?eventId=${e.target.value}`);
   };
 
   const handleLogout = async () => {
@@ -85,6 +112,29 @@ const Header = () => {
               {plans.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.title}
+                </option>
+              ))}
+            </select>
+            <span className={styles["custom-arrow"]} />
+          </div>
+        </div>
+      )}
+
+      {/* выпадающий список событий только на /events */}
+      {location.pathname === "/events" && (
+        <div className={styles["plans-dropdown"]}>
+          {eventsError && <p className={styles.error}>{eventsError}</p>}
+          <label htmlFor="eventSelect">Событие:</label>
+          <div className={styles["custom-select-wrapper"]}>
+            <select
+              id="eventSelect"
+              value={selectedEventId}
+              onChange={handleEventChange}
+              className={styles["custom-select"]}
+            >
+              {events.map((ev) => (
+                <option key={ev.id} value={ev.id}>
+                  {ev.title}
                 </option>
               ))}
             </select>

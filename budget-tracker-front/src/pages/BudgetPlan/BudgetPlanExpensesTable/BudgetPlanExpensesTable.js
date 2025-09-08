@@ -1,37 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
-import { API_ENDPOINTS } from '../../../config/apiConfig';
+import { useState } from 'react';
+import API_ENDPOINTS from '../../../config/apiConfig';
 import DataTable from '../../../components/DataTable/DataTable';
 import EditExpenseModal from '../../../components/Modals/EditExpenseModal/EditExpenseModal';
 
-const ExpensesTable = ({ budgetPlanId }) => {
-  const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const ExpensesTable = ({ transactions = [], onReload }) => {
   const [busyId, setBusyId] = useState(null);
   const [editTx, setEditTx] = useState(null);
   const [editOpen, setEditOpen] = useState(false);
-  const reloadRef = useRef(() => {});
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const url = API_ENDPOINTS.transactionsByFilter({ budgetPlanId : budgetPlanId });
-        const res = await fetch(url);
-        if (!res.ok) throw new Error('Failed to load data');
-        const data = await res.json();
-        setTransactions(data.transactions);
-      } catch (e) {
-        setError(e.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-    // store for later reload
-    reloadRef.current = fetchData;
-  }, [budgetPlanId]);
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete transaction?')) return;
@@ -39,7 +14,7 @@ const ExpensesTable = ({ budgetPlanId }) => {
       setBusyId(id);
       const res = await fetch(API_ENDPOINTS.deleteTransaction(id), { method: 'DELETE' });
       if (!res.ok) throw new Error('Delete error');
-      setTransactions(prev => prev.filter(t => t.id !== id));
+      onReload && onReload();
     } catch (e) {
       alert(e.message);
     } finally {
@@ -57,9 +32,6 @@ const ExpensesTable = ({ budgetPlanId }) => {
       alert(e.message);
     }
   };
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p className="error">Error: {error}</p>;
 
   const columns = [
     { key: 'title',           label: 'Назва',            sortable: true },
@@ -84,7 +56,7 @@ const ExpensesTable = ({ budgetPlanId }) => {
         isOpen={editOpen}
         onClose={() => setEditOpen(false)}
         transaction={editTx}
-        onSaved={() => reloadRef.current()}
+        onSaved={onReload}
       />
     </>
   );

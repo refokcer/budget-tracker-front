@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
-import styles from "./EditPlanModal.module.css";
+import styles from "./EditEventModal.module.css";
 
-const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
+const EditEventModal = ({ isOpen, onClose, event, items, onSaved }) => {
   const [title, setTitle] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [description, setDesc] = useState("");
+  const [parentId, setParentId] = useState("");
   const [rows, setRows] = useState([]);
   const [allCats, setAllCats] = useState([]);
   const [allCur, setAllCur] = useState([]);
+  const [months, setMonths] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -23,12 +25,13 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
   }, [isOpen, onClose]);
 
   useEffect(() => {
-    if (!isOpen || !plan) return;
+    if (!isOpen || !event) return;
     let ignore = false;
-    setTitle(plan.title);
-    setStartDate(plan.startDate.substring(0, 10));
-    setEndDate(plan.endDate.substring(0, 10));
-    setDesc(plan.description || "");
+    setTitle(event.title);
+    setStartDate(event.startDate.substring(0, 10));
+    setEndDate(event.endDate.substring(0, 10));
+    setDesc(event.description || "");
+    setParentId(event.parentId ? String(event.parentId) : "");
     (async () => {
       try {
         const res = await fetch(API_ENDPOINTS.editPlanModal);
@@ -70,11 +73,28 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
         }
       }
     })();
-
     return () => {
       ignore = true;
     };
-  }, [isOpen, plan, items]);
+  }, [isOpen, event, items]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    let ignore = false;
+    (async () => {
+      try {
+        const res = await fetch(API_ENDPOINTS.monthPlans);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        if (!ignore) setMonths(data);
+      } catch {
+        if (!ignore) setMonths([]);
+      }
+    })();
+    return () => {
+      ignore = true;
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -83,7 +103,7 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
       ...rows,
       {
         id: Date.now(),
-        budgetPlanId: plan.id,
+        budgetPlanId: event.id,
         categoryId: "",
         amount: "",
         currencyId: "",
@@ -116,18 +136,19 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          id: plan.id,
+          id: event.id,
           title,
           startDate,
           endDate,
-          type: plan.type,
+          type: 1,
           description,
+          parentId: parentId ? Number(parentId) : null,
         }),
       });
       for (const row of rows) {
         if (row._status === "skip") continue;
         const payload = {
-          budgetPlanId: plan.id,
+          budgetPlanId: event.id,
           categoryId: Number(row.categoryId),
           amount: Number(row.amount),
           currencyId: Number(row.currencyId),
@@ -162,7 +183,7 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
   return (
     <div className={styles["modal-overlay"]}>
       <div className={`${styles["modal-content"]} ${styles.large}`}>
-        <h3>Редагувати план</h3>
+        <h3>Редагувати подію</h3>
         {error && <p className={styles.error}>{error}</p>}
         <input
           placeholder="Назва"
@@ -181,6 +202,15 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
         />
+        <label>Місячний план:</label>
+        <select value={parentId} onChange={(e) => setParentId(e.target.value)}>
+          <option value="">-</option>
+          {months.map((m) => (
+            <option key={m.id} value={m.id}>
+              {m.title}
+            </option>
+          ))}
+        </select>
         <textarea
           placeholder="Опис"
           value={description}
@@ -280,4 +310,5 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
   );
 };
 
-export default EditPlanModal;
+export default EditEventModal;
+

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import API_ENDPOINTS from "../../../config/apiConfig";
 
@@ -17,6 +17,9 @@ const BudgetPlanPage = () => {
   const [plans, setPlans] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [planItems, setPlanItems] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [includeEvents, setIncludeEvents] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -28,7 +31,7 @@ useEffect(() => {
   const controller = new AbortController();
   (async () => {
     try {
-      const r = await fetch(API_ENDPOINTS.budgetPlans, { signal: controller.signal });
+      const r = await fetch(API_ENDPOINTS.monthPlans, { signal: controller.signal });
       if (!r.ok) throw new Error("Ошибка при загрузке планов");
       const data = await r.json();
       setPlans(data);
@@ -41,30 +44,47 @@ useEffect(() => {
   return () => controller.abort();
 }, [planIdFromQuery, setSearchParams]);
 
-useEffect(() => {
-  if (!planIdFromQuery) {
-    setSelectedPlan(null);
-    setPlanItems([]);
-    return;
-  }
-  const controller = new AbortController();
-  (async () => {
+const fetchPlanData = useCallback(
+  async (signal) => {
+    if (!planIdFromQuery) {
+      setSelectedPlan(null);
+      setPlanItems([]);
+      setTransactions([]);
+      setEvents([]);
+      return;
+    }
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch(API_ENDPOINTS.budgetPlanPage(planIdFromQuery), { signal: controller.signal });
+      const res = await fetch(
+        API_ENDPOINTS.budgetPlanPage(planIdFromQuery, includeEvents),
+        signal ? { signal } : {}
+      );
       if (!res.ok) throw new Error("Ошибка при загрузке плана");
       const data = await res.json();
       setSelectedPlan(data.plan);
-      setPlanItems(data.items);
+      // some backends may mix event summaries into items when events are included
+      // ensure only real plan items (with categoryTitle) are stored for editing
+      const baseItems = (data.items || []).filter((i) => i.categoryTitle !== undefined);
+      setPlanItems(baseItems);
+      setTransactions(data.transactions);
+      setEvents(data.events || []);
     } catch (e) {
       if (e.name !== "AbortError") setError(e.message);
     } finally {
       setLoading(false);
     }
-  })();
+  },
+  [planIdFromQuery, includeEvents]
+);
+
+useEffect(() => {
+  const controller = new AbortController();
+  fetchPlanData(controller.signal);
   return () => controller.abort();
-}, [planIdFromQuery]);
+}, [fetchPlanData]);
+
+const reload = () => fetchPlanData();
 
   const deletePlan = async () => {
     if (!selectedPlan) return;
@@ -108,6 +128,14 @@ useEffect(() => {
           <PlanDetails plan={selectedPlan} />
           <PlanItemsTable items={planItems} />
           <div className={styles["plan-actions"]}>
+            <label className={styles["events-toggle"]}>
+              <input
+                type="checkbox"
+                checked={includeEvents}
+                onChange={(e) => setIncludeEvents(e.target.checked)}
+              />
+              <span>показывать события</span>
+            </label>
             <button
               className={styles["edit-btn"]}
               onClick={() => setEditOpen(true)}
@@ -131,7 +159,34 @@ useEffect(() => {
         </div>
       )}
 
-      <BudgetPlanExpensesTable budgetPlanId={selectedPlan ? selectedPlan.id : planIdFromQuery} />
+      <div className={styles["plan-transactions"]}>
+        <BudgetPlanExpensesTable transactions={transactions} onReload={reload} />
+      </div>
+
+      {includeEvents &&
+        events.map((ev) => {
+          const periodString = `${new Date(
+            ev.plan.startDate
+          ).toLocaleDateString()} – ${new Date(
+            ev.plan.endDate
+          ).toLocaleDateString()}`;
+          return (
+            <div key={ev.plan.id} className={styles["event-block"]}>
+              <div className={styles["event-details"]}>
+                <span className={styles["event-title"]}>
+                  <strong>Название:</strong> {ev.plan.title}
+                </span>
+                <span className={styles["event-period"]}>
+                  <strong>Период:</strong> {periodString}
+                </span>
+              </div>
+              <BudgetPlanExpensesTable
+                transactions={ev.transactions}
+                onReload={reload}
+              />
+            </div>
+          );
+        })}
 
       <CreatePlanModal
         isOpen={createOpen}
