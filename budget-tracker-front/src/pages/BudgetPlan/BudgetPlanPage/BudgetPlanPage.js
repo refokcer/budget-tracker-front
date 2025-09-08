@@ -131,7 +131,7 @@ const reload = () => fetchPlanData();
                 checked={includeEvents}
                 onChange={(e) => setIncludeEvents(e.target.checked)}
               />
-              <span> показывать события</span>
+              <span>показывать события</span>
             </label>
             <button
               className={styles["edit-btn"]}
@@ -156,7 +156,9 @@ const reload = () => fetchPlanData();
         </div>
       )}
 
-      <BudgetPlanExpensesTable transactions={transactions} onReload={reload} />
+      <div className={styles["plan-transactions"]}>
+        <BudgetPlanExpensesTable transactions={transactions} onReload={reload} />
+      </div>
 
       {includeEvents &&
         events.map((ev) => (
