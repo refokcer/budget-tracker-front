@@ -125,6 +125,14 @@ const reload = () => fetchPlanData();
           <PlanDetails plan={selectedPlan} />
           <PlanItemsTable items={planItems} />
           <div className={styles["plan-actions"]}>
+            <label className={styles["events-toggle"]}>
+              <input
+                type="checkbox"
+                checked={includeEvents}
+                onChange={(e) => setIncludeEvents(e.target.checked)}
+              />
+              <span> показывать события</span>
+            </label>
             <button
               className={styles["edit-btn"]}
               onClick={() => setEditOpen(true)}
@@ -145,19 +153,6 @@ const reload = () => fetchPlanData();
               + новый
             </button>
           </div>
-        </div>
-      )}
-
-      {selectedPlan && (
-        <div className={styles["events-toggle"]}>
-          <label>
-            <input
-              type="checkbox"
-              checked={includeEvents}
-              onChange={(e) => setIncludeEvents(e.target.checked)}
-            />
-            <span> показывать события</span>
-          </label>
         </div>
       )}
 

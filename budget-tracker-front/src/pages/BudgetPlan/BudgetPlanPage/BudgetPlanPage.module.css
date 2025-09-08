@@ -14,17 +14,11 @@
 }
 
 .plan-actions {
-  margin-top: 16px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
-
-.plan-actions {
   display: flex;
   gap: 15px;
   justify-content: flex-end;
   margin-top: 12px;
+  align-items: center;
 }
 
 .delete-btn {
@@ -128,9 +122,10 @@
 }
 
 .events-toggle {
-  margin: 20px 0;
   color: var(--color-white);
-  align-self: flex-end;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .event-title {
