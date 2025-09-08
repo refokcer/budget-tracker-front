@@ -31,6 +31,8 @@ export const API_ENDPOINTS = {
 
   // Budget Plans
   budgetPlans: `${API_BASE_URL}/BudgetPlans`,
+  monthPlans: `${API_BASE_URL}/BudgetPlans/months`,
+  eventPlans: `${API_BASE_URL}/BudgetPlans/events`,
   createBudgetPlan: `${API_BASE_URL}/BudgetPlans`,
   updateBudgetPlan: `${API_BASE_URL}/BudgetPlans`,
   budgetPlanById: (id) => `${API_BASE_URL}/BudgetPlans/${id}`,
@@ -107,6 +109,7 @@ export const API_ENDPOINTS = {
   // Aggregated models for pages
   budgetPlanPage: (planId, includeEvents = false) =>
     `${API_BASE_URL}/pages/budgetPlanPage/${planId}?includeEvents=${includeEvents}`,
+  eventPage: (eventId) => `${API_BASE_URL}/pages/eventPage/${eventId}`,
   expensesTable: (month, year) =>
     `${API_BASE_URL}/pages/expensesByMonth/${month}?year=${year}`,
   incomesTable: (month, year) =>
