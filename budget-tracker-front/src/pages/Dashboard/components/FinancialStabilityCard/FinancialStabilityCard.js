@@ -51,7 +51,7 @@ const FinancialStabilityCard = ({ stability }) => {
 
       {recommendations.length > 0 && (
         <ul className={styles["db-recommendations"]}>
-          {recommendations.slice(0, 2).map((item, index) => (
+          {recommendations.map((item, index) => (
             <li key={index}>{item}</li>
           ))}
         </ul>
