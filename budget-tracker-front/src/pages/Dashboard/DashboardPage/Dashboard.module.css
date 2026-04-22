@@ -2,19 +2,31 @@
   width: 90%;
   margin: 0 auto;
   padding: 20px;
-  height: 90%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
 }
 
 .db-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: 1fr;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
   gap: 24px;
+  flex: 1;
+  min-height: 0;
+}
+
+.db-grid > div {
+  display: flex;
+  min-height: 0;
 }
 
 @media (max-width: 800px) {
   .db-grid {
     grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, minmax(260px, 1fr));
   }
 }
 
@@ -27,6 +39,10 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
+  min-height: 0;
+  overflow: auto;
+  box-sizing: border-box;
 }
 
 .db-title {
@@ -81,6 +97,63 @@
 .db-empty {
   text-align: center;
   color: #aaa;
+}
+
+.db-stability-score {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 12px;
+}
+
+.db-stability-index {
+  font-size: 2.4rem;
+  font-weight: 700;
+}
+
+.db-stability-level {
+  color: #8fd19e;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.db-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.db-metrics-grid div {
+  background: #3b3a4a;
+  border-radius: 6px;
+  padding: 9px;
+}
+
+.db-metrics-grid span,
+.db-stability-monthly span {
+  display: block;
+  color: #bbb;
+  font-size: 0.8rem;
+}
+
+.db-metrics-grid strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 1rem;
+}
+
+.db-stability-monthly {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.db-recommendations {
+  margin: 0;
+  padding-left: 18px;
+  color: #ddd;
+  font-size: 0.85rem;
 }
 
 .db-loading,

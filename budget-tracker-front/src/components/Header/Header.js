@@ -9,6 +9,12 @@ import TransferModal from "../Modals/TransferModal/TransferModal";
 import API_ENDPOINTS from "../../config/apiConfig";
 import { pageTitles } from "../../config/constants";
 import { useAuth } from "../../context/AuthContext";
+import {
+  DASHBOARD_CARD_OPTIONS,
+  MAX_VISIBLE_DASHBOARD_CARDS,
+  readVisibleDashboardCards,
+  writeVisibleDashboardCards,
+} from "../../pages/Dashboard/dashboardCardConfig";
 
 const Header = () => {
   const location = useLocation();
@@ -31,6 +37,12 @@ const Header = () => {
   const [events, setEvents] = useState([]);
   const [eventsError, setEventsError] = useState(null);
   const [selectedEventId, setSelectedEventId] = useState("");
+  const [visibleDashboardCards, setVisibleDashboardCards] = useState(
+    readVisibleDashboardCards
+  );
+
+  const isDashboardPage =
+    location.pathname === "/" || location.pathname === "/dashboard";
 
   useEffect(() => {
     if (location.pathname !== "/budget-plans") return;
@@ -75,6 +87,20 @@ const Header = () => {
   const handleLogout = async () => {
     await logout();
     navigate("/login");
+  };
+
+  const toggleDashboardCard = (cardId) => {
+    setVisibleDashboardCards((current) => {
+      const next = current.includes(cardId)
+        ? current.filter((id) => id !== cardId)
+        : [...current, cardId];
+
+      if (next.length > MAX_VISIBLE_DASHBOARD_CARDS) {
+        return current;
+      }
+
+      return writeVisibleDashboardCards(next);
+    });
   };
 
   useEffect(() => {
@@ -146,6 +172,36 @@ const Header = () => {
       {/* правая часть */}
       <div className={styles["header-right"]}>
         <div className={styles["header-right-buttons"]}>
+          {isDashboardPage && (
+            <details className={styles["dashboard-card-picker"]}>
+              <summary>
+                Cards {visibleDashboardCards.length}/{MAX_VISIBLE_DASHBOARD_CARDS}
+              </summary>
+              <div className={styles["dashboard-card-picker-menu"]}>
+                {DASHBOARD_CARD_OPTIONS.map((card) => {
+                  const checked = visibleDashboardCards.includes(card.id);
+                  const disabled =
+                    !checked &&
+                    visibleDashboardCards.length >= MAX_VISIBLE_DASHBOARD_CARDS;
+
+                  return (
+                    <label
+                      key={card.id}
+                      className={styles["dashboard-card-picker-item"]}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        disabled={disabled}
+                        onChange={() => toggleDashboardCard(card.id)}
+                      />
+                      <span>{card.label}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </details>
+          )}
           <button
             className={styles.expense}
             onClick={() => setIsModalOpen(true)}
