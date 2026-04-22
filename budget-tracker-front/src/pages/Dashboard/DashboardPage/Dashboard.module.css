@@ -99,23 +99,42 @@
   color: #aaa;
 }
 
+.db-stability-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+}
+
+.db-stability-header .db-title {
+  margin-bottom: 0;
+  line-height: 1;
+}
+
 .db-stability-score {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: center;
   gap: 12px;
+  line-height: 1;
 }
 
 .db-stability-index {
   font-size: 2.4rem;
   font-weight: 700;
+  line-height: 1;
 }
 
 .db-stability-level {
   color: #8fd19e;
   font-size: 1rem;
   font-weight: 600;
+  line-height: 1;
   text-transform: uppercase;
+}
+
+.db-financial-card {
+  overflow: hidden;
 }
 
 .db-metrics-grid {
@@ -124,7 +143,8 @@
   gap: 10px;
 }
 
-.db-metrics-grid div {
+.db-metrics-grid div,
+.db-stability-monthly div {
   background: #3b3a4a;
   border-radius: 6px;
   padding: 9px;
@@ -144,9 +164,15 @@
 }
 
 .db-stability-monthly {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.db-stability-monthly strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 1rem;
 }
 
 .db-recommendations {

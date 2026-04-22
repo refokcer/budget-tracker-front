@@ -17,12 +17,13 @@ const FinancialStabilityCard = ({ stability }) => {
   const recommendations = stability.recommendations || [];
 
   return (
-    <div className={styles["db-card"]}>
-      <h3 className={styles["db-title"]}>Financial Stability</h3>
-
-      <div className={styles["db-stability-score"]}>
-        <span className={styles["db-stability-index"]}>{stability.index}</span>
-        <span className={styles["db-stability-level"]}>{stability.level}</span>
+    <div className={`${styles["db-card"]} ${styles["db-financial-card"]}`}>
+      <div className={styles["db-stability-header"]}>
+        <h3 className={styles["db-title"]}>Financial Stability</h3>
+        <div className={styles["db-stability-score"]}>
+          <span className={styles["db-stability-index"]}>{stability.index}</span>
+          <span className={styles["db-stability-level"]}>{stability.level}</span>
+        </div>
       </div>
 
       <div className={styles["db-metrics-grid"]}>
@@ -39,14 +40,28 @@ const FinancialStabilityCard = ({ stability }) => {
           <strong>{money(metrics.emergencyFundMonths)} mo</strong>
         </div>
         <div>
+          <span>Overspending</span>
+          <strong>{percent(metrics.overspendingFrequency)}</strong>
+        </div>
+        <div>
+          <span>Income stability</span>
+          <strong>{percent(metrics.incomeStability)}</strong>
+        </div>
+        <div>
           <span>Goal</span>
           <strong>{percent(metrics.goalAchievementIndex)}</strong>
         </div>
       </div>
 
       <div className={styles["db-stability-monthly"]}>
-        <span>Avg income: {money(metrics.averageMonthlyIncome)}</span>
-        <span>Avg expenses: {money(metrics.averageMonthlyExpenses)}</span>
+        <div>
+          <span>Avg income</span>
+          <strong>{money(metrics.averageMonthlyIncome)}</strong>
+        </div>
+        <div>
+          <span>Avg expenses</span>
+          <strong>{money(metrics.averageMonthlyExpenses)}</strong>
+        </div>
       </div>
 
       {recommendations.length > 0 && (
