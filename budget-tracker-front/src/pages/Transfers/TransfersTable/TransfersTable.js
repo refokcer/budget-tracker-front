@@ -1,85 +1,70 @@
-import { useState, useEffect, useRef } from 'react';
-import API_ENDPOINTS from '../../../config/apiConfig';
-import DataTable from '../../../components/DataTable/DataTable';
-import EditTransferModal from '../../../components/Modals/EditTransferModal/EditTransferModal';
+import API_ENDPOINTS from "../../../config/apiConfig";
+import TransactionInlineTable from "../../../components/TransactionInlineTable/TransactionInlineTable";
 
-const TransfersTable = ({ start, end }) => {
-  const [rows, setRows] = useState([]);
-  const [loading, setLoad] = useState(true);
-  const [error, setErr] = useState(null);
-  const [busyId, setBusy] = useState(null);
-  const [editTx, setEditTx] = useState(null);
-  const [editOpen, setEditOpen] = useState(false);
-  const reloadRef = useRef(() => {});
-
-  useEffect(() => {
-    const load = async () => {
-      setLoad(true); setErr(null);
-      try {
-        const url = API_ENDPOINTS.transactionsByFilter({ start, end, type: 0 });
-        const res = await fetch(url);
-        if (!res.ok) throw new Error('Failed to load data');
-        const data = await res.json();
-        setRows(data.transactions);
-      } catch (e) { setErr(e.message); }
-      finally { setLoad(false); }
-    };
-    load();
-    reloadRef.current = load;
-  }, [start, end]);
-
-  const del = async (id) => {
-    if (!window.confirm('Delete?')) return;
-    try {
-      setBusy(id);
-      const r = await fetch(API_ENDPOINTS.deleteTransaction(id), { method: 'DELETE' });
-      if (!r.ok) throw new Error('Delete error');
-      setRows(p => p.filter(x => x.id !== id));
-    } catch (e) { alert(e.message); }
-    finally { setBusy(null); }
-  };
-
-  const handleEdit = async (id) => {
-    try {
-      const r = await fetch(API_ENDPOINTS.transactionById(id));
-      if (!r.ok) throw new Error('Failed to load data');
-      setEditTx(await r.json());
-      setEditOpen(true);
-    } catch (e) {
-      alert(e.message);
-    }
-  };
-
-  if (loading) return <p>Loading...</p>;
-  if (error)   return <p className="error">Error: {error}</p>;
-
-  const columns = [
-    { key: 'title',            label: 'Назва',       sortable: true },
-    { key: 'amount',           label: 'Сума',        sortable: true, render: (v,r) => `${r.currencySymbol} ${v.toFixed(2)}` },
-    { key: 'accountFromTitle', label: 'З рахунку',   sortable: true },
-    { key: 'accountToTitle',   label: 'На рахунок',  sortable: true },
-    { key: 'date',             label: 'Дата',        sortable: true, render: v => new Date(v).toLocaleDateString() },
-    { key: 'description',      label: 'Опис',                        render: v => v || '-' },
-  ];
-
-  return (
-    <>
-      <DataTable
-        columns={columns}
-        rows={rows}
-        onDelete={del}
-        deletingId={busyId}
-        onEdit={handleEdit}
-      />
-      <EditTransferModal
-        isOpen={editOpen}
-        onClose={() => setEditOpen(false)}
-        transaction={editTx}
-        onSaved={() => reloadRef.current()}
-      />
-    </>
-  );
+const editableColumns = {
+  title: { field: "title", type: "text", required: true },
+  amount: { field: "amount", type: "number", required: true },
+  accountFromTitle: {
+    field: "accountFrom",
+    type: "select",
+    required: true,
+    optionsKey: "accounts",
+    getOptionLabel: (option) => option.title,
+    summaryKey: "accountFromTitle",
+    validate: (transaction) =>
+      Number(transaction.accountFrom) === Number(transaction.accountTo)
+        ? "Sender and receiver accounts can't match!"
+        : null,
+  },
+  accountToTitle: {
+    field: "accountTo",
+    type: "select",
+    required: true,
+    optionsKey: "accounts",
+    getOptionLabel: (option) => option.title,
+    summaryKey: "accountToTitle",
+    validate: (transaction) =>
+      Number(transaction.accountFrom) === Number(transaction.accountTo)
+        ? "Sender and receiver accounts can't match!"
+        : null,
+  },
+  date: { field: "date", type: "date", required: true },
+  description: { field: "description", type: "text" },
 };
 
-export default TransfersTable;
+const tableColumns = [
+  { key: "title", label: "Назва", sortable: true },
+  { key: "amount", label: "Сума", sortable: true },
+  { key: "accountFromTitle", label: "З рахунку", sortable: true },
+  { key: "accountToTitle", label: "На рахунок", sortable: true },
+  { key: "date", label: "Дата", sortable: true },
+  { key: "description", label: "Опис" },
+];
 
+const buildPayload = (transaction) => ({
+  id: transaction.id,
+  title: transaction.title,
+  amount: Number(transaction.amount),
+  accountFrom: Number(transaction.accountFrom),
+  accountTo: Number(transaction.accountTo),
+  currencyId: Number(transaction.currencyId),
+  categoryId: Number(transaction.categoryId),
+  date: new Date(String(transaction.date).split("T")[0]).toISOString(),
+  description: transaction.description || "",
+  type: 0,
+});
+
+const TransfersTable = ({ start, end }) => (
+  <TransactionInlineTable
+    type={0}
+    start={start}
+    end={end}
+    modalEndpoint={API_ENDPOINTS.transferModal}
+    editableColumns={editableColumns}
+    tableColumns={tableColumns}
+    buildPayload={buildPayload}
+    deleteConfirmText="Delete?"
+  />
+);
+
+export default TransfersTable;

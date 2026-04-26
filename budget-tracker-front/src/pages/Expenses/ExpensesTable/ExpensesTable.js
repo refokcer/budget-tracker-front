@@ -1,93 +1,70 @@
-import { useState, useEffect, useRef } from 'react';
-import { API_ENDPOINTS } from '../../../config/apiConfig';
-import DataTable from '../../../components/DataTable/DataTable';
-import EditExpenseModal from '../../../components/Modals/EditExpenseModal/EditExpenseModal';
+import API_ENDPOINTS from "../../../config/apiConfig";
+import TransactionInlineTable from "../../../components/TransactionInlineTable/TransactionInlineTable";
 
-const ExpensesTable = ({ start, end }) => {
-  const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [busyId, setBusyId] = useState(null);
-  const [editTx, setEditTx] = useState(null);
-  const [editOpen, setEditOpen] = useState(false);
-  const reloadRef = useRef(() => {});
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const url = API_ENDPOINTS.transactionsByFilter({ start, end, type: 2 });
-        const res = await fetch(url);
-        if (!res.ok) throw new Error('Failed to load data');
-        const data = await res.json();
-        setTransactions(data.transactions);
-      } catch (e) {
-        setError(e.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-    // store for later reload
-    reloadRef.current = fetchData;
-  }, [start, end]);
-
-  const handleDelete = async (id) => {
-    if (!window.confirm('Delete transaction?')) return;
-    try {
-      setBusyId(id);
-      const res = await fetch(API_ENDPOINTS.deleteTransaction(id), { method: 'DELETE' });
-      if (!res.ok) throw new Error('Delete error');
-      setTransactions(prev => prev.filter(t => t.id !== id));
-    } catch (e) {
-      alert(e.message);
-    } finally {
-      setBusyId(null);
-    }
-  };
-
-  const handleEdit = async (id) => {
-    try {
-      const res = await fetch(API_ENDPOINTS.transactionById(id));
-      if (!res.ok) throw new Error('Failed to load data');
-      setEditTx(await res.json());
-      setEditOpen(true);
-    } catch (e) {
-      alert(e.message);
-    }
-  };
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p className="error">Error: {error}</p>;
-
-  const columns = [
-    { key: 'title',           label: 'Назва',            sortable: true },
-    { key: 'amount',          label: 'Сума',             sortable: true, render: (v,r) => `${r.currencySymbol} ${v.toFixed(2)}` },
-    { key: 'categoryTitle',   label: 'Категорія',        sortable: true },
-    { key: 'budetPlanTitle',  label: 'План',             sortable: true },
-    { key: 'accountFromTitle',label: 'Рахунок',          sortable: true },
-    { key: 'date',            label: 'Дата',             sortable: true, render: v => new Date(v).toLocaleDateString() },
-    { key: 'description',     label: 'Опис',                             render: v => v || '-' },
-  ];
-
-  return (
-    <>
-      <DataTable
-        columns={columns}
-        rows={transactions}
-        onDelete={handleDelete}
-        deletingId={busyId}
-        onEdit={handleEdit}
-      />
-      <EditExpenseModal
-        isOpen={editOpen}
-        onClose={() => setEditOpen(false)}
-        transaction={editTx}
-        onSaved={() => reloadRef.current()}
-      />
-    </>
-  );
+const editableColumns = {
+  title: { field: "title", type: "text", required: true },
+  amount: { field: "amount", type: "number", required: true },
+  categoryTitle: {
+    field: "categoryId",
+    type: "select",
+    required: true,
+    optionsKey: "categories",
+    getOptionLabel: (option) => option.title,
+    summaryKey: "categoryTitle",
+  },
+  budetPlanTitle: {
+    field: "budgetPlanId",
+    type: "select",
+    required: true,
+    optionsKey: "plans",
+    getOptionLabel: (option) => option.title,
+    summaryKey: "budetPlanTitle",
+  },
+  accountFromTitle: {
+    field: "accountFrom",
+    type: "select",
+    required: true,
+    optionsKey: "accounts",
+    getOptionLabel: (option) => option.title,
+    summaryKey: "accountFromTitle",
+  },
+  date: { field: "date", type: "date", required: true },
+  description: { field: "description", type: "text" },
 };
+
+const tableColumns = [
+  { key: "title", label: "Назва", sortable: true },
+  { key: "amount", label: "Сума", sortable: true },
+  { key: "categoryTitle", label: "Категорія", sortable: true },
+  { key: "budetPlanTitle", label: "План", sortable: true },
+  { key: "accountFromTitle", label: "Рахунок", sortable: true },
+  { key: "date", label: "Дата", sortable: true },
+  { key: "description", label: "Опис" },
+];
+
+const buildPayload = (transaction) => ({
+  id: transaction.id,
+  title: transaction.title,
+  amount: Number(transaction.amount),
+  accountFrom: Number(transaction.accountFrom),
+  budgetPlanId: Number(transaction.budgetPlanId),
+  currencyId: Number(transaction.currencyId),
+  categoryId: Number(transaction.categoryId),
+  date: new Date(String(transaction.date).split("T")[0]).toISOString(),
+  description: transaction.description || "",
+  type: 2,
+});
+
+const ExpensesTable = ({ start, end }) => (
+  <TransactionInlineTable
+    type={2}
+    start={start}
+    end={end}
+    modalEndpoint={API_ENDPOINTS.expenseModal}
+    editableColumns={editableColumns}
+    tableColumns={tableColumns}
+    buildPayload={buildPayload}
+  />
+);
 
 export default ExpensesTable;

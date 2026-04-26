@@ -104,11 +104,12 @@
   align-items: center;
   justify-content: center;
   gap: 22px;
+  min-height: 42px;
 }
 
 .db-stability-header .db-title {
   margin-bottom: 0;
-  line-height: 1;
+  line-height: 42px;
 }
 
 .db-stability-score {
@@ -116,13 +117,14 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  line-height: 1;
+  height: 42px;
 }
 
 .db-stability-index {
   font-size: 2.4rem;
   font-weight: 700;
   line-height: 1;
+  transform: translateY(-2px);
 }
 
 .db-stability-level {
@@ -131,6 +133,7 @@
   font-weight: 600;
   line-height: 1;
   text-transform: uppercase;
+  transform: translateY(-1px);
 }
 
 .db-financial-card {

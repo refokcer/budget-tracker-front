@@ -119,7 +119,7 @@ const EventsPage = () => {
       {selectedEvent && (
         <div className={styles.content}>
           <PlanDetails plan={selectedEvent} />
-          <PlanItemsTable items={planItems} />
+          <PlanItemsTable items={planItems} onReload={reload} />
           <div className={styles["plan-actions"]}>
             <button
               className={styles["edit-btn"]}

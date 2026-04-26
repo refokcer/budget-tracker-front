@@ -11,7 +11,7 @@
   background-color: var(--color-gray-dark);
   border-radius: var(--border-radius-medium);
   box-shadow: var(--shadow-medium);
-  overflow: hidden; /* keep rounded corners */
+  overflow: visible;
 }
 
 .data-table th,
@@ -19,6 +19,7 @@
   padding: 10px;
   text-align: left;
   border-bottom: 1px solid var(--table-row-hover-bg);
+  position: relative;
 }
 
 .data-table th {

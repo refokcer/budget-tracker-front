@@ -126,7 +126,7 @@ const reload = () => fetchPlanData();
       {selectedPlan && (
         <div className={styles.content}>
           <PlanDetails plan={selectedPlan} />
-          <PlanItemsTable items={planItems} />
+          <PlanItemsTable items={planItems} onReload={reload} />
           <div className={styles["plan-actions"]}>
             <label className={styles["events-toggle"]}>
               <input
