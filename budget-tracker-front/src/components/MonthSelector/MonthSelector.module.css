@@ -6,9 +6,9 @@
   margin: 12px auto 16px;
   padding: 8px 14px;
   border-radius: 999px;
-  background: rgba(48, 46, 61, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow: 0 16px 34px rgba(12, 11, 18, 0.18);
+  background: rgba(34, 37, 49, 0.72);
+  border: 1px solid rgba(205, 218, 219, 0.08);
+  box-shadow: 0 16px 34px rgba(8, 10, 16, 0.18);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
 }
@@ -17,7 +17,7 @@
   min-width: 180px;
   text-align: center;
   white-space: nowrap;
-  color: #f5f2e9;
+  color: #f2f5f1;
   font-size: 0.98rem;
   font-weight: 700;
   text-transform: capitalize;
@@ -30,8 +30,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(205, 218, 219, 0.08);
   border-radius: 50%;
   color: var(--color-white);
   font-size: 1.05rem;
@@ -41,5 +41,5 @@
 
 .month-selector button:hover {
   transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.09);
+  background: rgba(95, 179, 167, 0.12);
 }

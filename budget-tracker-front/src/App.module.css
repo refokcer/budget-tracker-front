@@ -4,8 +4,9 @@
   height: 100vh;
   overflow: hidden;
   background:
-    radial-gradient(circle at top left, rgba(119, 107, 145, 0.18), transparent 28%),
-    linear-gradient(180deg, #67667b 0%, #5e5d74 100%);
+    radial-gradient(circle at top left, rgba(91, 141, 148, 0.2), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(117, 99, 146, 0.16), transparent 34%),
+    linear-gradient(180deg, #596071 0%, #4b5061 100%);
 }
 
 .main-content {
@@ -22,7 +23,7 @@
   overflow: auto;
   scrollbar-gutter: stable both-edges;
   scrollbar-width: thin;
-  scrollbar-color: rgba(245, 242, 233, 0.35) rgba(48, 46, 61, 0.35);
+  scrollbar-color: rgba(211, 220, 220, 0.36) rgba(34, 37, 48, 0.38);
   background: transparent;
   padding: 10px;
 }
@@ -33,16 +34,16 @@
 }
 
 .content::-webkit-scrollbar-track {
-  background: rgba(48, 46, 61, 0.35);
+  background: rgba(34, 37, 48, 0.38);
   border-radius: 999px;
 }
 
 .content::-webkit-scrollbar-thumb {
-  background: rgba(245, 242, 233, 0.35);
-  border: 2px solid rgba(48, 46, 61, 0.35);
+  background: rgba(211, 220, 220, 0.36);
+  border: 2px solid rgba(34, 37, 48, 0.38);
   border-radius: 999px;
 }
 
 .content::-webkit-scrollbar-thumb:hover {
-  background: rgba(245, 242, 233, 0.55);
+  background: rgba(211, 220, 220, 0.56);
 }
