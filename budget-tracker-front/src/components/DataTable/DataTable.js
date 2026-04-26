@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import styles from "./DataTable.module.css";
 
-const DataTable = ({ columns, rows, onDelete, deletingId, onEdit }) => {
+const DataTable = ({ columns, rows, onDelete, deletingId, onEdit, tableClassName }) => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
   const handleSort = (key) => {
@@ -28,7 +28,7 @@ const DataTable = ({ columns, rows, onDelete, deletingId, onEdit }) => {
 
   return (
     <div className={styles["data-table-container"]}>
-      <table className={styles["data-table"]}>
+      <table className={`${styles["data-table"]} ${tableClassName || ""}`}>
         <thead>
           <tr>
             {columns.map((col) => (

@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import DataTable from "../../../components/DataTable/DataTable";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import editorStyles from "../../../components/TransactionInlineTable/TransactionInlineTable.module.css";
+import pageStyles from "../BudgetPlanPage/BudgetPlanPage.module.css";
 
 const editableColumns = {
   categoryTitle: {
@@ -429,7 +430,13 @@ const PlanItemsTable = ({ items, onReload }) => {
     },
   ];
 
-  return <DataTable columns={columns} rows={rows} />;
+  return (
+    <DataTable
+      columns={columns}
+      rows={rows}
+      tableClassName={pageStyles["plan-items-data-table"]}
+    />
+  );
 };
 
 export default PlanItemsTable;

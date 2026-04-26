@@ -27,6 +27,7 @@ const Header = () => {
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const avatarRef = useRef(null);
+  const dashboardCardsRef = useRef(null);
 
   const [plans, setPlans] = useState([]);
   const [plansError, setPlansError] = useState(null);
@@ -80,6 +81,13 @@ const Header = () => {
     const handleClickOutside = (event) => {
       if (avatarRef.current && !avatarRef.current.contains(event.target)) {
         setIsUserMenuOpen(false);
+      }
+
+      if (
+        dashboardCardsRef.current &&
+        !dashboardCardsRef.current.contains(event.target)
+      ) {
+        dashboardCardsRef.current.removeAttribute("open");
       }
     };
 
@@ -192,7 +200,10 @@ const Header = () => {
       <div className={styles["header-right"]}>
         <div className={styles["header-right-buttons"]}>
           {isDashboardPage && (
-            <details className={styles["dashboard-card-picker"]}>
+            <details
+              className={styles["dashboard-card-picker"]}
+              ref={dashboardCardsRef}
+            >
               <summary>
                 Cards {visibleDashboardCards.length}/{MAX_VISIBLE_DASHBOARD_CARDS}
               </summary>
