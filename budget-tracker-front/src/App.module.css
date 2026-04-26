@@ -3,13 +3,16 @@
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
+  background:
+    radial-gradient(circle at top left, rgba(119, 107, 145, 0.18), transparent 28%),
+    linear-gradient(180deg, #67667b 0%, #5e5d74 100%);
 }
 
 .main-content {
   display: flex;
   flex: 1;
   min-height: 0;
-  background-color: var(--secondary-color);
+  background: transparent;
 }
 
 .content {
@@ -17,6 +20,6 @@
   flex: 1;
   min-width: 0;
   overflow: auto;
-  background-color: var(--secondary-color);
-  padding: var(--spacing-medium);
+  background: transparent;
+  padding: 10px;
 }

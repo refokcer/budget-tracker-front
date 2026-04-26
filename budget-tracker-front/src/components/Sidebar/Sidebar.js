@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import styles from "./Sidebar.module.css";
 import starIcon from "../../data/Star.svg";
 import { menuLinks } from "../../config/constants";
@@ -9,17 +9,28 @@ const Sidebar = () => {
     <div className={styles.sidebar}>
       <nav className={styles["sidebar-menu"]}>
         {menuLinks.map(({ to, label, icon }) => (
-          <Link key={to} to={to} className={styles["sidebar-item"]}>
+          <NavLink
+            key={to}
+            to={to}
+            className={({ isActive }) =>
+              `${styles["sidebar-item"]} ${isActive ? styles["sidebar-item-active"] : ""}`
+            }
+          >
             <img src={icon} alt="icon" className={styles["sidebar-icon"]} />
             {label}
-          </Link>
+          </NavLink>
         ))}
       </nav>
       <div className={styles["sidebar-settings"]}>
-        <Link to="/settings" className={styles["sidebar-item"]}>
+        <NavLink
+          to="/settings"
+          className={({ isActive }) =>
+            `${styles["sidebar-item"]} ${isActive ? styles["sidebar-item-active"] : ""}`
+          }
+        >
           <img src={starIcon} alt="icon" className={styles["sidebar-icon"]} />
           Settings
-        </Link>
+        </NavLink>
       </div>
     </div>
   );

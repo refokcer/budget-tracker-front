@@ -28,17 +28,15 @@ const Header = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const avatarRef = useRef(null);
 
-  /* — планы — */
   const [plans, setPlans] = useState([]);
   const [plansError, setPlansError] = useState(null);
   const [selectedPlanId, setSelectedPlanId] = useState("");
 
-  /* — события — */
   const [events, setEvents] = useState([]);
   const [eventsError, setEventsError] = useState(null);
   const [selectedEventId, setSelectedEventId] = useState("");
   const [visibleDashboardCards, setVisibleDashboardCards] = useState(
-    readVisibleDashboardCards
+    readVisibleDashboardCards,
   );
 
   const isDashboardPage =
@@ -46,42 +44,57 @@ const Header = () => {
 
   useEffect(() => {
     if (location.pathname !== "/budget-plans") return;
+
     (async () => {
       try {
-        const r = await fetch(API_ENDPOINTS.monthPlans);
-        if (!r.ok) throw new Error("Ошибка при загрузке планов");
-        setPlans(await r.json());
-      } catch (e) {
-        setPlansError(e.message);
+        const response = await fetch(API_ENDPOINTS.monthPlans);
+        if (!response.ok) throw new Error("Failed to load plans");
+        setPlans(await response.json());
+      } catch (error) {
+        setPlansError(error.message);
       }
     })();
+
     const params = new URLSearchParams(location.search);
     setSelectedPlanId(params.get("planId") || "");
   }, [location.pathname, location.search]);
 
   useEffect(() => {
     if (location.pathname !== "/events") return;
+
     (async () => {
       try {
-        const r = await fetch(API_ENDPOINTS.eventPlans);
-        if (!r.ok) throw new Error("Ошибка при загрузке событий");
-        setEvents(await r.json());
-      } catch (e) {
-        setEventsError(e.message);
+        const response = await fetch(API_ENDPOINTS.eventPlans);
+        if (!response.ok) throw new Error("Failed to load events");
+        setEvents(await response.json());
+      } catch (error) {
+        setEventsError(error.message);
       }
     })();
+
     const params = new URLSearchParams(location.search);
     setSelectedEventId(params.get("eventId") || "");
   }, [location.pathname, location.search]);
 
-  const handlePlanChange = (e) => {
-    setSelectedPlanId(e.target.value);
-    navigate(`/budget-plans?planId=${e.target.value}`);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (avatarRef.current && !avatarRef.current.contains(event.target)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handlePlanChange = (event) => {
+    setSelectedPlanId(event.target.value);
+    navigate(`/budget-plans?planId=${event.target.value}`);
   };
 
-  const handleEventChange = (e) => {
-    setSelectedEventId(e.target.value);
-    navigate(`/events?eventId=${e.target.value}`);
+  const handleEventChange = (event) => {
+    setSelectedEventId(event.target.value);
+    navigate(`/events?eventId=${event.target.value}`);
   };
 
   const handleLogout = async () => {
@@ -103,31 +116,12 @@ const Header = () => {
     });
   };
 
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (avatarRef.current && !avatarRef.current.contains(e.target)) {
-        setIsUserMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  return (
-    <header className={styles.header}>
-      {/* бренд слева */}
-      <div className={styles["header-left"]}>
-        <h2 className={styles["brand-title"]}>My App</h2>
-      </div>
-
-      {/* ЗАГОЛОВОК ЧЁТКО ПО ЦЕНТРУ ЭКРАНА */}
-      <h2 className={styles["page-title"]}>{currentPageTitle}</h2>
-
-      {/* выпадающий список планов только на /budget-plans */}
-      {location.pathname === "/budget-plans" && (
+  const selectorMarkup =
+    location.pathname === "/budget-plans" ? (
+      <div className={styles["page-selector-slot"]}>
+        {plansError && <p className={styles.error}>{plansError}</p>}
         <div className={styles["plans-dropdown"]}>
-          {plansError && <p className={styles.error}>{plansError}</p>}
-          <label htmlFor="planSelect">План:</label>
+          <label htmlFor="planSelect">План</label>
           <div className={styles["custom-select-wrapper"]}>
             <select
               id="planSelect"
@@ -135,22 +129,21 @@ const Header = () => {
               onChange={handlePlanChange}
               className={styles["custom-select"]}
             >
-              {plans.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.title}
+              {plans.map((plan) => (
+                <option key={plan.id} value={plan.id}>
+                  {plan.title}
                 </option>
               ))}
             </select>
             <span className={styles["custom-arrow"]} />
           </div>
         </div>
-      )}
-
-      {/* выпадающий список событий только на /events */}
-      {location.pathname === "/events" && (
+      </div>
+    ) : location.pathname === "/events" ? (
+      <div className={styles["page-selector-slot"]}>
+        {eventsError && <p className={styles.error}>{eventsError}</p>}
         <div className={styles["plans-dropdown"]}>
-          {eventsError && <p className={styles.error}>{eventsError}</p>}
-          <label htmlFor="eventSelect">Событие:</label>
+          <label htmlFor="eventSelect">Событие</label>
           <div className={styles["custom-select-wrapper"]}>
             <select
               id="eventSelect"
@@ -158,18 +151,27 @@ const Header = () => {
               onChange={handleEventChange}
               className={styles["custom-select"]}
             >
-              {events.map((ev) => (
-                <option key={ev.id} value={ev.id}>
-                  {ev.title}
+              {events.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.title}
                 </option>
               ))}
             </select>
             <span className={styles["custom-arrow"]} />
           </div>
         </div>
-      )}
+      </div>
+    ) : null;
 
-      {/* правая часть */}
+  return (
+    <header className={styles.header}>
+      <div className={styles["header-left"]}>
+        <h2 className={styles["brand-title"]}>My App</h2>
+      </div>
+
+      <h2 className={styles["page-title"]}>{currentPageTitle}</h2>
+      {selectorMarkup}
+
       <div className={styles["header-right"]}>
         <div className={styles["header-right-buttons"]}>
           {isDashboardPage && (
@@ -231,7 +233,7 @@ const Header = () => {
         <div className={styles["header-right-avatar"]} ref={avatarRef}>
           <button
             className={styles["avatar-button"]}
-            onClick={() => setIsUserMenuOpen((o) => !o)}
+            onClick={() => setIsUserMenuOpen((open) => !open)}
           >
             <img src="favicon.ico" alt="User Avatar" className={styles.avatar} />
           </button>
@@ -243,7 +245,6 @@ const Header = () => {
         </div>
       </div>
 
-      {/* модалки */}
       <IncomeModal
         isOpen={isIncomeModalOpen}
         onClose={() => setIsIncomeModalOpen(false)}
