@@ -20,6 +20,29 @@
   flex: 1;
   min-width: 0;
   overflow: auto;
+  scrollbar-gutter: stable both-edges;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(245, 242, 233, 0.35) rgba(48, 46, 61, 0.35);
   background: transparent;
   padding: 10px;
+}
+
+.content::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: rgba(48, 46, 61, 0.35);
+  border-radius: 999px;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: rgba(245, 242, 233, 0.35);
+  border: 2px solid rgba(48, 46, 61, 0.35);
+  border-radius: 999px;
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 242, 233, 0.55);
 }

@@ -87,16 +87,6 @@ const Header = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handlePlanChange = (event) => {
-    setSelectedPlanId(event.target.value);
-    navigate(`/budget-plans?planId=${event.target.value}`);
-  };
-
-  const handleEventChange = (event) => {
-    setSelectedEventId(event.target.value);
-    navigate(`/events?eventId=${event.target.value}`);
-  };
-
   const handleLogout = async () => {
     await logout();
     navigate("/login");
@@ -116,27 +106,41 @@ const Header = () => {
     });
   };
 
+  const selectedPlan = plans.find((plan) => String(plan.id) === String(selectedPlanId));
+  const selectedEvent = events.find((event) => String(event.id) === String(selectedEventId));
+
   const selectorMarkup =
     location.pathname === "/budget-plans" ? (
       <div className={styles["page-selector-slot"]}>
         {plansError && <p className={styles.error}>{plansError}</p>}
         <div className={styles["plans-dropdown"]}>
           <label htmlFor="planSelect">План</label>
-          <div className={styles["custom-select-wrapper"]}>
-            <select
-              id="planSelect"
-              value={selectedPlanId}
-              onChange={handlePlanChange}
-              className={styles["custom-select"]}
-            >
+          <details className={styles["header-select"]} id="planSelect">
+            <summary className={styles["header-select-trigger"]}>
+              <span>{selectedPlan?.title || "Выбрать план"}</span>
+              <span className={styles["header-select-icon"]}>▾</span>
+            </summary>
+            <div className={styles["header-select-menu"]}>
               {plans.map((plan) => (
-                <option key={plan.id} value={plan.id}>
+                <button
+                  type="button"
+                  key={plan.id}
+                  className={`${styles["header-select-option"]} ${
+                    String(plan.id) === String(selectedPlanId)
+                      ? styles["header-select-option-active"]
+                      : ""
+                  }`}
+                  onClick={(event) => {
+                    setSelectedPlanId(String(plan.id));
+                    navigate(`/budget-plans?planId=${plan.id}`);
+                    event.currentTarget.closest("details")?.removeAttribute("open");
+                  }}
+                >
                   {plan.title}
-                </option>
+                </button>
               ))}
-            </select>
-            <span className={styles["custom-arrow"]} />
-          </div>
+            </div>
+          </details>
         </div>
       </div>
     ) : location.pathname === "/events" ? (
@@ -144,21 +148,32 @@ const Header = () => {
         {eventsError && <p className={styles.error}>{eventsError}</p>}
         <div className={styles["plans-dropdown"]}>
           <label htmlFor="eventSelect">Событие</label>
-          <div className={styles["custom-select-wrapper"]}>
-            <select
-              id="eventSelect"
-              value={selectedEventId}
-              onChange={handleEventChange}
-              className={styles["custom-select"]}
-            >
+          <details className={styles["header-select"]} id="eventSelect">
+            <summary className={styles["header-select-trigger"]}>
+              <span>{selectedEvent?.title || "Выбрать событие"}</span>
+              <span className={styles["header-select-icon"]}>▾</span>
+            </summary>
+            <div className={styles["header-select-menu"]}>
               {events.map((item) => (
-                <option key={item.id} value={item.id}>
+                <button
+                  type="button"
+                  key={item.id}
+                  className={`${styles["header-select-option"]} ${
+                    String(item.id) === String(selectedEventId)
+                      ? styles["header-select-option-active"]
+                      : ""
+                  }`}
+                  onClick={(event) => {
+                    setSelectedEventId(String(item.id));
+                    navigate(`/events?eventId=${item.id}`);
+                    event.currentTarget.closest("details")?.removeAttribute("open");
+                  }}
+                >
                   {item.title}
-                </option>
+                </button>
               ))}
-            </select>
-            <span className={styles["custom-arrow"]} />
-          </div>
+            </div>
+          </details>
         </div>
       </div>
     ) : null;
@@ -169,8 +184,10 @@ const Header = () => {
         <h2 className={styles["brand-title"]}>My App</h2>
       </div>
 
-      <h2 className={styles["page-title"]}>{currentPageTitle}</h2>
-      {selectorMarkup}
+      <div className={styles["header-center"]}>
+        <h2 className={styles["page-title"]}>{currentPageTitle}</h2>
+        {selectorMarkup}
+      </div>
 
       <div className={styles["header-right"]}>
         <div className={styles["header-right-buttons"]}>
