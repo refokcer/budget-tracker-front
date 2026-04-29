@@ -1,17 +1,53 @@
 .modal-content.large {
-  width: 650px;
+  width: min(860px, calc(100vw - 48px));
 }
 
 .acc-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 12px;
+  table-layout: fixed;
 }
+
+.acc-table th:nth-child(1),
+.acc-table td:nth-child(1) {
+  width: 22%;
+}
+
+.acc-table th:nth-child(2),
+.acc-table td:nth-child(2) {
+  width: 18%;
+}
+
+.acc-table th:nth-child(3),
+.acc-table td:nth-child(3) {
+  width: 24%;
+}
+
+.acc-table th:nth-child(4),
+.acc-table td:nth-child(4) {
+  width: 18%;
+}
+
+.acc-table th:nth-child(5),
+.acc-table td:nth-child(5) {
+  width: 72px;
+  text-align: center;
+}
+
 .acc-table th,
 .acc-table td {
   border-bottom: 1px solid var(--table-row-hover-bg);
-  padding: 8px;
+  padding: 14px 10px;
   text-align: left;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.acc-table th:last-child,
+.acc-table td:last-child {
+  text-align: center;
 }
 
 .del-btn {
@@ -19,7 +55,9 @@
   color: var(--color-white);
   border: none;
   border-radius: 4px;
-  padding: 2px 8px;
+  min-width: 48px;
+  height: 48px;
+  padding: 0;
   cursor: pointer;
 }
 .del-btn:disabled {
@@ -28,14 +66,16 @@
 
 .add-form {
   display: grid;
-  grid-template-columns: repeat(3, 1fr) auto;
-  gap: 18px;
-  margin-top: 12px;
+  grid-template-columns: minmax(180px, 1.25fr) 120px 160px minmax(180px, 1.25fr) auto;
+  align-items: center;
+  gap: 14px;
+  margin-top: 22px;
 }
-.add-form input {
-  padding: 6px;
-  border: 1px solid #777;
-  border-radius: 4px;
+.add-form input,
+.add-form select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .modal-overlay {
@@ -96,12 +136,14 @@
 }
 
 .modal-content input,
+.modal-content select,
 .modal-content textarea {
   padding: 10px;
-  margin: 8px 0;
+  margin: 0;
   border: 1px solid var(--color-gray-lightest);
   border-radius: 6px;
   font-size: 0.95rem;
+  background-color: var(--color-white);
 }
 
 .modal-content textarea {
@@ -110,7 +152,7 @@
 
 .modal-content input[type="date"],
 .modal-content input[type="number"] {
-  width: 93%;
+  width: 100%;
 }
 
 .modal-content label {
@@ -122,12 +164,18 @@
 
 .modal-content button {
   padding: 10px 16px;
-  margin: 8px 5px 0 0;
+  margin: 0;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.95rem;
   transition: background-color 0.3s ease;
+}
+
+.modal-content .del-btn {
+  min-width: 48px;
+  height: 48px;
+  padding: 0;
 }
 
 .modal-content button:disabled {
@@ -152,11 +200,36 @@
 }
 
 .submit-button-acc {
-  height: 70%;
+  height: 50px;
+  white-space: nowrap;
 }
 
 .acc-table-wrapper {
   max-height: 300px;
   overflow-y: auto;
-  margin-bottom: 12px;
+  margin-bottom: 0;
+}
+
+.close-button {
+  margin-top: 20px !important;
+}
+
+@media (max-width: 780px) {
+  .add-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .submit-button-acc {
+    width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .modal-content.large {
+    width: calc(100vw - 24px);
+  }
+
+  .add-form {
+    grid-template-columns: 1fr;
+  }
 }

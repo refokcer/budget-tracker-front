@@ -2,10 +2,30 @@ import { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./ManageAccounts.module.css";
 
+const ACCOUNT_TYPES = [
+  { value: 0, label: "Other" },
+  { value: 1, label: "Cash" },
+  { value: 2, label: "Checking" },
+  { value: 3, label: "Savings" },
+  { value: 4, label: "Credit card" },
+  { value: 5, label: "Investment" },
+  { value: 6, label: "Deposit" },
+  { value: 7, label: "E-wallet" },
+  { value: 8, label: "Loan" },
+];
+
+const getAccountTypeLabel = (type) => {
+  const accountType = ACCOUNT_TYPES.find(
+    (item) => item.value === Number(type) || item.label === type
+  );
+  return accountType?.label || "Other";
+};
+
 const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
   const [accounts, setAccounts] = useState([]);
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
+  const [type, setType] = useState("0");
   const [descr, setDescr] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -44,6 +64,7 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
           title,
           amount: +amount,
           currencyId: 1,
+          type: Number(type),
           description: descr,
         }),
       });
@@ -52,6 +73,7 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
       setAccounts((a) => [...a, newAcc]);
       setTitle("");
       setAmount("");
+      setType("0");
       setDescr("");
       onSaved && onSaved();
     } catch (e) {
@@ -96,6 +118,7 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
                     <th>Назва</th>
                     <th>Сума</th>
                     <th>Опис</th>
+                    <th>Type</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -105,6 +128,7 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
                       <td>{a.title}</td>
                       <td>{a.amount.toFixed(2)}</td>
                       <td>{a.description || "-"}</td>
+                      <td>{getAccountTypeLabel(a.type)}</td>
                       <td>
                         <button
                           className={styles["del-btn"]}
@@ -132,6 +156,13 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
+              <select value={type} onChange={(e) => setType(e.target.value)}>
+                {ACCOUNT_TYPES.map((accountType) => (
+                  <option key={accountType.value} value={accountType.value}>
+                    {accountType.label}
+                  </option>
+                ))}
+              </select>
               <input
                 placeholder="Опис"
                 value={descr}
