@@ -187,6 +187,91 @@
   font-size: 0.85rem;
 }
 
+.db-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.db-card-header .db-title {
+  margin: 0;
+}
+
+.db-card-header button {
+  border: 1px solid rgba(213, 224, 224, 0.12);
+  border-radius: 8px;
+  padding: 7px 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-white);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.db-goals-card {
+  gap: 14px;
+}
+
+.db-goals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.db-goal-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px 12px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid rgba(213, 224, 224, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--color-light);
+  text-align: left;
+  cursor: pointer;
+}
+
+.db-goal-row strong,
+.db-goal-row small {
+  display: block;
+}
+
+.db-goal-row strong {
+  overflow: hidden;
+  color: var(--color-white);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.db-goal-row small {
+  margin-top: 3px;
+  color: rgba(213, 224, 224, 0.68);
+  text-transform: uppercase;
+}
+
+.db-goal-amount {
+  color: var(--color-white);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.db-goal-progress {
+  grid-column: 1 / -1;
+  display: block;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.db-goal-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #5fb3a7, #31b76a);
+}
+
 .db-loading,
 .db-error {
   text-align: center;

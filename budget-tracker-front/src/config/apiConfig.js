@@ -56,6 +56,16 @@ export const API_ENDPOINTS = {
   currencyById: (id) => `${API_BASE_URL}/Currencies/${id}`,
   deleteCurrency: (id) => `${API_BASE_URL}/Currencies/${id}`,
 
+  // Financial goals
+  financialGoals: `${API_BASE_URL}/FinancialGoals`,
+  createFinancialGoal: `${API_BASE_URL}/FinancialGoals`,
+  updateFinancialGoal: `${API_BASE_URL}/FinancialGoals`,
+  financialGoalById: (id) => `${API_BASE_URL}/FinancialGoals/${id}`,
+  financialGoalForecast: (id) => `${API_BASE_URL}/FinancialGoals/${id}/forecast`,
+  applyFinancialGoalBudgetAdjustments: (id) =>
+    `${API_BASE_URL}/FinancialGoals/${id}/apply-budget-adjustments`,
+  deleteFinancialGoal: (id) => `${API_BASE_URL}/FinancialGoals/${id}`,
+
   // Expenses
   expenses: `${API_BASE_URL}/Expenses`,
   createExpense: `${API_BASE_URL}/Expenses`,

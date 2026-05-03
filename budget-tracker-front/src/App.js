@@ -8,6 +8,7 @@ import EventsPage from "./pages/Events";
 import TransfersPage from "./pages/Transfers";
 import SettingsPage from "./pages/Settings";
 import MonthlyReport from "./pages/MonthlyReport";
+import FinancialGoalsPage from "./pages/FinancialGoals";
 import { LoginPage, RegisterPage } from "./pages/Auth";
 import ProtectedLayout from "./components/ProtectedLayout/ProtectedLayout";
 
@@ -25,6 +26,7 @@ const App = () => {
           <Route path="/budget-plans" element={<BudgetPlanPage />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/transfers" element={<TransfersPage />} />
+          <Route path="/goals" element={<FinancialGoalsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/report" element={<MonthlyReport />} />
         </Route>

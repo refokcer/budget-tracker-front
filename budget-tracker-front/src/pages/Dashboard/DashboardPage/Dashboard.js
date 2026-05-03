@@ -5,6 +5,7 @@ import TopExpensesCard from "../components/TopExpensesCard/TopExpensesCard";
 import TopIncomesCard from "../components/TopIncomesCard/TopIncomesCard";
 import BiggestTransactionCard from "../components/BiggestTransactionCard/BiggestTransactionCard";
 import FinancialStabilityCard from "../components/FinancialStabilityCard/FinancialStabilityCard";
+import FinancialGoalsCard from "../components/FinancialGoalsCard/FinancialGoalsCard";
 import {
   DASHBOARD_CARDS_EVENT,
   readVisibleDashboardCards,
@@ -54,6 +55,7 @@ const Dashboard = () => {
     topIncomes,
     biggestTransaction,
     financialStability,
+    financialGoals,
   } = data;
 
   const cards = [
@@ -83,6 +85,11 @@ const Dashboard = () => {
       id: "financialStability",
       label: "Financial Stability",
       render: () => <FinancialStabilityCard stability={financialStability} />,
+    },
+    {
+      id: "financialGoals",
+      label: "Goals",
+      render: () => <FinancialGoalsCard goals={financialGoals || []} />,
     },
   ];
 

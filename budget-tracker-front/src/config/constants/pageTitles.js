@@ -6,6 +6,7 @@ export const pageTitles = {
   "/expenses": "Expenses",
   "/incomes": "Incomes",
   "/transfers": "Transfers",
+  "/goals": "Goals",
   "/settings": "Settings",
   "/report": "Monthly Report",
 };
