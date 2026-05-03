@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import API_ENDPOINTS from "../../../config/apiConfig";
+import { getDefaultMonthlyPlan, sortMonthlyPlans } from "../../../utils/budgetPlans";
 
 import PlanDetails from "../PlanDetails/PlanDetails";
 import PlanItemsTable from "../PlanItemsTable/PlanItemsTable";
 import CreatePlanModal from "../CreatePlanModal/CreatePlanModal";
 import EditPlanModal from "../EditPlanModal/EditPlanModal";
+import AutoPlanModal from "../AutoPlanModal/AutoPlanModal";
 import BudgetPlanExpensesTable from "../BudgetPlanExpensesTable/BudgetPlanExpensesTable";
 
 import styles from "./BudgetPlanPage.module.css";
@@ -25,6 +27,7 @@ const BudgetPlanPage = () => {
 
   const [createOpen, setCreateOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [autoOpen, setAutoOpen] = useState(false);
   const [busyDel, setBusyDel] = useState(false);
 
 useEffect(() => {
@@ -34,9 +37,14 @@ useEffect(() => {
       const r = await fetch(API_ENDPOINTS.monthPlans, { signal: controller.signal });
       if (!r.ok) throw new Error("Ошибка при загрузке планов");
       const data = await r.json();
-      setPlans(data);
-      if (!planIdFromQuery && data.length)
-        setSearchParams({ planId: data[0].id });
+      const sortedPlans = sortMonthlyPlans(data);
+      setPlans(sortedPlans);
+      if (!planIdFromQuery) {
+        const defaultPlan = getDefaultMonthlyPlan(sortedPlans);
+        if (defaultPlan) {
+          setSearchParams({ planId: defaultPlan.id }, { replace: true });
+        }
+      }
     } catch (e) {
       if (e.name !== "AbortError") setError(e.message);
     }
@@ -86,6 +94,16 @@ useEffect(() => {
 
 const reload = () => fetchPlanData();
 
+const openGeneratedPlan = (result) => {
+  const planId = result?.plan?.id;
+  if (!planId) {
+    window.location.reload();
+    return;
+  }
+
+  window.location.href = `/budget-plans?planId=${planId}`;
+};
+
   const deletePlan = async () => {
     if (!selectedPlan) return;
     if (!window.confirm("Удалить этот план?")) return;
@@ -118,6 +136,12 @@ const reload = () => fetchPlanData();
             onClick={() => setCreateOpen(true)}
           >
             + новый план
+          </button>
+          <button
+            className={styles["auto-btn"]}
+            onClick={() => setAutoOpen(true)}
+          >
+            Auto monthly
           </button>
           <p className={styles["no-plan-text"]}>Планов пока нет…</p>
         </>
@@ -154,6 +178,12 @@ const reload = () => fetchPlanData();
               onClick={() => setCreateOpen(true)}
             >
               + новый
+            </button>
+            <button
+              className={styles["auto-btn"]}
+              onClick={() => setAutoOpen(true)}
+            >
+              Auto monthly
             </button>
           </div>
         </div>
@@ -199,6 +229,11 @@ const reload = () => fetchPlanData();
         plan={selectedPlan}
         items={planItems}
         onSaved={() => window.location.reload()}
+      />
+      <AutoPlanModal
+        isOpen={autoOpen}
+        onClose={() => setAutoOpen(false)}
+        onCreated={openGeneratedPlan}
       />
     </div>
   );

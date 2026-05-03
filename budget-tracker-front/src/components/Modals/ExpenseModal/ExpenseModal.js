@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
+import { findCurrentMonthlyPlan } from "../../../utils/budgetPlans";
 import styles from "./ExpenseModal.module.css";
 
 const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
@@ -29,13 +30,37 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
 
     const load = async () => {
       try {
-        const res = await fetch(API_ENDPOINTS.expenseModal);
+        const [res, settingsRes] = await Promise.all([
+          fetch(API_ENDPOINTS.expenseModal),
+          fetch(API_ENDPOINTS.userSettings).catch(() => null),
+        ]);
+
         if (!res.ok) throw new Error("Failed to load data");
         const data = await res.json();
+        const settings = settingsRes?.ok ? await settingsRes.json() : {};
+
         setCurrencies(data.currencies);
         setCategories(data.categories);
         setAccounts(data.accounts);
         setPlans(data.plans);
+
+        if (!transaction) {
+          const currencyIds = new Set((data.currencies || []).map((c) => Number(c.id)));
+          const accountIds = new Set((data.accounts || []).map((a) => Number(a.id)));
+          const currentPlan = findCurrentMonthlyPlan(data.plans || []);
+
+          setCurrencyId(
+            settings.defaultCurrencyId && currencyIds.has(Number(settings.defaultCurrencyId))
+              ? String(settings.defaultCurrencyId)
+              : ""
+          );
+          setAccountFrom(
+            settings.defaultAccountId && accountIds.has(Number(settings.defaultAccountId))
+              ? String(settings.defaultAccountId)
+              : ""
+          );
+          setBudgetPlanId(currentPlan ? String(currentPlan.id) : "");
+        }
       } catch (e) {
         setError(e.message);
       }

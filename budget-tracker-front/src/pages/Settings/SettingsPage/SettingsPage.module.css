@@ -3,19 +3,17 @@
   justify-content: center;
   padding: 20px;
   width: 100%;
-
   box-sizing: border-box;
-  overflow: hidden;
-
-  height: 230px;
+  overflow-x: hidden;
+  min-height: 230px;
 }
 
 .settings-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(200px, 1fr));
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
   gap: 20px;
   width: 100%;
-  max-width: 800px;
+  max-width: 1120px;
 }
 
 .settings-card {
@@ -27,11 +25,32 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  gap: 10px;
 }
 
 .settings-card h3 {
-  margin: 0 0 12px;
+  margin: 0 0 4px;
   font-size: 1.2rem;
+}
+
+.settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+}
+
+.settings-field select {
+  width: 100%;
+  min-height: 40px;
+  background: #242433;
+  border: 1px solid #45485a;
+  border-radius: 6px;
+  color: var(--color-white);
+  padding: 8px 10px;
+  font-size: 0.95rem;
 }
 
 .settings-btn {
@@ -42,11 +61,36 @@
   padding: 10px 16px;
   font-size: 0.95rem;
   cursor: pointer;
-  margin-bottom: 10px;
   width: 100%;
   text-align: left;
 }
 
+.settings-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .settings-btn:hover {
   opacity: 0.85;
+}
+
+.settings-error,
+.settings-success {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.settings-error {
+  color: #ff8a8a;
+}
+
+.settings-success {
+  color: #7dd3a8;
+}
+
+@media (max-width: 900px) {
+  .settings-grid {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+  }
 }

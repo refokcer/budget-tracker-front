@@ -1,0 +1,209 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  width: min(860px, 100%);
+  max-height: calc(100vh - 36px);
+  overflow: auto;
+  padding: 20px;
+  border-radius: 8px;
+  background: #2e3142;
+  color: var(--color-light);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.42);
+}
+
+.modal-header,
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: var(--color-white);
+}
+
+.close-icon,
+.submit-button,
+.secondary-button {
+  border: 0;
+  border-radius: 8px;
+  color: var(--color-white);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.close-icon {
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.submit-button {
+  padding: 10px 15px;
+  background: var(--positive-color);
+}
+
+.secondary-button {
+  padding: 10px 15px;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(213, 224, 224, 0.12);
+}
+
+.submit-button:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px;
+  margin-top: 18px;
+}
+
+.form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: rgba(213, 224, 224, 0.78);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.wide-field {
+  grid-column: 1 / -1;
+}
+
+.form-grid input,
+.form-grid select {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(213, 224, 224, 0.12);
+  border-radius: 8px;
+  padding: 10px 11px;
+  background: rgba(15, 17, 25, 0.48);
+  color: var(--color-white);
+  font: inherit;
+}
+
+.toggles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.toggles label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid rgba(213, 224, 224, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  font-weight: 700;
+}
+
+.rules-panel,
+.summary div {
+  border: 1px solid rgba(213, 224, 224, 0.08);
+  border-radius: 8px;
+  background: rgba(35, 38, 51, 0.78);
+}
+
+.rules-panel {
+  display: grid;
+  gap: 6px;
+  margin: 14px 0;
+  padding: 12px;
+}
+
+.rules-panel strong {
+  color: var(--color-white);
+}
+
+.rules-panel span {
+  color: rgba(213, 224, 224, 0.72);
+  font-size: 0.9rem;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 18px 0 14px;
+}
+
+.summary div {
+  padding: 12px;
+}
+
+.summary span {
+  display: block;
+  margin-bottom: 6px;
+  color: rgba(213, 224, 224, 0.68);
+  font-size: 0.78rem;
+}
+
+.summary strong {
+  color: var(--color-white);
+}
+
+.table-wrap {
+  overflow-x: auto;
+  margin-bottom: 14px;
+}
+
+.table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-wrap th,
+.table-wrap td {
+  padding: 9px 8px;
+  border-bottom: 1px solid rgba(213, 224, 224, 0.1);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.table-wrap th {
+  color: rgba(213, 224, 224, 0.72);
+}
+
+.error {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #ffb5b5;
+  background: rgba(229, 57, 53, 0.12);
+}
+
+@media (max-width: 720px) {
+  .form-grid,
+  .toggles,
+  .summary {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .actions button {
+    width: 100%;
+  }
+}

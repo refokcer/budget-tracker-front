@@ -37,6 +37,12 @@ const getProgress = (goal, forecast) => {
   return Math.min(1, Number(goal.initialAmount || 0) / Number(goal.targetAmount));
 };
 
+const fetchGoalForecast = async (goalId) => {
+  const response = await fetch(API_ENDPOINTS.financialGoalForecast(goalId));
+  if (!response.ok) throw new Error("Failed to load goal forecast.");
+  return response.json();
+};
+
 const GoalModal = ({ goal, accounts, isOpen, onClose, onSaved }) => {
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
@@ -226,6 +232,7 @@ const FinancialGoalsPage = () => {
   const [accounts, setAccounts] = useState([]);
   const [selectedGoalId, setSelectedGoalId] = useState(null);
   const [forecast, setForecast] = useState(null);
+  const [forecastsByGoalId, setForecastsByGoalId] = useState({});
   const [loading, setLoading] = useState(true);
   const [forecastLoading, setForecastLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -248,6 +255,25 @@ const FinancialGoalsPage = () => {
     [goals, selectedGoalId]
   );
 
+  const loadGoalForecasts = useCallback(async (nextGoals) => {
+    const entries = await Promise.all(
+      nextGoals.map(async (goal) => {
+        try {
+          return [goal.id, await fetchGoalForecast(goal.id)];
+        } catch {
+          return [goal.id, null];
+        }
+      })
+    );
+
+    setForecastsByGoalId(
+      entries.reduce((acc, [goalId, nextForecast]) => {
+        if (nextForecast) acc[goalId] = nextForecast;
+        return acc;
+      }, {})
+    );
+  }, []);
+
   const loadGoals = useCallback(
     async (preferredGoalId, fallbackGoalId) => {
       const response = await fetch(API_ENDPOINTS.financialGoals);
@@ -264,9 +290,10 @@ const FinancialGoalsPage = () => {
         null;
 
       setSelectedGoalId(nextSelected?.id || null);
+      await loadGoalForecasts(nextGoals);
       return nextSelected;
     },
-    []
+    [loadGoalForecasts]
   );
 
   const loadInitialData = useCallback(async () => {
@@ -302,9 +329,12 @@ const FinancialGoalsPage = () => {
     try {
       setForecastLoading(true);
       setApplyResult(null);
-      const response = await fetch(API_ENDPOINTS.financialGoalForecast(goalId));
-      if (!response.ok) throw new Error("Failed to load goal forecast.");
-      setForecast(await response.json());
+      const nextForecast = await fetchGoalForecast(goalId);
+      setForecast(nextForecast);
+      setForecastsByGoalId((current) => ({
+        ...current,
+        [goalId]: nextForecast,
+      }));
     } catch (e) {
       setForecast(null);
       setError(e.message);
@@ -437,7 +467,7 @@ const FinancialGoalsPage = () => {
           <aside className={styles["goal-list"]}>
             {goals.map((goal) => {
               const isSelected = String(goal.id) === String(selectedGoalId);
-              const cardForecast = isSelected ? forecast : null;
+              const cardForecast = forecastsByGoalId[goal.id];
               const progress = getProgress(goal, cardForecast);
 
               return (

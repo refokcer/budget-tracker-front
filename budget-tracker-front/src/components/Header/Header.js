@@ -9,6 +9,7 @@ import TransferModal from "../Modals/TransferModal/TransferModal";
 import API_ENDPOINTS from "../../config/apiConfig";
 import { pageTitles } from "../../config/constants";
 import { useAuth } from "../../context/AuthContext";
+import { sortMonthlyPlans } from "../../utils/budgetPlans";
 import {
   DASHBOARD_CARD_OPTIONS,
   MAX_VISIBLE_DASHBOARD_CARDS,
@@ -50,7 +51,7 @@ const Header = () => {
       try {
         const response = await fetch(API_ENDPOINTS.monthPlans);
         if (!response.ok) throw new Error("Failed to load plans");
-        setPlans(await response.json());
+        setPlans(sortMonthlyPlans(await response.json()));
       } catch (error) {
         setPlansError(error.message);
       }

@@ -34,6 +34,7 @@ export const API_ENDPOINTS = {
   monthPlans: `${API_BASE_URL}/BudgetPlans/months`,
   eventPlans: `${API_BASE_URL}/BudgetPlans/events`,
   createBudgetPlan: `${API_BASE_URL}/BudgetPlans`,
+  createAutoMonthlyBudgetPlan: `${API_BASE_URL}/BudgetPlans/auto-monthly`,
   updateBudgetPlan: `${API_BASE_URL}/BudgetPlans`,
   budgetPlanById: (id) => `${API_BASE_URL}/BudgetPlans/${id}`,
   deleteBudgetPlan: (id) => `${API_BASE_URL}/BudgetPlans/${id}`,
@@ -55,6 +56,9 @@ export const API_ENDPOINTS = {
   updateCurrency: `${API_BASE_URL}/Currencies`,
   currencyById: (id) => `${API_BASE_URL}/Currencies/${id}`,
   deleteCurrency: (id) => `${API_BASE_URL}/Currencies/${id}`,
+
+  // User settings
+  userSettings: `${API_BASE_URL}/UserSettings`,
 
   // Financial goals
   financialGoals: `${API_BASE_URL}/FinancialGoals`,

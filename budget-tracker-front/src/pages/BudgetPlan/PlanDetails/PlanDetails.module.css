@@ -1,27 +1,46 @@
 .plan-details-inline {
-  display: flex;
-  gap: 80px;
+  width: min(100%, 1180px);
+  margin: 0 auto 14px;
+  padding: 0 14px;
+  box-sizing: border-box;
+}
+
+.plan-meta-row {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(240px, 1fr) minmax(120px, 0.6fr);
+  gap: 18px;
   align-items: baseline;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 15px;
 }
 
 .plan-title {
+  color: var(--color-white);
   font-size: 1.2rem;
   font-weight: 600;
-  color: var(--color-white);
-  margin-right: 10px;
 }
 
 .plan-period,
-.plan-type,
-.plan-description {
+.plan-type {
   color: var(--color-gray-lightest);
   font-size: 1rem;
 }
+
+.plan-description {
+  margin: 10px 0 0;
+  color: var(--color-gray-lightest);
+  font-size: 0.95rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
 .plan-period strong,
 .plan-type strong,
 .plan-description strong {
   color: var(--color-white);
+}
+
+@media (max-width: 900px) {
+  .plan-meta-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
 }

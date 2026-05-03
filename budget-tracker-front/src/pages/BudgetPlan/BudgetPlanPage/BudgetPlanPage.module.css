@@ -35,7 +35,8 @@
 }
 
 .create-btn,
-.edit-btn {
+.edit-btn,
+.auto-btn {
   padding: 6px 14px;
   border: none;
   border-radius: 4px;
@@ -45,6 +46,11 @@
 
 .create-btn {
   background: #1ea522;
+  color: var(--color-white);
+}
+
+.auto-btn {
+  background: #5fb3a7;
   color: var(--color-white);
 }
 
