@@ -28,6 +28,8 @@ const editableColumns = {
   },
 };
 
+const isOtherRow = (row) => Boolean(row.isOther);
+
 const InlineSelectEditor = ({
   cellKey,
   options,
@@ -265,7 +267,11 @@ const PlanItemsTable = ({ items, onReload }) => {
 
     const payload = buildPayload(row, normalizedValue, columnKey);
 
-    if (!payload.categoryId || !payload.currencyId || Number.isNaN(payload.amount)) {
+    if (
+      (!payload.categoryId && !isOtherRow(row)) ||
+      !payload.currencyId ||
+      Number.isNaN(payload.amount)
+    ) {
       alert("Failed to prepare budget plan item for saving");
       return;
     }
@@ -274,10 +280,21 @@ const PlanItemsTable = ({ items, onReload }) => {
     setSavingCell(cell);
 
     try {
-      const res = await fetch(API_ENDPOINTS.updateBudgetPlanItem, {
-        method: "PUT",
+      const isCreatingVirtualOther = row.isVirtual && columnKey !== "categoryTitle";
+      const res = await fetch(
+        isCreatingVirtualOther
+          ? API_ENDPOINTS.createBudgetPlanItem
+          : API_ENDPOINTS.updateBudgetPlanItem,
+        {
+        method: isCreatingVirtualOther ? "POST" : "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(isCreatingVirtualOther ? {
+          budgetPlanId: payload.budgetPlanId,
+          categoryId: 0,
+          amount: payload.amount,
+          currencyId: payload.currencyId,
+          description: payload.description,
+        } : payload),
       });
       if (!res.ok) throw new Error(`Save failed with status ${res.status}`);
 
@@ -316,6 +333,7 @@ const PlanItemsTable = ({ items, onReload }) => {
   const startEditing = (row, columnKey) => {
     const config = editableColumns[columnKey];
     if (!config || savingCell) return;
+    if (isOtherRow(row) && columnKey === "categoryTitle") return;
 
     if (columnKey === "categoryTitle") {
       const categoryId =
@@ -342,6 +360,14 @@ const PlanItemsTable = ({ items, onReload }) => {
         return row[key] === "-" ? "-" : `${row.currencySymbol}${row[key]}`;
       }
       return row[key];
+    }
+
+    if (isOtherRow(row) && key === "categoryTitle") {
+      return (
+        <span className={editorStyles.inlineCellValue}>
+          {row.categoryTitle}
+        </span>
+      );
     }
 
     if (isEditing && config.type === "select") {

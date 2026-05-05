@@ -19,6 +19,10 @@ const money = (value) =>
     maximumFractionDigits: 2,
   });
 
+const roundMoney = (value) => Math.round(Number(value || 0) * 100) / 100;
+
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
 const percent = (value) => `${Math.round(Number(value || 0) * 100)}%`;
 
 const formatDate = (value) => {
@@ -42,6 +46,23 @@ const fetchGoalForecast = async (goalId) => {
   if (!response.ok) throw new Error("Failed to load goal forecast.");
   return response.json();
 };
+
+const normalizeBudgetAdjustments = (items) =>
+  (items || []).map((item) => {
+    const currentBudgetLimit = roundMoney(item.currentBudgetLimit);
+    const recommendedBudgetLimit = roundMoney(item.recommendedBudgetLimit);
+    const suggestedReduction = roundMoney(currentBudgetLimit - recommendedBudgetLimit);
+
+    return {
+      ...item,
+      averageMonthlySpending: roundMoney(item.averageMonthlySpending),
+      currentBudgetLimit,
+      recommendedBudgetLimit,
+      suggestedReduction,
+      minRecommendedBudgetLimit: recommendedBudgetLimit,
+      maxSuggestedReduction: suggestedReduction,
+    };
+  });
 
 const GoalModal = ({ goal, accounts, isOpen, onClose, onSaved }) => {
   const [form, setForm] = useState(emptyForm);
@@ -241,6 +262,7 @@ const FinancialGoalsPage = () => {
   const [deletingId, setDeletingId] = useState(null);
   const [applying, setApplying] = useState(false);
   const [applyResult, setApplyResult] = useState(null);
+  const [editableBudgetAdjustments, setEditableBudgetAdjustments] = useState([]);
 
   const savingsAccounts = useMemo(
     () =>
@@ -347,6 +369,12 @@ const FinancialGoalsPage = () => {
     loadForecast(selectedGoalId);
   }, [loadForecast, selectedGoalId]);
 
+  useEffect(() => {
+    setEditableBudgetAdjustments(
+      normalizeBudgetAdjustments(forecast?.suggestedBudgetAdjustments)
+    );
+  }, [forecast]);
+
   const openCreate = () => {
     setModalGoal(null);
     setIsModalOpen(true);
@@ -387,9 +415,16 @@ const FinancialGoalsPage = () => {
 
   const applyBudgetAdjustments = async () => {
     if (!selectedGoal) return;
+    const adjustments = editableBudgetAdjustments
+      .filter((item) => Number(item.suggestedReduction || 0) > 0)
+      .map((item) => ({
+        categoryId: item.categoryId,
+        recommendedBudgetLimit: roundMoney(item.recommendedBudgetLimit),
+      }));
+
     if (
       !window.confirm(
-        "Apply suggested limits to the active monthly budget plan?"
+        "Apply edited limits to the active monthly budget plan?"
       )
     ) {
       return;
@@ -401,7 +436,11 @@ const FinancialGoalsPage = () => {
       setError(null);
       const response = await fetch(
         API_ENDPOINTS.applyFinancialGoalBudgetAdjustments(selectedGoal.id),
-        { method: "POST" }
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ adjustments }),
+        }
       );
       if (!response.ok) throw new Error("Failed to apply budget adjustments.");
       const result = await response.json();
@@ -412,6 +451,54 @@ const FinancialGoalsPage = () => {
     } finally {
       setApplying(false);
     }
+  };
+
+  const updateAdjustmentRecommendedLimit = (categoryId, value) => {
+    setEditableBudgetAdjustments((current) =>
+      current.map((item) => {
+        if (item.categoryId !== categoryId) return item;
+
+        const currentLimit = Number(item.currentBudgetLimit || 0);
+        const minLimit = Number(item.minRecommendedBudgetLimit || 0);
+        const nextLimit = roundMoney(clamp(Number(value || 0), minLimit, currentLimit));
+
+        return {
+          ...item,
+          recommendedBudgetLimit: nextLimit,
+          suggestedReduction: roundMoney(currentLimit - nextLimit),
+        };
+      })
+    );
+  };
+
+  const updateAdjustmentReduction = (categoryId, value) => {
+    setEditableBudgetAdjustments((current) =>
+      current.map((item) => {
+        if (item.categoryId !== categoryId) return item;
+
+        const currentLimit = Number(item.currentBudgetLimit || 0);
+        const maxReduction = Number(item.maxSuggestedReduction || 0);
+        const nextReduction = roundMoney(clamp(Number(value || 0), 0, maxReduction));
+
+        return {
+          ...item,
+          recommendedBudgetLimit: roundMoney(currentLimit - nextReduction),
+          suggestedReduction: nextReduction,
+        };
+      })
+    );
+  };
+
+  const removeAdjustment = (categoryId) => {
+    setEditableBudgetAdjustments((current) =>
+      current.filter((item) => item.categoryId !== categoryId)
+    );
+  };
+
+  const resetAdjustments = () => {
+    setEditableBudgetAdjustments(
+      normalizeBudgetAdjustments(forecast?.suggestedBudgetAdjustments)
+    );
   };
 
   const totalTarget = goals.reduce((sum, goal) => sum + Number(goal.targetAmount || 0), 0);
@@ -618,7 +705,9 @@ const FinancialGoalsPage = () => {
                           className={styles["secondary-button"]}
                           disabled={
                             applying ||
-                            !forecast.suggestedBudgetAdjustments?.length
+                            !editableBudgetAdjustments.some(
+                              (item) => Number(item.suggestedReduction || 0) > 0
+                            )
                           }
                           onClick={applyBudgetAdjustments}
                         >
@@ -637,6 +726,19 @@ const FinancialGoalsPage = () => {
 
                       {forecast.suggestedBudgetAdjustments?.length ? (
                         <div className={styles["table-wrap"]}>
+                          <div className={styles["adjustment-tools"]}>
+                            <span>
+                              {editableBudgetAdjustments.length} of{" "}
+                              {forecast.suggestedBudgetAdjustments.length} selected
+                            </span>
+                            <button
+                              type="button"
+                              className={styles["secondary-button"]}
+                              onClick={resetAdjustments}
+                            >
+                              Reset
+                            </button>
+                          </div>
                           <table>
                             <thead>
                               <tr>
@@ -645,20 +747,65 @@ const FinancialGoalsPage = () => {
                                 <th>Current limit</th>
                                 <th>Recommended</th>
                                 <th>Reduction</th>
+                                <th></th>
                               </tr>
                             </thead>
                             <tbody>
-                              {forecast.suggestedBudgetAdjustments.map((item) => (
+                              {editableBudgetAdjustments.map((item) => (
                                 <tr key={item.categoryId}>
                                   <td>{item.categoryTitle}</td>
                                   <td>{money(item.averageMonthlySpending)}</td>
                                   <td>{money(item.currentBudgetLimit)}</td>
-                                  <td>{money(item.recommendedBudgetLimit)}</td>
-                                  <td>{money(item.suggestedReduction)}</td>
+                                  <td>
+                                    <input
+                                      className={styles["money-input"]}
+                                      type="number"
+                                      min={item.minRecommendedBudgetLimit}
+                                      max={item.currentBudgetLimit}
+                                      step="0.01"
+                                      value={item.recommendedBudgetLimit}
+                                      onChange={(e) =>
+                                        updateAdjustmentRecommendedLimit(
+                                          item.categoryId,
+                                          e.target.value
+                                        )
+                                      }
+                                    />
+                                  </td>
+                                  <td>
+                                    <input
+                                      className={styles["money-input"]}
+                                      type="number"
+                                      min="0"
+                                      max={item.maxSuggestedReduction}
+                                      step="0.01"
+                                      value={item.suggestedReduction}
+                                      onChange={(e) =>
+                                        updateAdjustmentReduction(
+                                          item.categoryId,
+                                          e.target.value
+                                        )
+                                      }
+                                    />
+                                  </td>
+                                  <td>
+                                    <button
+                                      type="button"
+                                      className={styles["row-action-button"]}
+                                      onClick={() => removeAdjustment(item.categoryId)}
+                                    >
+                                      Remove
+                                    </button>
+                                  </td>
                                 </tr>
                               ))}
                             </tbody>
                           </table>
+                          {!editableBudgetAdjustments.length && (
+                            <p className={styles.muted}>
+                              All suggested adjustments were removed.
+                            </p>
+                          )}
                         </div>
                       ) : (
                         <p className={styles.muted}>No budget reductions are needed right now.</p>

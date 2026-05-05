@@ -313,6 +313,16 @@
   overflow-x: auto;
 }
 
+.adjustment-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  color: rgba(213, 224, 224, 0.72);
+  font-size: 0.82rem;
+}
+
 .table-wrap table {
   width: 100%;
   border-collapse: collapse;
@@ -330,6 +340,27 @@
 .table-wrap th {
   color: rgba(213, 224, 224, 0.72);
   font-weight: 700;
+}
+
+.money-input {
+  width: 118px;
+  box-sizing: border-box;
+  border: 1px solid rgba(213, 224, 224, 0.14);
+  border-radius: 8px;
+  padding: 8px 9px;
+  background: rgba(15, 17, 25, 0.46);
+  color: var(--color-white);
+  font: inherit;
+}
+
+.row-action-button {
+  border: 1px solid rgba(255, 181, 181, 0.28);
+  border-radius: 8px;
+  padding: 7px 10px;
+  background: rgba(229, 57, 53, 0.13);
+  color: #ffb5b5;
+  font-weight: 800;
+  cursor: pointer;
 }
 
 .empty {

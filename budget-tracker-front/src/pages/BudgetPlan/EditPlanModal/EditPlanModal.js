@@ -38,7 +38,7 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
         setAllCats(data.categories);
         setAllCur(data.currencies);
         setRows(
-          items.map((i) => ({
+          items.filter((i) => !i.isVirtual).map((i) => ({
             id: i.id,
             budgetPlanId: i.budgetPlanId,
             categoryId:
@@ -57,7 +57,7 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
       } catch {
         if (!ignore) {
           setRows(
-            items.map((i) => ({
+            items.filter((i) => !i.isVirtual).map((i) => ({
               id: i.id,
               budgetPlanId: i.budgetPlanId,
               categoryId: i.categoryId ?? "",
