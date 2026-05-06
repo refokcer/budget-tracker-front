@@ -1,7 +1,9 @@
 // src/config/apiConfig.js
 
 // base backend url
-export const BASE_URL = "https://localhost:7281";
+export const BASE_URL = (
+  process.env.REACT_APP_API_BASE_URL || "https://localhost:7281"
+).replace(/\/$/, "");
 
 const API_BASE_URL = `${BASE_URL}/api`;
 const AUTH_BASE_URL = `${BASE_URL}/auth`;
