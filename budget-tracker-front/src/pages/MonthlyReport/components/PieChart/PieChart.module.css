@@ -1,21 +1,122 @@
-.pie-card{
-  background:#2e2e3d; border-radius:8px; padding:16px;
-  box-shadow:0 4px 12px rgba(0,0,0,.3); color:#fff;
+.pie-card {
+  min-height: 310px;
+  border: 1px solid rgba(213, 224, 224, 0.08);
+  border-radius: 8px;
+  background: rgba(34, 35, 49, 0.94);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.26);
+  color: #fff;
+  padding: 18px 20px;
 }
-.pie-card h4{ margin:0 0 10px 0; font-size:1rem; }
-.pie-chart{ width:100%; height:auto; }
-.slice{ stroke:#2e2e3d; stroke-width:1; }
-.slice.c0{ fill:#ff7043; }
-.slice.c1{ fill:#ffee58; }
-.slice.c2{ fill:#66bb6a; }
-.slice.c3{ fill:#42a5f5; }
-.slice.c4{ fill:#ab47bc; }
-.legend{ list-style:none; padding:0; margin-top:8px; font-size:0.85rem; }
-.legend li{ margin-bottom:4px; }
-.dot{ display:inline-block; width:12px; height:12px; margin-right:6px; vertical-align:middle; }
-.dot.c0{ background:#ff7043; }
-.dot.c1{ background:#ffee58; }
-.dot.c2{ background:#66bb6a; }
-.dot.c3{ background:#42a5f5; }
-.dot.c4{ background:#ab47bc; }
-.empty{ text-align:center; color:#bbb; }
+
+.pie-card h4 {
+  margin: 0 0 14px;
+  font-size: 1.02rem;
+}
+
+.pie-layout {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+}
+
+.pie-chart {
+  width: 150px;
+  height: 150px;
+}
+
+.slice {
+  stroke: #222331;
+  stroke-width: 1;
+}
+
+.c0 {
+  fill: #ff6b5f;
+  background: #ff6b5f;
+}
+.c1 {
+  fill: #35b978;
+  background: #35b978;
+}
+.c2 {
+  fill: #4aa3ff;
+  background: #4aa3ff;
+}
+.c3 {
+  fill: #f7b731;
+  background: #f7b731;
+}
+.c4 {
+  fill: #a78bfa;
+  background: #a78bfa;
+}
+.c5 {
+  fill: #5fb3a7;
+  background: #5fb3a7;
+}
+.c6 {
+  fill: #f472b6;
+  background: #f472b6;
+}
+.c7 {
+  fill: #94a3b8;
+  background: #94a3b8;
+}
+.c8 {
+  fill: #fb923c;
+  background: #fb923c;
+}
+.c9 {
+  fill: #22d3ee;
+  background: #22d3ee;
+}
+
+.legend {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  font-size: 0.86rem;
+  list-style: none;
+}
+
+.legend li {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.legend span:nth-child(2) {
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.9);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.legend strong {
+  color: var(--color-white);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.empty {
+  margin: 70px 0 0;
+  color: rgba(213, 224, 224, 0.72);
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .pie-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .pie-chart {
+    justify-self: center;
+  }
+}

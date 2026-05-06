@@ -16,8 +16,12 @@ const money = (value) =>
 
 const AutoPlanModal = ({ isOpen, onClose, onCreated }) => {
   const now = useMemo(() => new Date(), []);
-  const [month, setMonth] = useState(now.getMonth() + 1);
-  const [year, setYear] = useState(now.getFullYear());
+  const defaultTarget = useMemo(
+    () => new Date(now.getFullYear(), now.getMonth() + 1, 1),
+    [now]
+  );
+  const [month, setMonth] = useState(defaultTarget.getMonth() + 1);
+  const [year, setYear] = useState(defaultTarget.getFullYear());
   const [title, setTitle] = useState("");
   const [replaceExisting, setReplaceExisting] = useState(false);
   const [applySeasonality, setApplySeasonality] = useState(true);
@@ -32,14 +36,14 @@ const AutoPlanModal = ({ isOpen, onClose, onCreated }) => {
 
     setResult(null);
     setError(null);
-    setMonth(now.getMonth() + 1);
-    setYear(now.getFullYear());
+    setMonth(defaultTarget.getMonth() + 1);
+    setYear(defaultTarget.getFullYear());
     setTitle("");
     setReplaceExisting(false);
     setApplySeasonality(true);
     setOverspendCarryRate("0.5");
     setUnderspendCarryRate("0.25");
-  }, [isOpen, now]);
+  }, [isOpen, defaultTarget]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -183,6 +187,7 @@ const AutoPlanModal = ({ isOpen, onClose, onCreated }) => {
               <span>December: gifts, holidays, food, entertainment.</span>
               <span>Winter: utilities, heating, fuel, transport.</span>
               <span>Summer: travel and vacation. September: school and education.</span>
+              <span>Financial discipline: income envelope, goals, category priority, and stability trend.</span>
             </div>
 
             <div className={styles.actions}>
@@ -218,6 +223,22 @@ const AutoPlanModal = ({ isOpen, onClose, onCreated }) => {
                 <span>New total</span>
                 <strong>{money(result.newTotal)}</strong>
               </div>
+              <div>
+                <span>Income baseline</span>
+                <strong>{money(result.averageMonthlyIncome)}</strong>
+              </div>
+              <div>
+                <span>Goal reserve</span>
+                <strong>{money(result.goalReserve)}</strong>
+              </div>
+              <div>
+                <span>Envelope</span>
+                <strong>{money(result.expenseEnvelope)}</strong>
+              </div>
+              <div>
+                <span>Stability trend</span>
+                <strong>{Number(result.financialStateTrend || 0).toFixed(2)}</strong>
+              </div>
             </div>
 
             <div className={styles["table-wrap"]}>
@@ -228,7 +249,9 @@ const AutoPlanModal = ({ isOpen, onClose, onCreated }) => {
                     <th>Previous</th>
                     <th>Spent</th>
                     <th>Carry</th>
+                    <th>Priority</th>
                     <th>Season</th>
+                    <th>State</th>
                     <th>New</th>
                   </tr>
                 </thead>
@@ -239,7 +262,9 @@ const AutoPlanModal = ({ isOpen, onClose, onCreated }) => {
                       <td>{money(item.previousLimit)}</td>
                       <td>{money(item.spentAmount)}</td>
                       <td>{money(item.carryAdjustment)}</td>
+                      <td>{item.priority}</td>
                       <td>x{Number(item.seasonalityMultiplier).toFixed(2)}</td>
+                      <td>x{Number(item.financialStateMultiplier).toFixed(2)}</td>
                       <td>{money(item.recommendedAmount)}</td>
                     </tr>
                   ))}

@@ -18,6 +18,13 @@ const Settings = () => {
   const [savingDefaults, setSavingDefaults] = useState(false);
   const [defaultsError, setDefaultsError] = useState(null);
   const [defaultsSaved, setDefaultsSaved] = useState(false);
+  const [adminJson, setAdminJson] = useState("");
+  const [adminTemplates, setAdminTemplates] = useState([]);
+  const [selectedTemplateId, setSelectedTemplateId] = useState("");
+  const [loadingTemplates, setLoadingTemplates] = useState(true);
+  const [adminBusy, setAdminBusy] = useState(false);
+  const [adminMessage, setAdminMessage] = useState(null);
+  const [adminError, setAdminError] = useState(null);
 
   const readError = async (response, fallback) => {
     const text = await response.text().catch(() => "");
@@ -37,27 +44,31 @@ const Settings = () => {
   useEffect(() => {
     let alive = true;
 
-    const loadDefaults = async () => {
+    const loadSettingsData = async () => {
       setLoadingDefaults(true);
+      setLoadingTemplates(true);
       setDefaultsError(null);
 
       try {
-        const [currenciesRes, accountsRes, settingsRes] = await Promise.all([
+        const [currenciesRes, accountsRes, settingsRes, templatesRes] = await Promise.all([
           fetch(API_ENDPOINTS.currencies),
           fetch(API_ENDPOINTS.accounts),
           fetch(API_ENDPOINTS.userSettings),
+          fetch(API_ENDPOINTS.adminDataTemplates),
         ]);
 
-        if (!currenciesRes.ok || !accountsRes.ok || !settingsRes.ok) {
-          throw new Error(
-            await readError(settingsRes, "Failed to load default transaction settings")
-          );
+        const failedResponse = [currenciesRes, accountsRes, settingsRes, templatesRes].find(
+          (response) => !response.ok
+        );
+        if (failedResponse) {
+          throw new Error(await readError(failedResponse, "Failed to load settings data"));
         }
 
-        const [currenciesData, accountsData, settingsData] = await Promise.all([
+        const [currenciesData, accountsData, settingsData, templatesData] = await Promise.all([
           currenciesRes.json(),
           accountsRes.json(),
           settingsRes.json(),
+          templatesRes.json(),
         ]);
 
         if (!alive) return;
@@ -70,14 +81,19 @@ const Settings = () => {
         setDefaultAccountId(
           settingsData.defaultAccountId ? String(settingsData.defaultAccountId) : ""
         );
+        setAdminTemplates(templatesData || []);
+        setSelectedTemplateId(templatesData?.[0]?.id || "");
       } catch (e) {
         if (alive) setDefaultsError(e.message);
       } finally {
-        if (alive) setLoadingDefaults(false);
+        if (alive) {
+          setLoadingDefaults(false);
+          setLoadingTemplates(false);
+        }
       }
     };
 
-    loadDefaults();
+    loadSettingsData();
 
     return () => {
       alive = false;
@@ -111,6 +127,93 @@ const Settings = () => {
       setDefaultsError(e.message);
     } finally {
       setSavingDefaults(false);
+    }
+  };
+
+  const loadSampleJson = async () => {
+    setAdminBusy(true);
+    setAdminError(null);
+    setAdminMessage(null);
+
+    try {
+      const res = await fetch(API_ENDPOINTS.adminDataSample);
+      if (!res.ok) throw new Error(await readError(res, "Failed to load sample JSON"));
+      const sample = await res.json();
+      setAdminJson(JSON.stringify(sample, null, 2));
+      setAdminMessage("Sample JSON loaded");
+    } catch (e) {
+      setAdminError(e.message);
+    } finally {
+      setAdminBusy(false);
+    }
+  };
+
+  const loadTemplateJson = async () => {
+    if (!selectedTemplateId) return;
+
+    setAdminBusy(true);
+    setAdminError(null);
+    setAdminMessage(null);
+
+    try {
+      const res = await fetch(API_ENDPOINTS.adminDataTemplate(selectedTemplateId));
+      if (!res.ok) throw new Error(await readError(res, "Failed to load template JSON"));
+      const template = await res.json();
+      const meta = adminTemplates.find((item) => item.id === selectedTemplateId);
+      setAdminJson(JSON.stringify(template, null, 2));
+      setAdminMessage(`${meta?.name || "Template"} JSON loaded`);
+    } catch (e) {
+      setAdminError(e.message);
+    } finally {
+      setAdminBusy(false);
+    }
+  };
+
+  const clearAdminData = async () => {
+    const confirmation = window.prompt(
+      "This will delete all your accounts, categories, plans, transactions, goals and settings. Type DELETE to confirm."
+    );
+    if (confirmation !== "DELETE") return;
+
+    setAdminBusy(true);
+    setAdminError(null);
+    setAdminMessage(null);
+
+    try {
+      const res = await fetch(API_ENDPOINTS.adminDataClear, { method: "DELETE" });
+      if (!res.ok) throw new Error(await readError(res, "Failed to clear data"));
+      setAdminMessage("Current user data cleared");
+      setAccounts([]);
+      setDefaultAccountId("");
+      setDefaultCurrencyId("");
+    } catch (e) {
+      setAdminError(e.message);
+    } finally {
+      setAdminBusy(false);
+    }
+  };
+
+  const importAdminJson = async () => {
+    setAdminBusy(true);
+    setAdminError(null);
+    setAdminMessage(null);
+
+    try {
+      const payload = JSON.parse(adminJson);
+      const res = await fetch(API_ENDPOINTS.adminDataImport, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(await readError(res, "Failed to import JSON"));
+      const result = await res.json();
+      setAdminMessage(
+        `Imported: ${result.accounts} accounts, ${result.categories} categories, ${result.budgetPlans} plans, ${result.transactions} transactions, ${result.financialGoals} goals`
+      );
+    } catch (e) {
+      setAdminError(e.message);
+    } finally {
+      setAdminBusy(false);
     }
   };
 
@@ -196,6 +299,98 @@ const Settings = () => {
           >
             Import statement
           </button>
+        </section>
+
+        <section className={`${styles["settings-card"]} ${styles["settings-card-wide"]}`}>
+          <h3>Admin data</h3>
+          <p className={styles["settings-muted"]}>
+            Clear current user data or import a full simulation from one JSON file.
+          </p>
+
+          {adminError && <p className={styles["settings-error"]}>{adminError}</p>}
+          {adminMessage && <p className={styles["settings-success"]}>{adminMessage}</p>}
+
+          <div className={styles["template-panel"]}>
+            <label className={styles["settings-field"]}>
+              <span>Simulation template</span>
+              <select
+                value={selectedTemplateId}
+                onChange={(e) => {
+                  setSelectedTemplateId(e.target.value);
+                  setAdminMessage(null);
+                  setAdminError(null);
+                }}
+                disabled={loadingTemplates || adminBusy || adminTemplates.length === 0}
+              >
+                {adminTemplates.length === 0 && (
+                  <option value="">No templates found</option>
+                )}
+                {adminTemplates.map((template) => (
+                  <option key={template.id} value={template.id}>
+                    {template.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <div className={styles["template-summary"]}>
+              {adminTemplates
+                .filter((template) => template.id === selectedTemplateId)
+                .map((template) => (
+                  <div key={template.id}>
+                    <p>{template.description}</p>
+                    <span>
+                      {template.accounts} accounts / {template.categories} categories /{" "}
+                      {template.budgetPlans} plans / {template.transactions} transactions /{" "}
+                      {template.financialGoals} goals
+                    </span>
+                  </div>
+                ))}
+            </div>
+          </div>
+
+          <textarea
+            className={styles["admin-json"]}
+            value={adminJson}
+            onChange={(e) => {
+              setAdminJson(e.target.value);
+              setAdminMessage(null);
+              setAdminError(null);
+            }}
+            placeholder="Paste admin seed JSON here"
+            spellCheck="false"
+          />
+
+          <div className={styles["admin-actions"]}>
+            <button
+              className={styles["settings-btn"]}
+              onClick={loadTemplateJson}
+              disabled={adminBusy || loadingTemplates || !selectedTemplateId}
+            >
+              Load selected template
+            </button>
+            <button
+              className={styles["settings-btn"]}
+              onClick={loadSampleJson}
+              disabled={adminBusy}
+            >
+              Load sample JSON
+            </button>
+            <button
+              className={styles["settings-btn"]}
+              onClick={importAdminJson}
+              disabled={adminBusy || !adminJson.trim()}
+            >
+              Import JSON
+            </button>
+            <button
+              className={`${styles["settings-btn"]} ${styles["danger-btn"]}`}
+              onClick={clearAdminData}
+              disabled={adminBusy}
+            >
+              Clear all current data
+            </button>
+          </div>
         </section>
       </div>
 

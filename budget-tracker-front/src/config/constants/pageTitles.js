@@ -9,4 +9,5 @@ export const pageTitles = {
   "/goals": "Goals",
   "/settings": "Settings",
   "/report": "Monthly Report",
+  "/profile": "Profile",
 };

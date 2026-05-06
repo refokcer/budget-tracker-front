@@ -13,6 +13,7 @@ export const DASHBOARD_CARD_OPTIONS = [
   { id: "topIncomes", label: "Top Incomes" },
   { id: "biggestTransaction", label: "Biggest Transaction" },
   { id: "financialStability", label: "Financial Stability" },
+  { id: "behavioralScore", label: "Behavioral Score" },
   { id: "financialGoals", label: "Goals" },
 ];
 

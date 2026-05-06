@@ -59,6 +59,15 @@ export const API_ENDPOINTS = {
 
   // User settings
   userSettings: `${API_BASE_URL}/UserSettings`,
+  userProfile: `${API_BASE_URL}/UserProfile`,
+  userProfilePassword: `${API_BASE_URL}/UserProfile/password`,
+
+  // Admin data
+  adminDataClear: `${API_BASE_URL}/AdminData/clear`,
+  adminDataImport: `${API_BASE_URL}/AdminData/import`,
+  adminDataSample: `${API_BASE_URL}/AdminData/sample`,
+  adminDataTemplates: `${API_BASE_URL}/AdminData/templates`,
+  adminDataTemplate: (templateId) => `${API_BASE_URL}/AdminData/templates/${templateId}`,
 
   // Financial goals
   financialGoals: `${API_BASE_URL}/FinancialGoals`,

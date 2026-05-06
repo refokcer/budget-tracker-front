@@ -17,7 +17,13 @@ const TopExpensesCard = ({ items }) => (
         <tbody>
           {items.map((it, i) => (
             <tr key={i}>
-              <td>{it.categoryTitle}</td>
+              <td>
+                <span
+                  className={styles["db-category-swatch"]}
+                  style={it.color ? { background: it.color } : undefined}
+                />
+                {it.categoryTitle}
+              </td>
               <td>{it.amount.toFixed(2)}</td>
               <td>{it.percent}</td>
             </tr>

@@ -7,8 +7,9 @@ import BudgetPlanPage from "./pages/BudgetPlan";
 import EventsPage from "./pages/Events";
 import TransfersPage from "./pages/Transfers";
 import SettingsPage from "./pages/Settings";
-import MonthlyReport from "./pages/MonthlyReport";
+import MonthlyReport from "./pages/MonthlyReport/MonthlyReportPage/MonthlyReportPage";
 import FinancialGoalsPage from "./pages/FinancialGoals";
+import ProfilePage from "./pages/Profile/ProfilePage/ProfilePage";
 import { LoginPage, RegisterPage } from "./pages/Auth";
 import ProtectedLayout from "./components/ProtectedLayout/ProtectedLayout";
 
@@ -29,6 +30,7 @@ const App = () => {
           <Route path="/goals" element={<FinancialGoalsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/report" element={<MonthlyReport />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Route>
       </Routes>
     </Router>

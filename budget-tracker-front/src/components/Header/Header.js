@@ -268,6 +268,14 @@ const Header = () => {
           </button>
           {isUserMenuOpen && (
             <div className={styles["user-menu"]}>
+              <button
+                onClick={() => {
+                  setIsUserMenuOpen(false);
+                  navigate("/profile");
+                }}
+              >
+                Profile
+              </button>
               <button onClick={handleLogout}>Logout</button>
             </div>
           )}

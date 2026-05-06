@@ -1,48 +1,57 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./ManageCategories.module.css";
 
-/* вкладки: key, надпис, type */
+const DEFAULT_COLOR = "#5FB3A7";
+
 const tabs = [
-  {
-    key: "expense",
-    label: "Категорії для витрат",
-    type: 2,
-  },
-  {
-    key: "income",
-    label: "Категорії для доходів",
-    type: 1,
-  },
-  {
-    key: "transfer",
-    label: "Категорії транзакцій",
-    type: 0,
-  },
+  { key: "expense", label: "Expense categories", type: 2 },
+  { key: "income", label: "Income categories", type: 1 },
+  { key: "transfer", label: "Transfer categories", type: 0 },
 ];
+
+const normalizeColor = (color) =>
+  /^#[0-9a-f]{6}$/i.test(color || "") ? color.toUpperCase() : DEFAULT_COLOR;
 
 const ManageCategories = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState("expense");
   const [categories, setCategories] = useState([]);
+  const [allCategories, setAllCategories] = useState([]);
   const [title, setTitle] = useState("");
   const [descr, setDescr] = useState("");
+  const [color, setColor] = useState(DEFAULT_COLOR);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [busyId, setBusyId] = useState(null);
 
+  const activeType = tabs.find((tab) => tab.key === activeTab)?.type ?? 2;
+
+  const colorUsage = useMemo(() => {
+    const usage = new Map();
+    allCategories.forEach((category) => {
+      const normalized = normalizeColor(category.color);
+      if (!usage.has(normalized)) usage.set(normalized, []);
+      usage.get(normalized).push(category);
+    });
+    return usage;
+  }, [allCategories]);
+
   useEffect(() => {
     if (!isOpen) return;
-
-    const { type } = tabs.find((t) => t.key === activeTab);
 
     const load = async () => {
       try {
         setLoading(true);
         setError(null);
-        const res = await fetch(API_ENDPOINTS.manageCategories(type));
-        if (!res.ok) throw new Error("Помилка завантаження");
+        const [res, allRes] = await Promise.all([
+          fetch(API_ENDPOINTS.manageCategories(activeType)),
+          fetch(API_ENDPOINTS.categories),
+        ]);
+        if (!res.ok || !allRes.ok) throw new Error("Failed to load categories");
         const data = await res.json();
+        const allData = await allRes.json();
         setCategories(Array.isArray(data.categories) ? data.categories : []);
+        setAllCategories(Array.isArray(allData) ? allData : []);
       } catch (e) {
         setError(e.message);
       } finally {
@@ -51,11 +60,11 @@ const ManageCategories = ({ isOpen, onClose }) => {
     };
 
     load();
-  }, [isOpen, activeTab]);
+  }, [isOpen, activeType]);
 
   const addCategory = async () => {
-    if (!title) return alert("Введіть назву");
-    const { type } = tabs.find((t) => t.key === activeTab);
+    const trimmedTitle = title.trim();
+    if (!trimmedTitle) return alert("Enter category name");
 
     try {
       setLoading(true);
@@ -64,15 +73,21 @@ const ManageCategories = ({ isOpen, onClose }) => {
       const res = await fetch(API_ENDPOINTS.createCategory, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, type, description: descr }),
+        body: JSON.stringify({
+          title: trimmedTitle,
+          type: activeType,
+          description: descr.trim() || null,
+          color,
+        }),
       });
-      if (!res.ok) throw new Error("Помилка створення");
+      if (!res.ok) throw new Error("Failed to create category");
 
       const newCat = await res.json();
-      setCategories((c) => [...c, newCat]);
-
+      setCategories((current) => [...current, newCat]);
+      setAllCategories((current) => [...current, newCat]);
       setTitle("");
       setDescr("");
+      setColor(DEFAULT_COLOR);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -80,15 +95,63 @@ const ManageCategories = ({ isOpen, onClose }) => {
     }
   };
 
+  const updateColor = async (category, nextColor) => {
+    const normalizedColor = normalizeColor(nextColor);
+      setCategories((current) =>
+        current.map((item) =>
+          item.id === category.id ? { ...item, color: normalizedColor } : item
+        )
+      );
+    setAllCategories((current) =>
+      current.map((item) =>
+        item.id === category.id ? { ...item, color: normalizedColor } : item
+      )
+    );
+
+    try {
+      setBusyId(category.id);
+      const res = await fetch(API_ENDPOINTS.updateCategory, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: category.id,
+          title: category.title,
+          type: category.type,
+          description: category.description,
+          color: normalizedColor,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to save category color");
+      const updated = await res.json();
+      setCategories((current) =>
+        current.map((item) => (item.id === category.id ? updated : item))
+      );
+      setAllCategories((current) =>
+        current.map((item) => (item.id === category.id ? updated : item))
+      );
+    } catch (e) {
+      setError(e.message);
+      setCategories((current) =>
+        current.map((item) => (item.id === category.id ? category : item))
+      );
+      setAllCategories((current) =>
+        current.map((item) => (item.id === category.id ? category : item))
+      );
+    } finally {
+      setBusyId(null);
+    }
+  };
+
   const del = async (id) => {
-    if (!window.confirm("Видалити категорію?")) return;
+    if (!window.confirm("Delete category?")) return;
     try {
       setBusyId(id);
       const res = await fetch(API_ENDPOINTS.deleteCategory(id), {
         method: "DELETE",
       });
-      if (!res.ok) throw new Error("Помилка видалення");
-      setCategories((c) => c.filter((x) => x.id !== id));
+      if (!res.ok) throw new Error("Failed to delete category");
+      setCategories((current) => current.filter((item) => item.id !== id));
+      setAllCategories((current) => current.filter((item) => item.id !== id));
     } catch (e) {
       alert(e.message);
     } finally {
@@ -101,26 +164,31 @@ const ManageCategories = ({ isOpen, onClose }) => {
   return (
     <div className={styles["modal-overlay"]}>
       <div className={`${styles["modal-content"]} ${styles.large}`}>
-        <h3>Керування категоріями</h3>
+        <div className={styles.header}>
+          <div>
+            <h3>Manage categories</h3>
+            <p>Assign colors for analytics. A color can be reused; shared colors are marked.</p>
+          </div>
+        </div>
 
         <div className={styles["cat-tabs"]}>
-          {tabs.map((t) => (
+          {tabs.map((tab) => (
             <button
-              key={t.key}
+              key={tab.key}
               className={
-                activeTab === t.key
+                activeTab === tab.key
                   ? `${styles.tab} ${styles.active}`
                   : styles.tab
               }
-              onClick={() => setActiveTab(t.key)}
+              onClick={() => setActiveTab(tab.key)}
             >
-              {t.label}
+              {tab.label}
             </button>
           ))}
         </div>
 
         {error && <p className={styles.error}>{error}</p>}
-        {loading && <p>Завантаження...</p>}
+        {loading && <p className={styles.loading}>Loading...</p>}
 
         {!loading && (
           <>
@@ -128,51 +196,97 @@ const ManageCategories = ({ isOpen, onClose }) => {
               <table className={styles["cat-table"]}>
                 <thead>
                   <tr>
-                    <th>Назва</th>
-                    <th>Опис</th>
+                    <th>Color</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Usage</th>
                     <th></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {categories.map((c) => (
-                    <tr key={c.id}>
-                      <td>{c.title}</td>
-                      <td>{c.description || "-"}</td>
-                      <td>
-                        <button
-                          className={styles["del-btn"]}
-                          disabled={busyId === c.id}
-                          onClick={() => del(c.id)}
-                        >
-                          {busyId === c.id ? "…" : "✕"}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {categories.map((category) => {
+                    const normalizedColor = normalizeColor(category.color);
+                    const shared = colorUsage.get(normalizedColor) || [];
+                    const isShared = shared.length > 1;
+
+                    return (
+                      <tr key={category.id}>
+                        <td>
+                          <div className={styles["color-cell"]}>
+                            <span
+                              className={styles.swatch}
+                              style={{ background: normalizedColor }}
+                            />
+                            <input
+                              aria-label={`Color for ${category.title}`}
+                              type="color"
+                              value={normalizedColor}
+                              disabled={busyId === category.id}
+                              onChange={(event) =>
+                                updateColor(category, event.target.value)
+                              }
+                            />
+                          </div>
+                        </td>
+                        <td>{category.title}</td>
+                        <td>{category.description || "-"}</td>
+                        <td>
+                          {isShared ? (
+                            <span
+                              className={styles["shared-badge"]}
+                              title={shared.map((item) => item.title).join(", ")}
+                            >
+                              Shared x{shared.length}
+                            </span>
+                          ) : (
+                            <span className={styles["unique-badge"]}>Unique</span>
+                          )}
+                        </td>
+                        <td>
+                          <button
+                            className={styles["del-btn"]}
+                            disabled={busyId === category.id}
+                            onClick={() => del(category.id)}
+                          >
+                            {busyId === category.id ? "..." : "x"}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
 
             <div className={styles["cat-add-form"]}>
+              <div className={styles["new-color"]}>
+                <span className={styles.swatch} style={{ background: color }} />
+                <input
+                  aria-label="New category color"
+                  type="color"
+                  value={color}
+                  onChange={(event) => setColor(event.target.value.toUpperCase())}
+                />
+              </div>
               <input
-                placeholder="Назва"
+                placeholder="Name"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(event) => setTitle(event.target.value)}
               />
               <input
-                placeholder="Опис"
+                placeholder="Description"
                 value={descr}
-                onChange={(e) => setDescr(e.target.value)}
+                onChange={(event) => setDescr(event.target.value)}
               />
               <button className={styles["submit-button"]} onClick={addCategory}>
-                Додати
+                Add
               </button>
             </div>
           </>
         )}
 
         <button className={styles["close-button"]} onClick={onClose}>
-          Закрити
+          Close
         </button>
       </div>
     </div>

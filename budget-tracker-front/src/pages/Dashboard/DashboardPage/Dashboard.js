@@ -5,6 +5,7 @@ import TopExpensesCard from "../components/TopExpensesCard/TopExpensesCard";
 import TopIncomesCard from "../components/TopIncomesCard/TopIncomesCard";
 import BiggestTransactionCard from "../components/BiggestTransactionCard/BiggestTransactionCard";
 import FinancialStabilityCard from "../components/FinancialStabilityCard/FinancialStabilityCard";
+import BehavioralScoreCard from "../components/BehavioralScoreCard/BehavioralScoreCard";
 import FinancialGoalsCard from "../components/FinancialGoalsCard/FinancialGoalsCard";
 import {
   DASHBOARD_CARDS_EVENT,
@@ -55,6 +56,7 @@ const Dashboard = () => {
     topIncomes,
     biggestTransaction,
     financialStability,
+    behavioralScore,
     financialGoals,
   } = data;
 
@@ -85,6 +87,11 @@ const Dashboard = () => {
       id: "financialStability",
       label: "Financial Stability",
       render: () => <FinancialStabilityCard stability={financialStability} />,
+    },
+    {
+      id: "behavioralScore",
+      label: "Behavioral Score",
+      render: () => <BehavioralScoreCard behavioralScore={behavioralScore} />,
     },
     {
       id: "financialGoals",

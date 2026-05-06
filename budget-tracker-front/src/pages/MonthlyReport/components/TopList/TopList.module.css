@@ -1,18 +1,68 @@
-.toplist-card{
-  background:#2e2e3d; border-radius:8px; padding:16px;
-  box-shadow:0 4px 12px rgba(0,0,0,.3); color:#fff;
+.toplist-card {
+  min-height: 310px;
+  border: 1px solid rgba(213, 224, 224, 0.08);
+  border-radius: 8px;
+  background: rgba(34, 35, 49, 0.94);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.26);
+  color: #fff;
+  padding: 18px 20px;
 }
-.toplist-card h4{ margin:0 0 10px 0; font-size:1rem; }
-.toplist{ list-style:none; padding:0; margin:0; font-size:0.9rem; }
-.toplist li{
-  display:flex; align-items:center; gap:8px; padding:4px 0;
-  border-bottom:1px solid #444;
+
+.toplist-card h4 {
+  margin: 0 0 14px;
+  font-size: 1.02rem;
 }
-.toplist li:last-child{ border-bottom:none; }
-.color-dot{
-  width:12px; height:12px; border-radius:50%;
+
+.toplist {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  font-size: 0.9rem;
+  list-style: none;
 }
-.name{ flex:1; }
-.amount{ width:90px; text-align:right; }
-.percent{ width:60px; text-align:right; color:#bbb; }
-.empty{ text-align:center; color:#bbb; }
+
+.toplist li {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) auto 54px;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0 0 8px;
+}
+
+.toplist li:last-child {
+  border-bottom: none;
+}
+
+.color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.name {
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.9);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.amount {
+  color: var(--color-white);
+  font-weight: 800;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.percent {
+  color: rgba(213, 224, 224, 0.68);
+  text-align: right;
+}
+
+.empty {
+  margin: 70px 0 0;
+  color: rgba(213, 224, 224, 0.72);
+  text-align: center;
+}

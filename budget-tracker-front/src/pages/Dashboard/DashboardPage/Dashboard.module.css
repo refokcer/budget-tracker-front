@@ -11,8 +11,9 @@
 
 .db-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-template-rows: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
   gap: 24px;
   flex: 1;
   min-height: 0;
@@ -26,7 +27,8 @@
 @media (max-width: 800px) {
   .db-grid {
     grid-template-columns: 1fr;
-    grid-template-rows: repeat(4, minmax(260px, 1fr));
+    grid-template-rows: none;
+    grid-auto-rows: minmax(260px, auto);
   }
 }
 
@@ -40,6 +42,7 @@
   flex-direction: column;
   gap: 10px;
   width: 100%;
+  height: 100%;
   min-height: 0;
   overflow: auto;
   box-sizing: border-box;
@@ -72,6 +75,16 @@
 .db-small-table th {
   color: #bbb;
   font-weight: 500;
+}
+
+.db-category-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: #5fb3a7;
+  vertical-align: middle;
 }
 
 .db-balance {
@@ -137,7 +150,7 @@
 }
 
 .db-financial-card {
-  overflow: hidden;
+  overflow: auto;
   gap: 14px;
   padding-top: 30px;
 }
@@ -275,4 +288,11 @@
 .db-loading,
 .db-error {
   text-align: center;
+}
+
+@media (max-width: 800px) {
+  .db-card {
+    height: auto;
+    min-height: 260px;
+  }
 }
