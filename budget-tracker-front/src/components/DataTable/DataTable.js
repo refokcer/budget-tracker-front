@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import styles from "./DataTable.module.css";
 
 const DataTable = ({ columns, rows, onDelete, deletingId, onEdit, tableClassName }) => {
@@ -16,8 +16,8 @@ const DataTable = ({ columns, rows, onDelete, deletingId, onEdit, tableClassName
     const data = [...rows];
     if (sortConfig.key) {
       data.sort((a, b) => {
-        let A = a[sortConfig.key];
-        let B = b[sortConfig.key];
+        const A = a[sortConfig.key];
+        const B = b[sortConfig.key];
         if (A < B) return sortConfig.direction === "asc" ? -1 : 1;
         if (A > B) return sortConfig.direction === "asc" ? 1 : -1;
         return 0;
@@ -36,14 +36,14 @@ const DataTable = ({ columns, rows, onDelete, deletingId, onEdit, tableClassName
                 key={col.key}
                 onClick={() => col.sortable && handleSort(col.key)}
                 className={
-                  sortConfig.key === col.key ? styles["sorted"] : undefined
+                  sortConfig.key === col.key ? styles.sorted : undefined
                 }
               >
                 {col.label}
                 {col.sortable && sortConfig.key === col.key
                   ? sortConfig.direction === "asc"
-                    ? " ▲"
-                    : " ▼"
+                    ? " ^"
+                    : " v"
                   : ""}
               </th>
             ))}
@@ -65,7 +65,7 @@ const DataTable = ({ columns, rows, onDelete, deletingId, onEdit, tableClassName
                     className={styles["edit-btn"]}
                     onClick={() => onEdit(row.id)}
                   >
-                    ✎
+                    Edit
                   </button>
                 </td>
               )}
@@ -76,7 +76,7 @@ const DataTable = ({ columns, rows, onDelete, deletingId, onEdit, tableClassName
                     disabled={deletingId === row.id}
                     onClick={() => onDelete(row.id)}
                   >
-                    {deletingId === row.id ? "…" : "✕"}
+                    {deletingId === row.id ? "..." : "X"}
                   </button>
                 </td>
               )}
