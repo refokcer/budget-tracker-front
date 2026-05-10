@@ -1,25 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import DataTable from "../../DataTable/DataTable";
-import API_ENDPOINTS from "../../../config/apiConfig";
 import styles from "./ImportStatementModal.module.css";
-import { parseAll, mapToPrepare } from "../../../utils/ukrsibParser";
-
-const banks = [
-  { value: "ukrsib", label: "UkrSibBank", note: "PDF statement" },
-  { value: "privat", label: "PrivatBank", note: "Not available yet" },
-];
-
-const typeOptions = [
-  { value: 2, label: "Expense" },
-  { value: 1, label: "Income" },
-  { value: 0, label: "Transfer" },
-];
-
-const formatMoney = (value) =>
-  Number(value || 0).toLocaleString("uk-UA", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
+import {
+  calculateImportSummary,
+  formatMoney,
+  loadStatementImportOptions,
+  prepareStatementFile,
+  saveStatementOperations,
+  statementBanks,
+  statementTransactionTypes,
+} from "../../../services/statementImportService";
 
 const ImportStatementModal = ({ isOpen, onClose }) => {
   const [bank, setBank] = useState("ukrsib");
@@ -46,53 +36,14 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
 
     (async () => {
       try {
-        const res = await fetch(API_ENDPOINTS.expenseModal);
-        if (!res.ok) throw new Error("Failed to load import options");
-        const data = await res.json();
-        setOptions({
-          categories: data.categories || [],
-          accounts: data.accounts || [],
-          plans: data.plans || [],
-          currencies: data.currencies || [],
-        });
+        setOptions(await loadStatementImportOptions());
       } catch (e) {
         setError(e.message);
       }
     })();
   }, [isOpen]);
 
-  const summary = useMemo(
-    () =>
-      operations.reduce(
-        (acc, op) => {
-          const amount = Number(op.amount || 0);
-          acc.count += 1;
-
-          if (String(op.type) === "2") {
-            acc.expenses += 1;
-            acc.expenseAmount += amount;
-          } else if (String(op.type) === "1") {
-            acc.incomes += 1;
-            acc.incomeAmount += amount;
-          } else {
-            acc.transfers += 1;
-            acc.transferAmount += amount;
-          }
-
-          return acc;
-        },
-        {
-          count: 0,
-          expenses: 0,
-          incomes: 0,
-          transfers: 0,
-          expenseAmount: 0,
-          incomeAmount: 0,
-          transferAmount: 0,
-        }
-      ),
-    [operations]
-  );
+  const summary = useMemo(() => calculateImportSummary(operations), [operations]);
 
   const handleFile = async (e) => {
     if (bank !== "ukrsib") {
@@ -110,60 +61,17 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
     setSuccess(null);
 
     try {
-      const pdfjsLib = await import(
-        "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.5.136/build/pdf.mjs"
-      );
-      pdfjsLib.GlobalWorkerOptions.workerSrc =
-        "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.5.136/build/pdf.worker.mjs";
+      const { operations: preparedOperations, emptyReason } =
+        await prepareStatementFile(file);
 
-      const buf = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
-
-      let fullText = "";
-      for (let p = 1; p <= pdf.numPages; p++) {
-        const page = await pdf.getPage(p);
-        const txt = await page.getTextContent();
-        fullText += txt.items.map((i) => i.str).join("\n") + "\n";
-      }
-
-      const { operations: parsed } = parseAll(fullText);
-      if (parsed.length === 0) {
-        setError("This statement does not contain transactions.");
-        return;
-      }
-
-      const prepareModels = parsed.map(mapToPrepare);
-      const res = await fetch(API_ENDPOINTS.prepareTransactions, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(prepareModels),
-      });
-      if (!res.ok) throw new Error("Failed to prepare statement data");
-
-      const prepared = await res.json();
-      if (!prepared.length) {
-        setError("All transactions from this statement already exist.");
+      if (emptyReason) {
+        setError(emptyReason);
         setOperations([]);
         return;
       }
 
-      const ops = prepared.map((op, idx) => ({
-        id: idx + 1,
-        title: op.title,
-        amount: op.amount,
-        currencyId: op.currencyId ? String(op.currencyId) : "",
-        categoryId: op.categoryId ? String(op.categoryId) : "",
-        budgetPlanId: op.budgetPlanId ? String(op.budgetPlanId) : "",
-        accountFrom: op.accountFrom ? String(op.accountFrom) : "",
-        accountTo: op.accountTo ? String(op.accountTo) : "",
-        authCode: op.authCode || "",
-        date: op.date ? op.date.split("T")[0] : "",
-        description: op.description || "",
-        type: String(op.type),
-      }));
-
-      setOperations(ops);
-      setSuccess(`${ops.length} transactions are ready for review.`);
+      setOperations(preparedOperations);
+      setSuccess(`${preparedOperations.length} transactions are ready for review.`);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -196,35 +104,7 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
     setSuccess(null);
 
     try {
-      for (const op of operations) {
-        const payload = {
-          title: op.title,
-          amount: parseFloat(op.amount),
-          currencyId: parseInt(op.currencyId),
-          categoryId: op.categoryId ? parseInt(op.categoryId) : undefined,
-          accountFrom: op.accountFrom ? parseInt(op.accountFrom) : undefined,
-          accountTo: op.accountTo ? parseInt(op.accountTo) : undefined,
-          budgetPlanId: op.budgetPlanId ? parseInt(op.budgetPlanId) : undefined,
-          description: op.description,
-          date: new Date(op.date).toISOString(),
-          authCode: op.authCode || "",
-        };
-
-        let url = API_ENDPOINTS.createExpense;
-        if (String(op.type) === "1") url = API_ENDPOINTS.createIncome;
-        if (String(op.type) === "0") url = API_ENDPOINTS.createTransfer;
-
-        const res = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-
-        if (!res.ok) {
-          throw new Error(`Failed to save "${op.title}"`);
-        }
-      }
-
+      await saveStatementOperations(operations);
       onClose();
     } catch (e) {
       setError(e.message);
@@ -381,7 +261,7 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
           value={r.type}
           onChange={(e) => updateRow(r.id, "type", e.target.value)}
         >
-          {typeOptions.map((t) => (
+          {statementTransactionTypes.map((t) => (
             <option key={t.value} value={t.value}>
               {t.label}
             </option>
@@ -425,7 +305,7 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
                 }}
                 className={styles["bank-select"]}
               >
-                {banks.map((b) => (
+                {statementBanks.map((b) => (
                   <option key={b.value} value={b.value}>
                     {b.label}
                   </option>
@@ -434,7 +314,7 @@ const ImportStatementModal = ({ isOpen, onClose }) => {
             </label>
 
             <div className={styles["bank-hint"]}>
-              {banks.find((item) => item.value === bank)?.note}
+              {statementBanks.find((item) => item.value === bank)?.note}
             </div>
 
             <label
