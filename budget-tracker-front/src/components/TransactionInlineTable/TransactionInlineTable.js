@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import API_ENDPOINTS from "../../config/apiConfig";
+import { apiFetch, apiJson, getApiErrorMessage } from "../../services/apiClient";
 import DataTable from "../DataTable/DataTable";
 import styles from "./TransactionInlineTable.module.css";
 
@@ -188,12 +189,10 @@ const TransactionInlineTable = ({
       setError(null);
       try {
         const url = API_ENDPOINTS.transactionsByFilter({ start, end, type });
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Failed to load data");
-        const data = await res.json();
+        const data = await apiJson(url, {}, "Failed to load data");
         setTableRows(data.transactions);
       } catch (fetchError) {
-        setError(fetchError.message);
+        setError(getApiErrorMessage(fetchError));
       } finally {
         setLoading(false);
       }
@@ -206,9 +205,7 @@ const TransactionInlineTable = ({
   useEffect(() => {
     const loadOptions = async () => {
       try {
-        const res = await fetch(modalEndpoint);
-        if (!res.ok) throw new Error("Failed to load editor data");
-        const data = await res.json();
+        const data = await apiJson(modalEndpoint, {}, "Failed to load editor data");
         setOptions({
           accounts: data.accounts || [],
           categories: data.categories || [],
@@ -216,7 +213,7 @@ const TransactionInlineTable = ({
           currencies: data.currencies || [],
         });
       } catch (fetchError) {
-        setError((prev) => prev || fetchError.message);
+        setError((prev) => prev || getApiErrorMessage(fetchError));
       }
     };
 
@@ -238,14 +235,13 @@ const TransactionInlineTable = ({
 
     try {
       setBusyId(id);
-      const res = await fetch(API_ENDPOINTS.deleteTransaction(id), {
+      await apiFetch(API_ENDPOINTS.deleteTransaction(id), {
         method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Delete error");
+      }, "Delete error");
       setTableRows((prev) => prev.filter((transaction) => transaction.id !== id));
       onReload?.();
     } catch (deleteError) {
-      alert(deleteError.message);
+      alert(getApiErrorMessage(deleteError));
     } finally {
       setBusyId(null);
     }
@@ -254,10 +250,11 @@ const TransactionInlineTable = ({
   const ensureTransactionDetails = async (id) => {
     if (detailsById[id]) return detailsById[id];
 
-    const res = await fetch(API_ENDPOINTS.transactionById(id));
-    if (!res.ok) throw new Error("Failed to load transaction");
-
-    const transaction = await res.json();
+    const transaction = await apiJson(
+      API_ENDPOINTS.transactionById(id),
+      {},
+      "Failed to load transaction"
+    );
     setDetailsById((prev) => ({ ...prev, [id]: transaction }));
     return transaction;
   };
@@ -281,7 +278,7 @@ const TransactionInlineTable = ({
       setDraftValue(nextValue);
       setEditingCell({ rowId: row.id, columnKey });
     } catch (loadError) {
-      alert(loadError.message);
+      alert(getApiErrorMessage(loadError));
     }
   };
 
@@ -364,13 +361,10 @@ const TransactionInlineTable = ({
     setSavingCell(cell);
 
     try {
-      const res = await fetch(API_ENDPOINTS.updateTransaction, {
+      await apiFetch(API_ENDPOINTS.updateTransaction, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(buildPayload(updatedTransaction)),
-      });
-
-      if (!res.ok) throw new Error(`Save failed with status ${res.status}`);
+        body: buildPayload(updatedTransaction),
+      }, "Save failed");
 
       setDetailsById((prev) => ({ ...prev, [rowId]: updatedTransaction }));
       setTableRows((prev) =>
@@ -383,7 +377,7 @@ const TransactionInlineTable = ({
       onReload?.();
       cancelEditing();
     } catch (saveError) {
-      alert(saveError.message);
+      alert(getApiErrorMessage(saveError));
     } finally {
       commitLockRef.current = false;
       setSavingCell(null);

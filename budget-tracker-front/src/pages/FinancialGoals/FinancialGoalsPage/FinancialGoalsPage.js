@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
+import { apiFetch, apiJson, getApiErrorMessage } from "../../../services/apiClient";
 import styles from "./FinancialGoalsPage.module.css";
 
 const SAVINGS_ACCOUNT_TYPES = new Set([3, 5, 6]);
@@ -42,9 +43,11 @@ const getProgress = (goal, forecast) => {
 };
 
 const fetchGoalForecast = async (goalId) => {
-  const response = await fetch(API_ENDPOINTS.financialGoalForecast(goalId));
-  if (!response.ok) throw new Error("Failed to load goal forecast.");
-  return response.json();
+  return apiJson(
+    API_ENDPOINTS.financialGoalForecast(goalId),
+    {},
+    "Failed to load goal forecast."
+  );
 };
 
 const normalizeBudgetAdjustments = (items) =>
@@ -122,32 +125,24 @@ const GoalModal = ({ goal, accounts, isOpen, onClose, onSaved }) => {
       setSaving(true);
       setError(null);
 
-      const response = await fetch(
+      const savedGoal = await apiJson(
         goal ? API_ENDPOINTS.updateFinancialGoal : API_ENDPOINTS.createFinancialGoal,
         {
           method: goal ? "PUT" : "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(
-            goal
+          body: goal
               ? {
                   ...payload,
                   id: goal.id,
                   createdAt: goal.createdAt,
                 }
-              : payload
-          ),
-        }
+              : payload,
+        },
+        goal ? "Failed to update goal." : "Failed to create goal."
       );
-
-      if (!response.ok) {
-        throw new Error(goal ? "Failed to update goal." : "Failed to create goal.");
-      }
-
-      const savedGoal = await response.json().catch(() => null);
       onSaved(savedGoal);
       onClose();
     } catch (e) {
-      setError(e.message);
+      setError(getApiErrorMessage(e));
     } finally {
       setSaving(false);
     }
@@ -298,10 +293,7 @@ const FinancialGoalsPage = () => {
 
   const loadGoals = useCallback(
     async (preferredGoalId, fallbackGoalId) => {
-      const response = await fetch(API_ENDPOINTS.financialGoals);
-      if (!response.ok) throw new Error("Failed to load goals.");
-
-      const data = await response.json();
+      const data = await apiJson(API_ENDPOINTS.financialGoals, {}, "Failed to load goals.");
       const nextGoals = Array.isArray(data) ? data : [];
       setGoals(nextGoals);
 
@@ -323,16 +315,14 @@ const FinancialGoalsPage = () => {
       setLoading(true);
       setError(null);
 
-      const [accountsResponse] = await Promise.all([
-        fetch(API_ENDPOINTS.accounts),
+      const [accountsData] = await Promise.all([
+        apiJson(API_ENDPOINTS.accounts, {}, "Failed to load accounts."),
         loadGoals(),
       ]);
 
-      if (!accountsResponse.ok) throw new Error("Failed to load accounts.");
-      const accountsData = await accountsResponse.json();
       setAccounts(Array.isArray(accountsData) ? accountsData : []);
     } catch (e) {
-      setError(e.message);
+      setError(getApiErrorMessage(e));
     } finally {
       setLoading(false);
     }
@@ -359,7 +349,7 @@ const FinancialGoalsPage = () => {
       }));
     } catch (e) {
       setForecast(null);
-      setError(e.message);
+      setError(getApiErrorMessage(e));
     } finally {
       setForecastLoading(false);
     }
@@ -391,7 +381,7 @@ const FinancialGoalsPage = () => {
       setError(null);
       await loadGoals(savedGoal?.id);
     } catch (e) {
-      setError(e.message);
+      setError(getApiErrorMessage(e));
     }
   };
 
@@ -401,13 +391,12 @@ const FinancialGoalsPage = () => {
 
     try {
       setDeletingId(selectedGoal.id);
-      const response = await fetch(API_ENDPOINTS.deleteFinancialGoal(selectedGoal.id), {
+      await apiFetch(API_ENDPOINTS.deleteFinancialGoal(selectedGoal.id), {
         method: "DELETE",
-      });
-      if (!response.ok) throw new Error("Failed to delete goal.");
+      }, "Failed to delete goal.");
       await loadGoals();
     } catch (e) {
-      setError(e.message);
+      setError(getApiErrorMessage(e));
     } finally {
       setDeletingId(null);
     }
@@ -434,20 +423,18 @@ const FinancialGoalsPage = () => {
       setApplying(true);
       setApplyResult(null);
       setError(null);
-      const response = await fetch(
+      const result = await apiJson(
         API_ENDPOINTS.applyFinancialGoalBudgetAdjustments(selectedGoal.id),
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ adjustments }),
-        }
+          body: { adjustments },
+        },
+        "Failed to apply budget adjustments."
       );
-      if (!response.ok) throw new Error("Failed to apply budget adjustments.");
-      const result = await response.json();
       setApplyResult(result);
       await loadForecast(selectedGoal.id);
     } catch (e) {
-      setError(e.message);
+      setError(getApiErrorMessage(e));
     } finally {
       setApplying(false);
     }

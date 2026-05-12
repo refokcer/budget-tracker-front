@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import API_ENDPOINTS from "../../../config/apiConfig";
+import { apiFetch, apiJson, getApiErrorMessage } from "../../../services/apiClient";
 import { getDefaultMonthlyPlan, sortMonthlyPlans } from "../../../utils/budgetPlans";
 
 import PlanDetails from "../PlanDetails/PlanDetails";
@@ -34,9 +35,11 @@ useEffect(() => {
   const controller = new AbortController();
   (async () => {
     try {
-      const r = await fetch(API_ENDPOINTS.monthPlans, { signal: controller.signal });
-      if (!r.ok) throw new Error("Ошибка при загрузке планов");
-      const data = await r.json();
+      const data = await apiJson(
+        API_ENDPOINTS.monthPlans,
+        { signal: controller.signal },
+        "Failed to load budget plans"
+      );
       const sortedPlans = sortMonthlyPlans(data);
       setPlans(sortedPlans);
       if (!planIdFromQuery) {
@@ -46,7 +49,7 @@ useEffect(() => {
         }
       }
     } catch (e) {
-      if (e.name !== "AbortError") setError(e.message);
+      if (e.name !== "AbortError") setError(getApiErrorMessage(e));
     }
   })();
   return () => controller.abort();
@@ -64,19 +67,18 @@ const fetchPlanData = useCallback(
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch(
+      const data = await apiJson(
         API_ENDPOINTS.budgetPlanPage(planIdFromQuery, includeEvents),
-        signal ? { signal } : {}
+        signal ? { signal } : {},
+        "Failed to load budget plan"
       );
-      if (!res.ok) throw new Error("Ошибка при загрузке плана");
-      const data = await res.json();
       setSelectedPlan(data.plan);
       const baseItems = (data.items || []).filter((i) => !i.isEventSummary);
       setPlanItems(baseItems);
       setTransactions(data.transactions);
       setEvents(data.events || []);
     } catch (e) {
-      if (e.name !== "AbortError") setError(e.message);
+      if (e.name !== "AbortError") setError(getApiErrorMessage(e));
     } finally {
       setLoading(false);
     }
@@ -107,16 +109,15 @@ const openGeneratedPlan = (result) => {
     if (!window.confirm("Удалить этот план?")) return;
     try {
       setBusyDel(true);
-      const r = await fetch(API_ENDPOINTS.deleteBudgetPlan(selectedPlan.id), {
+      await apiFetch(API_ENDPOINTS.deleteBudgetPlan(selectedPlan.id), {
         method: "DELETE",
-      });
-      if (!r.ok) throw new Error("Ошибка удаления плана");
+      }, "Failed to delete budget plan");
       setPlans((p) => p.filter((pl) => pl.id !== selectedPlan.id));
       setSelectedPlan(null);
       setPlanItems([]);
       setSearchParams({});
     } catch (e) {
-      alert(e.message);
+      alert(getApiErrorMessage(e));
     } finally {
       setBusyDel(false);
     }

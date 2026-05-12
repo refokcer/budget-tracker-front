@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
+import { apiFetch, apiJson, getApiErrorMessage } from "../../../services/apiClient";
 import styles from "./ProfilePage.module.css";
 
 const emptyProfile = {
@@ -14,26 +15,6 @@ const formatMoney = (value) =>
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-
-const getErrorMessage = async (response, fallback) => {
-  try {
-    const payload = await response.json();
-    if (Array.isArray(payload)) {
-      return payload
-        .map((item) => item.description || item)
-        .filter(Boolean)
-        .join(" ");
-    }
-    if (payload?.errors) {
-      return Object.values(payload.errors).flat().join(" ");
-    }
-    if (payload?.message) return payload.message;
-  } catch {
-    return fallback;
-  }
-
-  return fallback;
-};
 
 const initialsFromProfile = (profile) => {
   const source = profile?.fullName || profile?.email || profile?.userName || "User";
@@ -65,12 +46,7 @@ const ProfilePage = () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch(API_ENDPOINTS.userProfile);
-        if (!response.ok) {
-          throw new Error(await getErrorMessage(response, "Failed to load profile"));
-        }
-
-        const data = await response.json();
+        const data = await apiJson(API_ENDPOINTS.userProfile, {}, "Failed to load profile");
         setProfile(data);
         setForm({
           fullName: data.fullName || "",
@@ -79,7 +55,7 @@ const ProfilePage = () => {
           phoneNumber: data.phoneNumber || "",
         });
       } catch (e) {
-        setError(e.message);
+        setError(getApiErrorMessage(e));
       } finally {
         setLoading(false);
       }
@@ -129,21 +105,14 @@ const ProfilePage = () => {
     setSuccess(null);
 
     try {
-      const response = await fetch(API_ENDPOINTS.userProfile, {
+      const updated = await apiJson(API_ENDPOINTS.userProfile, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-
-      if (!response.ok) {
-        throw new Error(await getErrorMessage(response, "Failed to save profile"));
-      }
-
-      const updated = await response.json();
+        body: form,
+      }, "Failed to save profile");
       setProfile(updated);
       setSuccess("Profile saved.");
     } catch (e) {
-      setError(e.message);
+      setError(getApiErrorMessage(e));
     } finally {
       setSaving(false);
     }
@@ -160,18 +129,13 @@ const ProfilePage = () => {
 
     setChangingPassword(true);
     try {
-      const response = await fetch(API_ENDPOINTS.userProfilePassword, {
+      await apiFetch(API_ENDPOINTS.userProfilePassword, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: {
           currentPassword: passwordForm.currentPassword,
           newPassword: passwordForm.newPassword,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(await getErrorMessage(response, "Failed to change password"));
-      }
+        },
+      }, "Failed to change password");
 
       setPasswordForm({
         currentPassword: "",
@@ -180,7 +144,7 @@ const ProfilePage = () => {
       });
       setPasswordMessage("Password changed.");
     } catch (e) {
-      setPasswordMessage(e.message);
+      setPasswordMessage(getApiErrorMessage(e));
     } finally {
       setChangingPassword(false);
     }

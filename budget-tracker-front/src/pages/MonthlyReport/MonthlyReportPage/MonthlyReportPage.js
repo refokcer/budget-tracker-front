@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
+import { apiJson, getApiErrorMessage } from "../../../services/apiClient";
 import MonthSelector from "../../../components/MonthSelector/MonthSelector";
 
 import PieChart from "../components/PieChart/PieChart";
@@ -157,12 +158,14 @@ const MonthlyReportPage = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(API_ENDPOINTS.monthlyReport(month, year));
-        if (!res.ok) throw new Error("Failed to load monthly analytics");
-        const data = await res.json();
+        const data = await apiJson(
+          API_ENDPOINTS.monthlyReport(month, year),
+          {},
+          "Failed to load monthly analytics"
+        );
         setReport(data);
       } catch (e) {
-        setError(e.message);
+        setError(getApiErrorMessage(e));
       } finally {
         setLoading(false);
       }

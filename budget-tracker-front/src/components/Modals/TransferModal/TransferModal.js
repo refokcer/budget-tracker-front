@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
+import { apiFetch, apiJson, getApiErrorMessage } from "../../../services/apiClient";
 import styles from "./TransferModal.module.css";
 
 const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
@@ -28,14 +29,12 @@ const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
 
     const fetchData = async () => {
       try {
-        const res = await fetch(API_ENDPOINTS.transferModal);
-        if (!res.ok) throw new Error("Failed to load data");
-        const data = await res.json();
+        const data = await apiJson(API_ENDPOINTS.transferModal, {}, "Failed to load data");
         setCategories(data.categories);
         setCurrencies(data.currencies);
         setAccounts(data.accounts);
       } catch (error) {
-        setError(error.message);
+        setError(getApiErrorMessage(error));
       }
     };
 
@@ -100,25 +99,19 @@ const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
     }
 
     try {
-      const response = await fetch(
+      await apiFetch(
         transaction ? API_ENDPOINTS.updateTransaction : API_ENDPOINTS.createTransfer,
         {
           method: transaction ? "PUT" : "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
+          body: payload,
+        },
+        transaction ? "Update failed" : "Create transfer failed"
       );
-
-      if (!response.ok) {
-        throw new Error(
-          transaction ? "Update failed" : "Creation failed"
-        );
-      }
 
       onSaved && onSaved();
       onClose();
     } catch (error) {
-      setError(error.message);
+      setError(getApiErrorMessage(error));
     } finally {
       setLoading(false);
     }

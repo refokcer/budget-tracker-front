@@ -1,5 +1,11 @@
-import { createContext, useContext, useState, useEffect, useRef } from "react";
-import API_ENDPOINTS, { BASE_URL } from "../config/apiConfig";
+import { createContext, useCallback, useContext, useState, useEffect, useRef } from "react";
+import API_ENDPOINTS from "../config/apiConfig";
+import {
+  apiFetch,
+  apiJson,
+  configureApiClient,
+  refreshAccessToken,
+} from "../services/apiClient";
 
 const AuthContext = createContext(null);
 
@@ -15,77 +21,65 @@ export const AuthProvider = ({ children }) => {
   const accessTokenRef = useRef(accessToken);
   const refreshTokenRef = useRef(refreshToken);
 
-  const saveTokens = ({ accessToken, refreshToken }) => {
+  const saveTokens = useCallback(({ accessToken, refreshToken }) => {
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
     accessTokenRef.current = accessToken;
     refreshTokenRef.current = refreshToken;
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
-  };
+  }, []);
 
-  const register = async (email, password) => {
-    const res = await fetch(API_ENDPOINTS.auth.register, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    if (!res.ok) throw new Error("Registration failed");
-    const data = await res.json();
-    saveTokens(data);
-  };
-
-  const login = async (email, password) => {
-    const res = await fetch(API_ENDPOINTS.auth.login, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    if (!res.ok) throw new Error("Login failed");
-    const data = await res.json();
-    saveTokens(data);
-  };
-
-  const logout = async () => {
-    if (accessToken && refreshToken) {
-      await fetch(API_ENDPOINTS.auth.logout, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({ accessToken, refreshToken }),
-      }).catch(() => {});
-    }
+  const clearTokens = useCallback(() => {
     setAccessToken(null);
     setRefreshToken(null);
     accessTokenRef.current = null;
     refreshTokenRef.current = null;
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+  }, []);
+
+  useEffect(() => {
+    configureApiClient({
+      getAccessToken: () => accessTokenRef.current,
+      getRefreshToken: () => refreshTokenRef.current,
+      onTokens: saveTokens,
+      onUnauthorized: clearTokens,
+    });
+  }, [clearTokens, saveTokens]);
+
+  const register = async (email, password) => {
+    const data = await apiJson(API_ENDPOINTS.auth.register, {
+      method: "POST",
+      body: { email, password },
+      auth: false,
+    }, "Registration failed");
+    saveTokens(data);
   };
 
-  const refresh = async () => {
-    const currentAccess = accessTokenRef.current;
-    const currentRefresh = refreshTokenRef.current;
-    if (!currentAccess || !currentRefresh) return null;
-    const res = await fetch(API_ENDPOINTS.auth.refresh, {
+  const login = async (email, password) => {
+    const data = await apiJson(API_ENDPOINTS.auth.login, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${currentAccess}`,
-      },
-      body: JSON.stringify({ accessToken: currentAccess, refreshToken: currentRefresh }),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      saveTokens(data);
-      return data.accessToken;
-    } else {
-      await logout();
-      return null;
-    }
+      body: { email, password },
+      auth: false,
+    }, "Login failed");
+    saveTokens(data);
   };
+
+  const logout = useCallback(async () => {
+    if (accessToken && refreshToken) {
+      await apiFetch(API_ENDPOINTS.auth.logout, {
+        method: "POST",
+        body: { accessToken, refreshToken },
+        retryOnUnauthorized: false,
+      }).catch(() => {});
+    }
+    clearTokens();
+  }, [accessToken, clearTokens, refreshToken]);
+
+  const refresh = useCallback(async () => {
+    return refreshAccessToken();
+  }, []);
   const parseJwt = (token) => {
     try {
       const base64Url = token.split(".")[1];
@@ -115,37 +109,7 @@ export const AuthProvider = ({ children }) => {
       setInitializing(false);
     };
     verify();
-  }, []);
-  useEffect(() => {
-    const originalFetch = window.fetch;
-    window.fetch = async (input, init = {}) => {
-      const url = typeof input === "string" ? input : input.url;
-      const options = { ...init };
-      const token = accessTokenRef.current;
-      if (token && url.startsWith(BASE_URL)) {
-        options.headers = {
-          ...(options.headers || {}),
-          Authorization: `Bearer ${token}`,
-        };
-      }
-      let response = await originalFetch(input, options);
-      if (response.status === 401 && refreshTokenRef.current) {
-        const newToken = await refresh();
-        if (newToken) {
-          options.headers = {
-            ...(options.headers || {}),
-            Authorization: `Bearer ${accessTokenRef.current}`,
-          };
-          response = await originalFetch(input, options);
-        }
-      }
-      return response;
-    };
-    return () => {
-      window.fetch = originalFetch;
-    };
-  }, []);
-
+  }, [logout, refresh]);
   const value = {
     accessToken,
     refreshToken,

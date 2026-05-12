@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
+import { apiFetch, apiJson, getApiErrorMessage } from "../../../services/apiClient";
 import styles from "./EditEventModal.module.css";
 
 const EditEventModal = ({ isOpen, onClose, event, items, onSaved }) => {
@@ -34,9 +35,7 @@ const EditEventModal = ({ isOpen, onClose, event, items, onSaved }) => {
     setParentId(event.parentId ? String(event.parentId) : "");
     (async () => {
       try {
-        const res = await fetch(API_ENDPOINTS.editPlanModal);
-        if (!res.ok) throw new Error();
-        const data = await res.json();
+        const data = await apiJson(API_ENDPOINTS.editPlanModal, {}, "Failed to load event editor data");
         if (ignore) return;
         setAllCats(data.categories);
         setAllCur(data.currencies);
@@ -83,9 +82,7 @@ const EditEventModal = ({ isOpen, onClose, event, items, onSaved }) => {
     let ignore = false;
     (async () => {
       try {
-        const res = await fetch(API_ENDPOINTS.monthPlans);
-        if (!res.ok) throw new Error();
-        const data = await res.json();
+        const data = await apiJson(API_ENDPOINTS.monthPlans, {}, "Failed to load month plans");
         if (!ignore) setMonths(data);
       } catch {
         if (!ignore) setMonths([]);
@@ -132,10 +129,9 @@ const EditEventModal = ({ isOpen, onClose, event, items, onSaved }) => {
     try {
       setLoading(true);
       setError(null);
-      await fetch(API_ENDPOINTS.updateBudgetPlan, {
+      await apiFetch(API_ENDPOINTS.updateBudgetPlan, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: {
           id: event.id,
           title,
           startDate,
@@ -143,8 +139,8 @@ const EditEventModal = ({ isOpen, onClose, event, items, onSaved }) => {
           type: 1,
           description,
           parentId: parentId ? Number(parentId) : null,
-        }),
-      });
+        },
+      }, "Failed to update event");
       for (const row of rows) {
         if (row._status === "skip") continue;
         const payload = {
@@ -155,26 +151,24 @@ const EditEventModal = ({ isOpen, onClose, event, items, onSaved }) => {
           description: row.description,
         };
         if (row._status === "new") {
-          await fetch(API_ENDPOINTS.createBudgetPlanItem, {
+          await apiFetch(API_ENDPOINTS.createBudgetPlanItem, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
+            body: payload,
+          }, "Failed to create event budget item");
         } else if (row._status === "delete") {
-          await fetch(API_ENDPOINTS.deleteBudgetPlanItem(row.id), {
+          await apiFetch(API_ENDPOINTS.deleteBudgetPlanItem(row.id), {
             method: "DELETE",
-          });
+          }, "Failed to delete event budget item");
         } else {
-          await fetch(API_ENDPOINTS.updateBudgetPlanItem, {
+          await apiFetch(API_ENDPOINTS.updateBudgetPlanItem, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...payload, id: row.id }),
-          });
+            body: { ...payload, id: row.id },
+          }, "Failed to update event budget item");
         }
       }
       onSaved();
     } catch (e) {
-      setError(e.message);
+      setError(getApiErrorMessage(e));
     } finally {
       setLoading(false);
     }

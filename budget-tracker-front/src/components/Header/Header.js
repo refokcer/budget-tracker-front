@@ -7,6 +7,7 @@ import ExpenseModal from "../Modals/ExpenseModal/ExpenseModal";
 import IncomeModal from "../Modals/IncomeModal/IncomeModal";
 import TransferModal from "../Modals/TransferModal/TransferModal";
 import API_ENDPOINTS from "../../config/apiConfig";
+import { apiJson, getApiErrorMessage } from "../../services/apiClient";
 import { pageTitles } from "../../config/constants";
 import { useAuth } from "../../context/AuthContext";
 import { sortMonthlyPlans } from "../../utils/budgetPlans";
@@ -49,11 +50,10 @@ const Header = () => {
 
     (async () => {
       try {
-        const response = await fetch(API_ENDPOINTS.monthPlans);
-        if (!response.ok) throw new Error("Failed to load plans");
-        setPlans(sortMonthlyPlans(await response.json()));
+        const data = await apiJson(API_ENDPOINTS.monthPlans, {}, "Failed to load plans");
+        setPlans(sortMonthlyPlans(data));
       } catch (error) {
-        setPlansError(error.message);
+        setPlansError(getApiErrorMessage(error));
       }
     })();
 
@@ -66,11 +66,10 @@ const Header = () => {
 
     (async () => {
       try {
-        const response = await fetch(API_ENDPOINTS.eventPlans);
-        if (!response.ok) throw new Error("Failed to load events");
-        setEvents(await response.json());
+        const data = await apiJson(API_ENDPOINTS.eventPlans, {}, "Failed to load events");
+        setEvents(data);
       } catch (error) {
-        setEventsError(error.message);
+        setEventsError(getApiErrorMessage(error));
       }
     })();
 

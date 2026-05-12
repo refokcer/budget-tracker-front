@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
+import { apiJson, getApiErrorMessage } from "../../../services/apiClient";
 import styles from "./AutoPlanModal.module.css";
 
 const monthName = (month, year) =>
@@ -64,10 +65,9 @@ const AutoPlanModal = ({ isOpen, onClose, onCreated }) => {
       setError(null);
       setResult(null);
 
-      const response = await fetch(API_ENDPOINTS.createAutoMonthlyBudgetPlan, {
+      const data = await apiJson(API_ENDPOINTS.createAutoMonthlyBudgetPlan, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: {
           month: Number(month),
           year: Number(year),
           title: title.trim() || null,
@@ -75,16 +75,12 @@ const AutoPlanModal = ({ isOpen, onClose, onCreated }) => {
           applySeasonality,
           overspendCarryRate: Number(overspendCarryRate),
           underspendCarryRate: Number(underspendCarryRate),
-        }),
-      });
+        },
+      }, "Failed to create automatic budget plan.");
 
-      if (!response.ok) {
-        throw new Error("Failed to create automatic budget plan.");
-      }
-
-      setResult(await response.json());
+      setResult(data);
     } catch (e) {
-      setError(e.message);
+      setError(getApiErrorMessage(e));
     } finally {
       setLoading(false);
     }

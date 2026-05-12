@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
+import { apiFetch, apiJson, getApiErrorMessage } from "../../../services/apiClient";
 import styles from "./ManageCategories.module.css";
 
 const DEFAULT_COLOR = "#5FB3A7";
@@ -43,17 +44,14 @@ const ManageCategories = ({ isOpen, onClose }) => {
       try {
         setLoading(true);
         setError(null);
-        const [res, allRes] = await Promise.all([
-          fetch(API_ENDPOINTS.manageCategories(activeType)),
-          fetch(API_ENDPOINTS.categories),
+        const [data, allData] = await Promise.all([
+          apiJson(API_ENDPOINTS.manageCategories(activeType), {}, "Failed to load categories"),
+          apiJson(API_ENDPOINTS.categories, {}, "Failed to load categories"),
         ]);
-        if (!res.ok || !allRes.ok) throw new Error("Failed to load categories");
-        const data = await res.json();
-        const allData = await allRes.json();
         setCategories(Array.isArray(data.categories) ? data.categories : []);
         setAllCategories(Array.isArray(allData) ? allData : []);
       } catch (e) {
-        setError(e.message);
+        setError(getApiErrorMessage(e));
       } finally {
         setLoading(false);
       }
@@ -70,26 +68,22 @@ const ManageCategories = ({ isOpen, onClose }) => {
       setLoading(true);
       setError(null);
 
-      const res = await fetch(API_ENDPOINTS.createCategory, {
+      const newCat = await apiJson(API_ENDPOINTS.createCategory, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: {
           title: trimmedTitle,
           type: activeType,
           description: descr.trim() || null,
           color,
-        }),
-      });
-      if (!res.ok) throw new Error("Failed to create category");
-
-      const newCat = await res.json();
+        },
+      }, "Failed to create category");
       setCategories((current) => [...current, newCat]);
       setAllCategories((current) => [...current, newCat]);
       setTitle("");
       setDescr("");
       setColor(DEFAULT_COLOR);
     } catch (e) {
-      setError(e.message);
+      setError(getApiErrorMessage(e));
     } finally {
       setLoading(false);
     }
@@ -110,19 +104,16 @@ const ManageCategories = ({ isOpen, onClose }) => {
 
     try {
       setBusyId(category.id);
-      const res = await fetch(API_ENDPOINTS.updateCategory, {
+      const updated = await apiJson(API_ENDPOINTS.updateCategory, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: {
           id: category.id,
           title: category.title,
           type: category.type,
           description: category.description,
           color: normalizedColor,
-        }),
-      });
-      if (!res.ok) throw new Error("Failed to save category color");
-      const updated = await res.json();
+        },
+      }, "Failed to save category color");
       setCategories((current) =>
         current.map((item) => (item.id === category.id ? updated : item))
       );
@@ -130,7 +121,7 @@ const ManageCategories = ({ isOpen, onClose }) => {
         current.map((item) => (item.id === category.id ? updated : item))
       );
     } catch (e) {
-      setError(e.message);
+      setError(getApiErrorMessage(e));
       setCategories((current) =>
         current.map((item) => (item.id === category.id ? category : item))
       );
@@ -146,14 +137,13 @@ const ManageCategories = ({ isOpen, onClose }) => {
     if (!window.confirm("Delete category?")) return;
     try {
       setBusyId(id);
-      const res = await fetch(API_ENDPOINTS.deleteCategory(id), {
+      await apiFetch(API_ENDPOINTS.deleteCategory(id), {
         method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Failed to delete category");
+      }, "Failed to delete category");
       setCategories((current) => current.filter((item) => item.id !== id));
       setAllCategories((current) => current.filter((item) => item.id !== id));
     } catch (e) {
-      alert(e.message);
+      alert(getApiErrorMessage(e));
     } finally {
       setBusyId(null);
     }

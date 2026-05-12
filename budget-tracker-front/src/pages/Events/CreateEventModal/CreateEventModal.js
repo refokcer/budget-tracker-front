@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
+import { apiFetch, apiJson, getApiErrorMessage } from "../../../services/apiClient";
 import styles from "./CreateEventModal.module.css";
 
 const CreateEventModal = ({ isOpen, onClose, onCreated }) => {
@@ -27,9 +28,7 @@ const CreateEventModal = ({ isOpen, onClose, onCreated }) => {
     let ignore = false;
     (async () => {
       try {
-        const res = await fetch(API_ENDPOINTS.monthPlans);
-        if (!res.ok) throw new Error();
-        const data = await res.json();
+        const data = await apiJson(API_ENDPOINTS.monthPlans, {}, "Failed to load month plans");
         if (!ignore) setMonths(data);
       } catch {
         if (!ignore) setMonths([]);
@@ -58,15 +57,13 @@ const CreateEventModal = ({ isOpen, onClose, onCreated }) => {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch(API_ENDPOINTS.createBudgetPlan, {
+      await apiFetch(API_ENDPOINTS.createBudgetPlan, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newEvent),
-      });
-      if (!res.ok) throw new Error("Помилка при створенні події");
+        body: newEvent,
+      }, "Failed to create event");
       onCreated();
     } catch (e) {
-      setError(e.message);
+      setError(getApiErrorMessage(e));
     } finally {
       setLoading(false);
     }

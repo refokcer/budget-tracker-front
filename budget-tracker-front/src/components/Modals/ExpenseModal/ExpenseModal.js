@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
+import { apiFetch, apiJson, getApiErrorMessage } from "../../../services/apiClient";
 import { findCurrentMonthlyPlan } from "../../../utils/budgetPlans";
 import styles from "./ExpenseModal.module.css";
 
@@ -30,14 +31,10 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
 
     const load = async () => {
       try {
-        const [res, settingsRes] = await Promise.all([
-          fetch(API_ENDPOINTS.expenseModal),
-          fetch(API_ENDPOINTS.userSettings).catch(() => null),
+        const [data, settings] = await Promise.all([
+          apiJson(API_ENDPOINTS.expenseModal, {}, "Failed to load data"),
+          apiJson(API_ENDPOINTS.userSettings, {}, "Failed to load user settings").catch(() => ({})),
         ]);
-
-        if (!res.ok) throw new Error("Failed to load data");
-        const data = await res.json();
-        const settings = settingsRes?.ok ? await settingsRes.json() : {};
 
         setCurrencies(data.currencies);
         setCategories(data.categories);
@@ -62,7 +59,7 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
           setBudgetPlanId(currentPlan ? String(currentPlan.id) : "");
         }
       } catch (e) {
-        setError(e.message);
+        setError(getApiErrorMessage(e));
       }
     };
 
@@ -121,19 +118,18 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(
+      await apiFetch(
         transaction ? API_ENDPOINTS.updateTransaction : API_ENDPOINTS.createExpense,
         {
           method: transaction ? "PUT" : "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
+          body: payload,
+        },
+        transaction ? "Update failed" : "Create expense failed"
       );
-      if (!res.ok) throw new Error(`Статус ${res.status}`);
       onSaved && onSaved();
       onClose();
     } catch (e) {
-      setError(e.message);
+      setError(getApiErrorMessage(e));
     } finally {
       setLoading(false);
     }

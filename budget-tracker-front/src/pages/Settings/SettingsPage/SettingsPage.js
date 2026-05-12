@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
+import { apiFetch, apiJson, getApiErrorMessage } from "../../../services/apiClient";
 import styles from "./SettingsPage.module.css";
 
 import ManageAccountsModal from "../ManageAccounts/ManageAccounts";
@@ -26,21 +27,6 @@ const Settings = () => {
   const [adminMessage, setAdminMessage] = useState(null);
   const [adminError, setAdminError] = useState(null);
 
-  const readError = async (response, fallback) => {
-    const text = await response.text().catch(() => "");
-    if (!text) return fallback;
-
-    try {
-      const data = JSON.parse(text);
-      if (Array.isArray(data)) {
-        return data.map((item) => item.message || item.reason || String(item)).join(", ");
-      }
-      return data.message || data.error || text;
-    } catch {
-      return text;
-    }
-  };
-
   useEffect(() => {
     let alive = true;
 
@@ -50,25 +36,11 @@ const Settings = () => {
       setDefaultsError(null);
 
       try {
-        const [currenciesRes, accountsRes, settingsRes, templatesRes] = await Promise.all([
-          fetch(API_ENDPOINTS.currencies),
-          fetch(API_ENDPOINTS.accounts),
-          fetch(API_ENDPOINTS.userSettings),
-          fetch(API_ENDPOINTS.adminDataTemplates),
-        ]);
-
-        const failedResponse = [currenciesRes, accountsRes, settingsRes, templatesRes].find(
-          (response) => !response.ok
-        );
-        if (failedResponse) {
-          throw new Error(await readError(failedResponse, "Failed to load settings data"));
-        }
-
         const [currenciesData, accountsData, settingsData, templatesData] = await Promise.all([
-          currenciesRes.json(),
-          accountsRes.json(),
-          settingsRes.json(),
-          templatesRes.json(),
+          apiJson(API_ENDPOINTS.currencies, {}, "Failed to load settings data"),
+          apiJson(API_ENDPOINTS.accounts, {}, "Failed to load settings data"),
+          apiJson(API_ENDPOINTS.userSettings, {}, "Failed to load settings data"),
+          apiJson(API_ENDPOINTS.adminDataTemplates, {}, "Failed to load settings data"),
         ]);
 
         if (!alive) return;
@@ -84,7 +56,7 @@ const Settings = () => {
         setAdminTemplates(templatesData || []);
         setSelectedTemplateId(templatesData?.[0]?.id || "");
       } catch (e) {
-        if (alive) setDefaultsError(e.message);
+        if (alive) setDefaultsError(getApiErrorMessage(e));
       } finally {
         if (alive) {
           setLoadingDefaults(false);
@@ -106,25 +78,18 @@ const Settings = () => {
     setDefaultsSaved(false);
 
     try {
-      const res = await fetch(API_ENDPOINTS.userSettings, {
+      const settings = await apiJson(API_ENDPOINTS.userSettings, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: {
           defaultCurrencyId: defaultCurrencyId ? Number(defaultCurrencyId) : null,
           defaultAccountId: defaultAccountId ? Number(defaultAccountId) : null,
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error(await readError(res, "Failed to save default transaction settings"));
-      }
-
-      const settings = await res.json();
+        },
+      }, "Failed to save default transaction settings");
       setDefaultCurrencyId(settings.defaultCurrencyId ? String(settings.defaultCurrencyId) : "");
       setDefaultAccountId(settings.defaultAccountId ? String(settings.defaultAccountId) : "");
       setDefaultsSaved(true);
     } catch (e) {
-      setDefaultsError(e.message);
+      setDefaultsError(getApiErrorMessage(e));
     } finally {
       setSavingDefaults(false);
     }
@@ -136,13 +101,11 @@ const Settings = () => {
     setAdminMessage(null);
 
     try {
-      const res = await fetch(API_ENDPOINTS.adminDataSample);
-      if (!res.ok) throw new Error(await readError(res, "Failed to load sample JSON"));
-      const sample = await res.json();
+      const sample = await apiJson(API_ENDPOINTS.adminDataSample, {}, "Failed to load sample JSON");
       setAdminJson(JSON.stringify(sample, null, 2));
       setAdminMessage("Sample JSON loaded");
     } catch (e) {
-      setAdminError(e.message);
+      setAdminError(getApiErrorMessage(e));
     } finally {
       setAdminBusy(false);
     }
@@ -156,14 +119,16 @@ const Settings = () => {
     setAdminMessage(null);
 
     try {
-      const res = await fetch(API_ENDPOINTS.adminDataTemplate(selectedTemplateId));
-      if (!res.ok) throw new Error(await readError(res, "Failed to load template JSON"));
-      const template = await res.json();
+      const template = await apiJson(
+        API_ENDPOINTS.adminDataTemplate(selectedTemplateId),
+        {},
+        "Failed to load template JSON"
+      );
       const meta = adminTemplates.find((item) => item.id === selectedTemplateId);
       setAdminJson(JSON.stringify(template, null, 2));
       setAdminMessage(`${meta?.name || "Template"} JSON loaded`);
     } catch (e) {
-      setAdminError(e.message);
+      setAdminError(getApiErrorMessage(e));
     } finally {
       setAdminBusy(false);
     }
@@ -180,14 +145,13 @@ const Settings = () => {
     setAdminMessage(null);
 
     try {
-      const res = await fetch(API_ENDPOINTS.adminDataClear, { method: "DELETE" });
-      if (!res.ok) throw new Error(await readError(res, "Failed to clear data"));
+      await apiFetch(API_ENDPOINTS.adminDataClear, { method: "DELETE" }, "Failed to clear data");
       setAdminMessage("Current user data cleared");
       setAccounts([]);
       setDefaultAccountId("");
       setDefaultCurrencyId("");
     } catch (e) {
-      setAdminError(e.message);
+      setAdminError(getApiErrorMessage(e));
     } finally {
       setAdminBusy(false);
     }
@@ -200,18 +164,15 @@ const Settings = () => {
 
     try {
       const payload = JSON.parse(adminJson);
-      const res = await fetch(API_ENDPOINTS.adminDataImport, {
+      const result = await apiJson(API_ENDPOINTS.adminDataImport, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error(await readError(res, "Failed to import JSON"));
-      const result = await res.json();
+        body: payload,
+      }, "Failed to import JSON");
       setAdminMessage(
         `Imported: ${result.accounts} accounts, ${result.categories} categories, ${result.budgetPlans} plans, ${result.transactions} transactions, ${result.financialGoals} goals`
       );
     } catch (e) {
-      setAdminError(e.message);
+      setAdminError(getApiErrorMessage(e));
     } finally {
       setAdminBusy(false);
     }

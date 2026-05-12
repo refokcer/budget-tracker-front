@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
+import { apiFetch, apiJson, getApiErrorMessage } from "../../../services/apiClient";
 import styles from "./EditIncomeModal.module.css";
 
 const EditIncomeModal = ({ isOpen, onClose, transaction, onSaved }) => {
@@ -27,14 +28,12 @@ const EditIncomeModal = ({ isOpen, onClose, transaction, onSaved }) => {
 
     const fetchData = async () => {
       try {
-        const res = await fetch(API_ENDPOINTS.incomeModal);
-        if (!res.ok) throw new Error("Failed to load data");
-        const data = await res.json();
+        const data = await apiJson(API_ENDPOINTS.incomeModal, {}, "Failed to load data");
         setCurrencies(data.currencies);
         setCategories(data.categories);
         setAccounts(data.accounts);
       } catch (error) {
-        setError(error.message);
+        setError(getApiErrorMessage(error));
       }
     };
 
@@ -79,20 +78,15 @@ const EditIncomeModal = ({ isOpen, onClose, transaction, onSaved }) => {
     };
 
     try {
-      const response = await fetch(API_ENDPOINTS.updateTransaction, {
+      await apiFetch(API_ENDPOINTS.updateTransaction, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        throw new Error("Update failed");
-      }
+        body: payload,
+      }, "Update failed");
 
       onSaved && onSaved();
       onClose();
     } catch (error) {
-      setError(error.message);
+      setError(getApiErrorMessage(error));
     } finally {
       setLoading(false);
     }

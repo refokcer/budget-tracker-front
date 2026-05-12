@@ -1,4 +1,5 @@
 import API_ENDPOINTS from "../config/apiConfig";
+import { apiFetch, apiJson } from "./apiClient";
 import { parseAll, mapToPrepare } from "../utils/ukrsibParser";
 
 const PDFJS_WORKER_URL =
@@ -52,10 +53,7 @@ export const calculateImportSummary = (operations) =>
   );
 
 export const loadStatementImportOptions = async () => {
-  const res = await fetch(API_ENDPOINTS.expenseModal);
-  if (!res.ok) throw new Error("Failed to load import options");
-
-  const data = await res.json();
+  const data = await apiJson(API_ENDPOINTS.expenseModal, {}, "Failed to load import options");
   return {
     categories: data.categories || [],
     accounts: data.accounts || [],
@@ -75,14 +73,10 @@ export const prepareStatementFile = async (file) => {
     };
   }
 
-  const res = await fetch(API_ENDPOINTS.prepareTransactions, {
+  const prepared = await apiJson(API_ENDPOINTS.prepareTransactions, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(parsed.map(mapToPrepare)),
-  });
-  if (!res.ok) throw new Error("Failed to prepare statement data");
-
-  const prepared = await res.json();
+    body: parsed.map(mapToPrepare),
+  }, "Failed to prepare statement data");
   if (!prepared.length) {
     return {
       operations: [],
@@ -98,15 +92,10 @@ export const prepareStatementFile = async (file) => {
 
 export const saveStatementOperations = async (operations) => {
   for (const op of operations) {
-    const res = await fetch(resolveCreateEndpoint(op.type), {
+    await apiFetch(resolveCreateEndpoint(op.type), {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(toCreatePayload(op)),
-    });
-
-    if (!res.ok) {
-      throw new Error(`Failed to save "${op.title}"`);
-    }
+      body: toCreatePayload(op),
+    }, `Failed to save "${op.title}"`);
   }
 };
 

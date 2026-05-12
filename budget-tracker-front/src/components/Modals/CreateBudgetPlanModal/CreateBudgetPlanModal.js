@@ -1,5 +1,6 @@
 import { useState } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
+import { apiFetch, getApiErrorMessage } from "../../../services/apiClient";
 import styles from "./CreateBudgetPlanModal.module.css";
 
 const CreateBudgetPlanModal = ({ isOpen, onClose, onPlanCreated }) => {
@@ -31,21 +32,16 @@ const CreateBudgetPlanModal = ({ isOpen, onClose, onPlanCreated }) => {
     };
 
     try {
-      const response = await fetch(API_ENDPOINTS.createBudgetPlan, {
+      await apiFetch(API_ENDPOINTS.createBudgetPlan, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newPlan),
-      });
-
-      if (!response.ok) {
-        throw new Error("Ошибка при создании плана бюджета");
-      }
+        body: newPlan,
+      }, "Failed to create budget plan");
 
       alert("План бюджета успешно создан!");
       // Сообщаем родителю, что план создан
       onPlanCreated();
     } catch (err) {
-      setError(err.message);
+      setError(getApiErrorMessage(err));
     } finally {
       setLoading(false);
     }

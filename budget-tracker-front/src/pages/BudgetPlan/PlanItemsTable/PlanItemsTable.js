@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import DataTable from "../../../components/DataTable/DataTable";
 import API_ENDPOINTS from "../../../config/apiConfig";
+import { apiFetch, apiJson, getApiErrorMessage } from "../../../services/apiClient";
 import editorStyles from "../../../components/TransactionInlineTable/TransactionInlineTable.module.css";
 import pageStyles from "../BudgetPlanPage/BudgetPlanPage.module.css";
 
@@ -157,9 +158,7 @@ const PlanItemsTable = ({ items, onReload }) => {
   useEffect(() => {
     const loadOptions = async () => {
       try {
-        const res = await fetch(API_ENDPOINTS.editPlanModal);
-        if (!res.ok) throw new Error("Failed to load editor data");
-        const data = await res.json();
+        const data = await apiJson(API_ENDPOINTS.editPlanModal, {}, "Failed to load editor data");
         setOptions({
           categories: data.categories || [],
           currencies: data.currencies || [],
@@ -281,22 +280,21 @@ const PlanItemsTable = ({ items, onReload }) => {
 
     try {
       const isCreatingVirtualOther = row.isVirtual && columnKey !== "categoryTitle";
-      const res = await fetch(
+      await apiFetch(
         isCreatingVirtualOther
           ? API_ENDPOINTS.createBudgetPlanItem
           : API_ENDPOINTS.updateBudgetPlanItem,
         {
         method: isCreatingVirtualOther ? "POST" : "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(isCreatingVirtualOther ? {
+        body: isCreatingVirtualOther ? {
           budgetPlanId: payload.budgetPlanId,
           categoryId: 0,
           amount: payload.amount,
           currencyId: payload.currencyId,
           description: payload.description,
-        } : payload),
-      });
-      if (!res.ok) throw new Error(`Save failed with status ${res.status}`);
+        } : payload,
+      },
+      "Failed to save plan item");
 
       setRows((prev) =>
         prev.map((item) => {
@@ -323,7 +321,7 @@ const PlanItemsTable = ({ items, onReload }) => {
       onReload?.();
       cancelEditing();
     } catch (error) {
-      alert(error.message);
+      alert(getApiErrorMessage(error));
     } finally {
       commitLockRef.current = false;
       setSavingCell(null);

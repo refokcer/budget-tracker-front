@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { API_ENDPOINTS } from "../../../config/apiConfig";
+import { apiJson, getApiErrorMessage } from "../../../services/apiClient";
 import AccountsCard from "../components/AccountsCard/AccountsCard";
 import TopExpensesCard from "../components/TopExpensesCard/TopExpensesCard";
 import TopIncomesCard from "../components/TopIncomesCard/TopIncomesCard";
@@ -22,12 +23,10 @@ const Dashboard = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch(API_ENDPOINTS.dashboardPage);
-        if (!res.ok) throw new Error("Помилка завантаження");
-        const json = await res.json();
+        const json = await apiJson(API_ENDPOINTS.dashboardPage, {}, "Failed to load dashboard");
         setData(json);
       } catch (e) {
-        setError(e.message);
+        setError(getApiErrorMessage(e));
       } finally {
         setLoading(false);
       }

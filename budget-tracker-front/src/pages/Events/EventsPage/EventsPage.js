@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import API_ENDPOINTS from "../../../config/apiConfig";
+import { apiFetch, apiJson, getApiErrorMessage } from "../../../services/apiClient";
 
 import PlanDetails from "../../BudgetPlan/PlanDetails/PlanDetails";
 import PlanItemsTable from "../../BudgetPlan/PlanItemsTable/PlanItemsTable";
@@ -28,14 +29,16 @@ const EventsPage = () => {
     const controller = new AbortController();
     (async () => {
       try {
-        const r = await fetch(API_ENDPOINTS.eventPlans, { signal: controller.signal });
-        if (!r.ok) throw new Error("Ошибка при загрузке событий");
-        const data = await r.json();
+        const data = await apiJson(
+          API_ENDPOINTS.eventPlans,
+          { signal: controller.signal },
+          "Failed to load events"
+        );
         setEvents(data);
         if (!eventIdFromQuery && data.length)
           setSearchParams({ eventId: data[0].id });
       } catch (e) {
-        if (e.name !== "AbortError") setError(e.message);
+        if (e.name !== "AbortError") setError(getApiErrorMessage(e));
       }
     })();
     return () => controller.abort();
@@ -52,17 +55,16 @@ const EventsPage = () => {
       try {
         setLoading(true);
         setError(null);
-        const res = await fetch(
+        const data = await apiJson(
           API_ENDPOINTS.eventPage(eventIdFromQuery),
-          signal ? { signal } : {}
+          signal ? { signal } : {},
+          "Failed to load event"
         );
-        if (!res.ok) throw new Error("Ошибка при загрузке события");
-        const data = await res.json();
         setSelectedEvent(data.plan);
         setPlanItems(data.items || []);
         setTransactions(data.transactions || []);
       } catch (e) {
-        if (e.name !== "AbortError") setError(e.message);
+        if (e.name !== "AbortError") setError(getApiErrorMessage(e));
       } finally {
         setLoading(false);
       }
@@ -83,17 +85,16 @@ const EventsPage = () => {
     if (!window.confirm("Удалить это событие?")) return;
     try {
       setBusyDel(true);
-      const r = await fetch(API_ENDPOINTS.deleteBudgetPlan(selectedEvent.id), {
+      await apiFetch(API_ENDPOINTS.deleteBudgetPlan(selectedEvent.id), {
         method: "DELETE",
-      });
-      if (!r.ok) throw new Error("Ошибка удаления события");
+      }, "Failed to delete event");
       setEvents((p) => p.filter((ev) => ev.id !== selectedEvent.id));
       setSelectedEvent(null);
       setPlanItems([]);
       setTransactions([]);
       setSearchParams({});
     } catch (e) {
-      alert(e.message);
+      alert(getApiErrorMessage(e));
     } finally {
       setBusyDel(false);
     }

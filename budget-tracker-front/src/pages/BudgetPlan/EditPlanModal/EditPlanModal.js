@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
+import { apiFetch, apiJson, getApiErrorMessage } from "../../../services/apiClient";
 import styles from "./EditPlanModal.module.css";
 
 const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
@@ -31,9 +32,7 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
     setDesc(plan.description || "");
     (async () => {
       try {
-        const res = await fetch(API_ENDPOINTS.editPlanModal);
-        if (!res.ok) throw new Error();
-        const data = await res.json();
+        const data = await apiJson(API_ENDPOINTS.editPlanModal, {}, "Failed to load plan editor data");
         if (ignore) return;
         setAllCats(data.categories);
         setAllCur(data.currencies);
@@ -112,18 +111,17 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
     try {
       setLoading(true);
       setError(null);
-      await fetch(API_ENDPOINTS.updateBudgetPlan, {
+      await apiFetch(API_ENDPOINTS.updateBudgetPlan, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: {
           id: plan.id,
           title,
           startDate,
           endDate,
           type: plan.type,
           description,
-        }),
-      });
+        },
+      }, "Failed to update budget plan");
       for (const row of rows) {
         if (row._status === "skip") continue;
         const payload = {
@@ -134,26 +132,24 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
           description: row.description,
         };
         if (row._status === "new") {
-          await fetch(API_ENDPOINTS.createBudgetPlanItem, {
+          await apiFetch(API_ENDPOINTS.createBudgetPlanItem, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
+            body: payload,
+          }, "Failed to create budget plan item");
         } else if (row._status === "delete") {
-          await fetch(API_ENDPOINTS.deleteBudgetPlanItem(row.id), {
+          await apiFetch(API_ENDPOINTS.deleteBudgetPlanItem(row.id), {
             method: "DELETE",
-          });
+          }, "Failed to delete budget plan item");
         } else {
-          await fetch(API_ENDPOINTS.updateBudgetPlanItem, {
+          await apiFetch(API_ENDPOINTS.updateBudgetPlanItem, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...payload, id: row.id }),
-          });
+            body: { ...payload, id: row.id },
+          }, "Failed to update budget plan item");
         }
       }
       onSaved();
     } catch (e) {
-      setError(e.message);
+      setError(getApiErrorMessage(e));
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import API_ENDPOINTS from "../../../config/apiConfig";
+import { apiFetch, apiJson, getApiErrorMessage } from "../../../services/apiClient";
 import styles from "./ManageAccounts.module.css";
 
 const ACCOUNT_TYPES = [
@@ -38,12 +39,10 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
       try {
         setLoading(true);
         setError(null);
-        const res = await fetch(API_ENDPOINTS.manageAccounts);
-        if (!res.ok) throw new Error("Помилка завантаження");
-        const data = await res.json();
+        const data = await apiJson(API_ENDPOINTS.manageAccounts, {}, "Failed to load accounts");
         setAccounts(Array.isArray(data.accounts) ? data.accounts : []);
       } catch (e) {
-        setError(e.message);
+        setError(getApiErrorMessage(e));
       } finally {
         setLoading(false);
       }
@@ -57,19 +56,16 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch(API_ENDPOINTS.accounts, {
+      const newAcc = await apiJson(API_ENDPOINTS.accounts, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: {
           title,
           amount: +amount,
           currencyId: 1,
           type: Number(type),
           description: descr,
-        }),
-      });
-      if (!res.ok) throw new Error("Помилка створення");
-      const newAcc = await res.json();
+        },
+      }, "Failed to create account");
       setAccounts((a) => [...a, newAcc]);
       setTitle("");
       setAmount("");
@@ -77,7 +73,7 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
       setDescr("");
       onSaved && onSaved();
     } catch (e) {
-      setError(e.message);
+      setError(getApiErrorMessage(e));
     } finally {
       setLoading(false);
     }
@@ -87,13 +83,12 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
     if (!window.confirm("Видалити акаунт?")) return;
     try {
       setBusyId(id);
-      const res = await fetch(API_ENDPOINTS.deleteAccount(id), {
+      await apiFetch(API_ENDPOINTS.deleteAccount(id), {
         method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Помилка видалення");
+      }, "Failed to delete account");
       setAccounts((a) => a.filter((x) => x.id !== id));
     } catch (e) {
-      alert(e.message);
+      alert(getApiErrorMessage(e));
     } finally {
       setBusyId(null);
     }
