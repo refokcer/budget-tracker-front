@@ -3,7 +3,7 @@ import API_ENDPOINTS from "../../../config/apiConfig";
 import { apiFetch, apiJson, getApiErrorMessage } from "../../../services/apiClient";
 import styles from "./EditTransferModal.module.css";
 
-const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
+const EditTransferModal = ({ isOpen, onClose, transfer, onSaved }) => {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [currencyId, setCurrencyId] = useState("");
@@ -39,16 +39,16 @@ const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
     };
 
     fetchData();
-    if (transaction) {
-      setTitle(transaction.title || "");
-      setAmount(transaction.amount ? String(transaction.amount) : "");
-      setCurrencyId(transaction.currencyId ? String(transaction.currencyId) : "");
-      setAccountFrom(transaction.accountFrom ? String(transaction.accountFrom) : "");
-      setAccountTo(transaction.accountTo ? String(transaction.accountTo) : "");
-      setCategoryId(transaction.categoryId ? String(transaction.categoryId) : "");
-      setDescription(transaction.description || "");
+    if (transfer) {
+      setTitle(transfer.title || "");
+      setAmount(transfer.amount ? String(transfer.amount) : "");
+      setCurrencyId(transfer.currencyId ? String(transfer.currencyId) : "");
+      setAccountFrom(transfer.accountFrom ? String(transfer.accountFrom) : "");
+      setAccountTo(transfer.accountTo ? String(transfer.accountTo) : "");
+      setCategoryId(transfer.categoryId ? String(transfer.categoryId) : "");
+      setDescription(transfer.description || "");
       setDate(
-        transaction.date ? transaction.date.split("T")[0] : new Date().toISOString().split("T")[0]
+        transfer.date ? transfer.date.split("T")[0] : new Date().toISOString().split("T")[0]
       );
     }
 
@@ -56,10 +56,10 @@ const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen, onClose, transaction]);
+  }, [isOpen, onClose, transfer]);
 
   const handleSubmit = async () => {
-    if (!title || !amount || !currencyId || !accountFrom || !accountTo || !date) {
+    if (!title || !amount || !currencyId || !accountFrom || !accountTo || !categoryId || !date) {
       alert("Please fill in all fields!");
       return;
     }
@@ -72,7 +72,7 @@ const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
     setLoading(true);
     setError(null);
     const payload = {
-      id: transaction.id,
+      id: transfer.id,
       title,
       amount: parseFloat(amount),
       accountFrom: parseInt(accountFrom),
@@ -84,13 +84,8 @@ const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
       type: 0,
     };
 
-    if (!payload.categoryId) {
-      alert("Please select a category!");
-      return;
-    }
-
     try {
-      await apiFetch(API_ENDPOINTS.updateTransaction, {
+      await apiFetch(API_ENDPOINTS.updateTransfer, {
         method: "PUT",
         body: payload,
       }, "Update failed");
@@ -130,7 +125,7 @@ const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
           <option value="">Select currency</option>
           {currencies.map((c) => (
             <option key={c.id} value={c.id}>
-              {c.symbol} ({c.name})
+              {c.symbol} ({c.name || c.title || c.code})
             </option>
           ))}
         </select>
@@ -185,3 +180,4 @@ const EditTransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
 };
 
 export default EditTransferModal;
+

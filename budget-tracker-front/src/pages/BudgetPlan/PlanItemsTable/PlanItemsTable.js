@@ -357,6 +357,11 @@ const PlanItemsTable = ({ items, onReload }) => {
       if (key === "spent" || key === "remaining") {
         return row[key] === "-" ? "-" : `${row.currencySymbol}${row[key]}`;
       }
+      if (key === "projectedSpent") {
+        return row[key] === undefined || row[key] === null
+          ? "-"
+          : `${row.currencySymbol}${row[key]}`;
+      }
       return row[key];
     }
 
@@ -446,6 +451,11 @@ const PlanItemsTable = ({ items, onReload }) => {
       key: "remaining",
       label: "Осталось",
       render: (_, row) => renderEditableCell("remaining", row),
+    },
+    {
+      key: "projectedSpent",
+      label: "Forecast",
+      render: (_, row) => renderEditableCell("projectedSpent", row),
     },
     {
       key: "description",

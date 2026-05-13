@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import API_ENDPOINTS from "../../../config/apiConfig";
 import { apiFetch, apiJson, getApiErrorMessage } from "../../../services/apiClient";
 import styles from "./SettingsPage.module.css";
 
 import ManageAccountsModal from "../ManageAccounts/ManageAccounts";
 import ManageCategoriesModal from "../ManageCategories/ManageCategories";
+import ManageRecurringPaymentsModal from "../ManageRecurringPayments/ManageRecurringPayments";
 import ImportStatementModal from "../../../components/Modals/ImportStatementModal/ImportStatementModal";
 
 const Settings = () => {
   const [accOpen, setAccOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
+  const [recurringOpen, setRecurringOpen] = useState(false);
   const [stmtOpen, setStmtOpen] = useState(false);
   const [currencies, setCurrencies] = useState([]);
   const [accounts, setAccounts] = useState([]);
@@ -169,7 +172,7 @@ const Settings = () => {
         body: payload,
       }, "Failed to import JSON");
       setAdminMessage(
-        `Imported: ${result.accounts} accounts, ${result.categories} categories, ${result.budgetPlans} plans, ${result.transactions} transactions, ${result.financialGoals} goals`
+        `Imported: ${result.accounts} accounts, ${result.categories} categories, ${result.budgetPlans} plans, ${result.transactions} transactions, ${result.financialGoals} goals, ${result.recurringPayments || 0} recurring`
       );
     } catch (e) {
       setAdminError(getApiErrorMessage(e));
@@ -250,6 +253,17 @@ const Settings = () => {
           >
             Manage categories
           </button>
+
+          <button
+            className={styles["settings-btn"]}
+            onClick={() => setRecurringOpen(true)}
+          >
+            Recurring payments
+          </button>
+
+          <Link className={styles["settings-btn"]} to="/settings/auto-plan-rules">
+            Auto plan rules
+          </Link>
         </section>
 
         <section className={styles["settings-card"]}>
@@ -360,6 +374,10 @@ const Settings = () => {
       <ManageCategoriesModal
         isOpen={catOpen}
         onClose={() => setCatOpen(false)}
+      />
+      <ManageRecurringPaymentsModal
+        isOpen={recurringOpen}
+        onClose={() => setRecurringOpen(false)}
       />
       <ImportStatementModal
         isOpen={stmtOpen}

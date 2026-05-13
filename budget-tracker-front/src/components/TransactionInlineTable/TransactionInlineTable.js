@@ -155,6 +155,11 @@ const TransactionInlineTable = ({
   start,
   end,
   modalEndpoint,
+  listEndpoint,
+  detailEndpoint = API_ENDPOINTS.transactionById,
+  updateEndpoint = API_ENDPOINTS.updateTransaction,
+  deleteEndpoint = API_ENDPOINTS.deleteTransaction,
+  entityName = "transaction",
   deleteConfirmText = "Delete transaction?",
   editableColumns,
   tableColumns,
@@ -188,7 +193,9 @@ const TransactionInlineTable = ({
       setLoading(true);
       setError(null);
       try {
-        const url = API_ENDPOINTS.transactionsByFilter({ start, end, type });
+        const url = listEndpoint
+          ? listEndpoint(start, end)
+          : API_ENDPOINTS.transactionsByFilter({ start, end, type });
         const data = await apiJson(url, {}, "Failed to load data");
         setTableRows(data.transactions);
       } catch (fetchError) {
@@ -200,7 +207,7 @@ const TransactionInlineTable = ({
 
     fetchData();
     reloadRef.current = fetchData;
-  }, [rows, start, end, type]);
+  }, [rows, start, end, type, listEndpoint]);
 
   useEffect(() => {
     const loadOptions = async () => {
@@ -235,10 +242,10 @@ const TransactionInlineTable = ({
 
     try {
       setBusyId(id);
-      await apiFetch(API_ENDPOINTS.deleteTransaction(id), {
+      await apiFetch(deleteEndpoint(id), {
         method: "DELETE",
       }, "Delete error");
-      setTableRows((prev) => prev.filter((transaction) => transaction.id !== id));
+      setTableRows((prev) => prev.filter((item) => item.id !== id));
       onReload?.();
     } catch (deleteError) {
       alert(getApiErrorMessage(deleteError));
@@ -247,16 +254,16 @@ const TransactionInlineTable = ({
     }
   };
 
-  const ensureTransactionDetails = async (id) => {
+  const ensureItemDetails = async (id) => {
     if (detailsById[id]) return detailsById[id];
 
-    const transaction = await apiJson(
-      API_ENDPOINTS.transactionById(id),
+    const item = await apiJson(
+      detailEndpoint(id),
       {},
-      "Failed to load transaction"
+      `Failed to load ${entityName}`
     );
-    setDetailsById((prev) => ({ ...prev, [id]: transaction }));
-    return transaction;
+    setDetailsById((prev) => ({ ...prev, [id]: item }));
+    return item;
   };
 
   const startEditing = async (row, columnKey) => {
@@ -266,8 +273,8 @@ const TransactionInlineTable = ({
     if (!config) return;
 
     try {
-      const transaction = await ensureTransactionDetails(row.id);
-      const rawValue = transaction[config.field];
+      const item = await ensureItemDetails(row.id);
+      const rawValue = item[config.field];
       const nextValue =
         config.type === "date"
           ? formatDateForInput(rawValue)
@@ -282,7 +289,7 @@ const TransactionInlineTable = ({
     }
   };
 
-  const updateSummaryRow = (row, columnKey, value, transaction) => {
+  const updateSummaryRow = (row, columnKey, value, item) => {
     const updatedRow = { ...row };
     const config = editableColumns[columnKey];
 
@@ -294,7 +301,7 @@ const TransactionInlineTable = ({
         ? config.getOptionLabel(selectedOption)
         : "-";
     } else if (config.field === "date") {
-      updatedRow.date = transaction.date;
+      updatedRow.date = item.date;
     } else {
       updatedRow[config.field] = config.type === "number" ? Number(value) : value;
     }
@@ -309,18 +316,18 @@ const TransactionInlineTable = ({
     const config = editableColumns[columnKey];
     if (!config) return;
 
-    const currentTransaction = detailsById[rowId];
-    if (!currentTransaction) return;
+    const currentItem = detailsById[rowId];
+    if (!currentItem) return;
 
     const normalizedValue = nextRawValue;
     const trimmedValue =
       typeof normalizedValue === "string" ? normalizedValue.trim() : normalizedValue;
     const previousValue =
       config.type === "date"
-        ? formatDateForInput(currentTransaction[config.field])
-        : currentTransaction[config.field] === null || currentTransaction[config.field] === undefined
+        ? formatDateForInput(currentItem[config.field])
+        : currentItem[config.field] === null || currentItem[config.field] === undefined
           ? ""
-          : String(currentTransaction[config.field]);
+          : String(currentItem[config.field]);
 
     if (normalizedValue === previousValue) {
       cancelEditing();
@@ -337,8 +344,8 @@ const TransactionInlineTable = ({
       return;
     }
 
-    const updatedTransaction = {
-      ...currentTransaction,
+    const updatedItem = {
+      ...currentItem,
       [config.field]:
         config.type === "number"
           ? Number(normalizedValue)
@@ -350,7 +357,7 @@ const TransactionInlineTable = ({
     };
 
     if (typeof config.validate === "function") {
-      const validationError = config.validate(updatedTransaction);
+      const validationError = config.validate(updatedItem);
       if (validationError) {
         alert(validationError);
         return;
@@ -361,16 +368,16 @@ const TransactionInlineTable = ({
     setSavingCell(cell);
 
     try {
-      await apiFetch(API_ENDPOINTS.updateTransaction, {
+      await apiFetch(updateEndpoint, {
         method: "PUT",
-        body: buildPayload(updatedTransaction),
+        body: buildPayload(updatedItem),
       }, "Save failed");
 
-      setDetailsById((prev) => ({ ...prev, [rowId]: updatedTransaction }));
+      setDetailsById((prev) => ({ ...prev, [rowId]: updatedItem }));
       setTableRows((prev) =>
         prev.map((row) =>
           row.id === rowId
-            ? updateSummaryRow(row, columnKey, normalizedValue, updatedTransaction)
+            ? updateSummaryRow(row, columnKey, normalizedValue, updatedItem)
             : row,
         ),
       );

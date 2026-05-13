@@ -4,11 +4,18 @@ import { apiFetch, apiJson, getApiErrorMessage } from "../../../services/apiClie
 import styles from "./ManageCategories.module.css";
 
 const DEFAULT_COLOR = "#5FB3A7";
+const DEFAULT_PRIORITY = 0;
 
 const tabs = [
   { key: "expense", label: "Expense categories", type: 2 },
   { key: "income", label: "Income categories", type: 1 },
   { key: "transfer", label: "Transfer categories", type: 0 },
+];
+
+const priorities = [
+  { value: 1, label: "Mandatory" },
+  { value: 0, label: "Flexible" },
+  { value: 2, label: "Discretionary" },
 ];
 
 const normalizeColor = (color) =>
@@ -21,6 +28,7 @@ const ManageCategories = ({ isOpen, onClose }) => {
   const [title, setTitle] = useState("");
   const [descr, setDescr] = useState("");
   const [color, setColor] = useState(DEFAULT_COLOR);
+  const [priority, setPriority] = useState(String(DEFAULT_PRIORITY));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [busyId, setBusyId] = useState(null);
@@ -75,6 +83,7 @@ const ManageCategories = ({ isOpen, onClose }) => {
           type: activeType,
           description: descr.trim() || null,
           color,
+          priority: Number(priority),
         },
       }, "Failed to create category");
       setCategories((current) => [...current, newCat]);
@@ -82,6 +91,7 @@ const ManageCategories = ({ isOpen, onClose }) => {
       setTitle("");
       setDescr("");
       setColor(DEFAULT_COLOR);
+      setPriority(String(DEFAULT_PRIORITY));
     } catch (e) {
       setError(getApiErrorMessage(e));
     } finally {
@@ -89,16 +99,16 @@ const ManageCategories = ({ isOpen, onClose }) => {
     }
   };
 
-  const updateColor = async (category, nextColor) => {
-    const normalizedColor = normalizeColor(nextColor);
-      setCategories((current) =>
-        current.map((item) =>
-          item.id === category.id ? { ...item, color: normalizedColor } : item
-        )
-      );
+  const updateCategory = async (category, patch, fallbackMessage) => {
+    const nextCategory = { ...category, ...patch };
+    setCategories((current) =>
+      current.map((item) =>
+        item.id === category.id ? nextCategory : item
+      )
+    );
     setAllCategories((current) =>
       current.map((item) =>
-        item.id === category.id ? { ...item, color: normalizedColor } : item
+        item.id === category.id ? nextCategory : item
       )
     );
 
@@ -111,9 +121,10 @@ const ManageCategories = ({ isOpen, onClose }) => {
           title: category.title,
           type: category.type,
           description: category.description,
-          color: normalizedColor,
+          color: nextCategory.color,
+          priority: Number(nextCategory.priority ?? DEFAULT_PRIORITY),
         },
-      }, "Failed to save category color");
+      }, fallbackMessage);
       setCategories((current) =>
         current.map((item) => (item.id === category.id ? updated : item))
       );
@@ -131,6 +142,22 @@ const ManageCategories = ({ isOpen, onClose }) => {
     } finally {
       setBusyId(null);
     }
+  };
+
+  const updateColor = async (category, nextColor) => {
+    await updateCategory(
+      category,
+      { color: normalizeColor(nextColor) },
+      "Failed to save category color"
+    );
+  };
+
+  const updatePriority = async (category, nextPriority) => {
+    await updateCategory(
+      category,
+      { priority: Number(nextPriority) },
+      "Failed to save category priority"
+    );
   };
 
   const del = async (id) => {
@@ -157,7 +184,7 @@ const ManageCategories = ({ isOpen, onClose }) => {
         <div className={styles.header}>
           <div>
             <h3>Manage categories</h3>
-            <p>Assign colors for analytics. A color can be reused; shared colors are marked.</p>
+            <p>Assign colors and planning priority. Shared colors are marked.</p>
           </div>
         </div>
 
@@ -188,6 +215,7 @@ const ManageCategories = ({ isOpen, onClose }) => {
                   <tr>
                     <th>Color</th>
                     <th>Name</th>
+                    <th>Priority</th>
                     <th>Description</th>
                     <th>Usage</th>
                     <th></th>
@@ -219,6 +247,22 @@ const ManageCategories = ({ isOpen, onClose }) => {
                           </div>
                         </td>
                         <td>{category.title}</td>
+                        <td>
+                          <select
+                            className={styles["priority-select"]}
+                            value={String(category.priority ?? DEFAULT_PRIORITY)}
+                            disabled={busyId === category.id}
+                            onChange={(event) =>
+                              updatePriority(category, event.target.value)
+                            }
+                          >
+                            {priorities.map((item) => (
+                              <option key={item.value} value={item.value}>
+                                {item.label}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
                         <td>{category.description || "-"}</td>
                         <td>
                           {isShared ? (
@@ -268,6 +312,16 @@ const ManageCategories = ({ isOpen, onClose }) => {
                 value={descr}
                 onChange={(event) => setDescr(event.target.value)}
               />
+              <select
+                value={priority}
+                onChange={(event) => setPriority(event.target.value)}
+              >
+                {priorities.map((item) => (
+                  <option key={item.value} value={item.value}>
+                    {item.label}
+                  </option>
+                ))}
+              </select>
               <button className={styles["submit-button"]} onClick={addCategory}>
                 Add
               </button>

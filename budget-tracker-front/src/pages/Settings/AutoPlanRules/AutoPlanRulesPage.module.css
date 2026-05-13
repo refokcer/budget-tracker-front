@@ -1,0 +1,195 @@
+.page {
+  width: min(1480px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 24px 0 40px;
+  color: var(--color-white);
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.header h2 {
+  margin: 0 0 6px;
+  font-size: 1.7rem;
+}
+
+.header p,
+.muted {
+  margin: 0;
+  color: #cbd5e1;
+}
+
+.backLink,
+.actions button {
+  min-height: 42px;
+  border: 0;
+  border-radius: 6px;
+  background: #1e88e5;
+  color: var(--color-white);
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.panel {
+  background: #2e2e3d;
+  border-radius: 8px;
+  padding: 18px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) 180px 150px 150px;
+  gap: 12px;
+  padding: 0 10px 12px;
+  color: #cbd5e1;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.ruleRow {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) 180px 150px 150px;
+  gap: 12px;
+  align-items: start;
+  border: 1px solid #45485a;
+  border-radius: 8px;
+  background: #242433;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.categoryName {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  font-weight: 800;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field span {
+  display: none;
+}
+
+.field input,
+.field select,
+.monthField input {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid #45485a;
+  border-radius: 6px;
+  background: #1f2030;
+  color: var(--color-white);
+  padding: 8px 10px;
+  box-sizing: border-box;
+}
+
+.monthGrid {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(72px, 1fr));
+  gap: 8px;
+}
+
+.monthField {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+  color: #cbd5e1;
+  font-size: 0.86rem;
+}
+
+.error,
+.success {
+  margin: 0 0 12px;
+  font-size: 0.95rem;
+}
+
+.error {
+  color: #ff8a8a;
+}
+
+.success {
+  color: #7dd3a8;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.actions button {
+  min-width: 240px;
+}
+
+.actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+@media (max-width: 1180px) {
+  .tableHeader {
+    display: none;
+  }
+
+  .ruleRow {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .categoryName {
+    grid-column: 1 / -1;
+  }
+
+  .field span {
+    display: block;
+    color: #cbd5e1;
+    font-size: 0.8rem;
+  }
+
+  .monthGrid {
+    grid-template-columns: repeat(6, minmax(86px, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .page {
+    width: min(520px, calc(100% - 24px));
+    padding-top: 16px;
+  }
+
+  .header {
+    flex-direction: column;
+  }
+
+  .backLink,
+  .actions button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .ruleRow {
+    grid-template-columns: 1fr;
+  }
+
+  .monthGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

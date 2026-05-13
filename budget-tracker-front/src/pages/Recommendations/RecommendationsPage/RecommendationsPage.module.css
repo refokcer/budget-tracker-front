@@ -1,0 +1,283 @@
+.page {
+  width: min(1400px, calc(100vw - 64px));
+  margin: 0 auto;
+  padding: 28px 0 42px;
+  color: var(--color-white);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  gap: 22px;
+  align-items: stretch;
+  margin-bottom: 22px;
+}
+
+.hero,
+.signalCard,
+.actionCard,
+.sectionCard,
+.statePanel {
+  border: 1px solid rgba(213, 224, 224, 0.08);
+  border-radius: 8px;
+  background: #2e2e3d;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+}
+
+.hero {
+  padding: 24px;
+}
+
+.hero h1 {
+  margin: 12px 0 10px;
+  font-size: clamp(2rem, 3.1vw, 3.4rem);
+  line-height: 1.04;
+}
+
+.hero p,
+.signalCard p,
+.sectionCard p,
+.actionCard dd {
+  color: rgba(232, 238, 246, 0.78);
+  line-height: 1.45;
+}
+
+.hero p {
+  max-width: 760px;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.statusBadge,
+.priority,
+.signalTop b,
+.sectionTitle span {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 800;
+  padding: 6px 10px;
+}
+
+.healthy {
+  background: rgba(64, 196, 122, 0.16);
+  color: #91e0b0;
+}
+
+.watch {
+  background: rgba(247, 183, 49, 0.16);
+  color: #f7d77a;
+}
+
+.attention {
+  background: rgba(255, 92, 92, 0.16);
+  color: #ffaaa5;
+}
+
+.scorePanel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.scoreItem {
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 8px;
+  background: #242433;
+  padding: 18px;
+}
+
+.scoreItem span {
+  color: rgba(213, 224, 224, 0.72);
+  font-size: 0.9rem;
+}
+
+.scoreItem strong {
+  margin-top: 8px;
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.scoreItem em {
+  margin-top: 10px;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.up {
+  color: #91e0b0;
+}
+
+.down {
+  color: #ffaaa5;
+}
+
+.signalsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.signalCard,
+.actionCard,
+.sectionCard,
+.statePanel {
+  padding: 16px;
+}
+
+.signalTop,
+.signalValue,
+.actionTop,
+.sectionHeader,
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.signalTop span,
+.sectionHeader span {
+  color: rgba(213, 224, 224, 0.72);
+  font-size: 0.88rem;
+}
+
+.signalValue {
+  justify-content: flex-start;
+  margin: 14px 0 8px;
+}
+
+.signalValue strong {
+  font-size: 1.7rem;
+}
+
+.signalValue em {
+  color: rgba(213, 224, 224, 0.62);
+  font-size: 0.84rem;
+  font-style: normal;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  gap: 22px;
+}
+
+.actionsColumn,
+.explainColumn,
+.actionGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sectionHeader h2,
+.actionGroup h3,
+.sectionTitle h3,
+.actionCard h4 {
+  margin: 0;
+}
+
+.sectionHeader h2 {
+  font-size: 1.35rem;
+}
+
+.actionCard {
+  background: #282838;
+}
+
+.actionTop {
+  margin-bottom: 12px;
+}
+
+.actionTop a {
+  color: var(--color-white);
+  text-decoration: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  font-weight: 800;
+  padding: 8px 12px;
+}
+
+.high {
+  background: rgba(255, 92, 92, 0.18);
+  color: #ffaaa5;
+}
+
+.medium {
+  background: rgba(247, 183, 49, 0.18);
+  color: #f7d77a;
+}
+
+.low {
+  background: rgba(64, 196, 122, 0.16);
+  color: #91e0b0;
+}
+
+.actionCard dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 14px 0 0;
+}
+
+.actionCard dt {
+  margin-bottom: 5px;
+  color: rgba(213, 224, 224, 0.72);
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.actionCard dd {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.sectionCard ul {
+  margin: 12px 0 0;
+  padding-left: 18px;
+  color: rgba(232, 238, 246, 0.82);
+}
+
+.sectionCard li + li {
+  margin-top: 6px;
+}
+
+.statePanel {
+  margin-top: 28px;
+}
+
+.error {
+  color: #ffaaa5;
+}
+
+@media (max-width: 1100px) {
+  .hero,
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .signalsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .page {
+    width: min(100% - 28px, 560px);
+    padding-top: 18px;
+  }
+
+  .signalsGrid,
+  .scorePanel,
+  .actionCard dl {
+    grid-template-columns: 1fr;
+  }
+}

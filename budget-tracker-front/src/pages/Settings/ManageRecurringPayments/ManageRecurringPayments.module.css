@@ -1,0 +1,223 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.52);
+}
+
+.modal {
+  width: min(1120px, calc(100vw - 48px));
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  border: 1px solid rgba(213, 224, 224, 0.08);
+  border-radius: 8px;
+  background: #2e2e3d;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.42);
+  color: var(--color-white);
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.header h3,
+.form h4,
+.paymentCard h4 {
+  margin: 0;
+}
+
+.header p {
+  margin: 6px 0 0;
+  color: rgba(213, 224, 224, 0.72);
+  font-size: 0.92rem;
+}
+
+.body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+  gap: 18px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 620px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.paymentCard {
+  border: 1px solid rgba(213, 224, 224, 0.08);
+  border-radius: 8px;
+  background: #262637;
+  padding: 14px;
+}
+
+.paymentCard.inactive {
+  opacity: 0.62;
+}
+
+.paymentTop,
+.cardActions,
+.formActions,
+.metaRow,
+.previewRow,
+.checks {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.paymentTop {
+  justify-content: space-between;
+}
+
+.paymentTop span,
+.metaRow,
+.previewRow,
+.muted {
+  color: rgba(213, 224, 224, 0.72);
+  font-size: 0.86rem;
+}
+
+.metaRow,
+.previewRow {
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.metaRow span,
+.previewRow span {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 5px 8px;
+}
+
+.cardActions {
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid rgba(213, 224, 224, 0.08);
+  border-radius: 8px;
+  background: #262637;
+  padding: 14px;
+}
+
+.twoCols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.form label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: rgba(213, 224, 224, 0.78);
+  font-size: 0.86rem;
+}
+
+.form input,
+.form select,
+.form textarea {
+  min-height: 38px;
+  border: 1px solid rgba(213, 224, 224, 0.14);
+  border-radius: 8px;
+  background: #202031;
+  color: var(--color-white);
+  padding: 8px 10px;
+  box-sizing: border-box;
+}
+
+.form textarea {
+  min-height: 76px;
+  resize: vertical;
+}
+
+.checks {
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.checks label {
+  flex-direction: row;
+  align-items: center;
+}
+
+.checks input {
+  min-height: auto;
+}
+
+.formActions {
+  margin-top: 4px;
+}
+
+.formActions button,
+.cardActions button,
+.secondaryButton,
+.closeButton {
+  border: none;
+  border-radius: 8px;
+  color: var(--color-white);
+  cursor: pointer;
+  font-weight: 800;
+  padding: 9px 13px;
+}
+
+.formActions button:first-child {
+  background: #2d8fe8;
+}
+
+.secondaryButton,
+.closeButton,
+.cardActions button {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.dangerButton {
+  background: var(--danger-color) !important;
+}
+
+.closeButton {
+  margin-top: 14px;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.error,
+.success {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+}
+
+.error {
+  color: #ff8a8a;
+}
+
+.success {
+  color: #7dd3a8;
+}
+
+@media (max-width: 900px) {
+  .body,
+  .twoCols {
+    grid-template-columns: 1fr;
+  }
+}

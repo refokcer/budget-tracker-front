@@ -1,6 +1,8 @@
 import API_ENDPOINTS from "../../../config/apiConfig";
 import TransactionInlineTable from "../../../components/TransactionInlineTable/TransactionInlineTable";
 
+const TRANSFER_TYPE = 0;
+
 const editableColumns = {
   title: { field: "title", type: "text", required: true },
   amount: { field: "amount", type: "number", required: true },
@@ -11,8 +13,8 @@ const editableColumns = {
     optionsKey: "accounts",
     getOptionLabel: (option) => option.title,
     summaryKey: "accountFromTitle",
-    validate: (transaction) =>
-      Number(transaction.accountFrom) === Number(transaction.accountTo)
+    validate: (transfer) =>
+      Number(transfer.accountFrom) === Number(transfer.accountTo)
         ? "Sender and receiver accounts can't match!"
         : null,
   },
@@ -23,8 +25,8 @@ const editableColumns = {
     optionsKey: "accounts",
     getOptionLabel: (option) => option.title,
     summaryKey: "accountToTitle",
-    validate: (transaction) =>
-      Number(transaction.accountFrom) === Number(transaction.accountTo)
+    validate: (transfer) =>
+      Number(transfer.accountFrom) === Number(transfer.accountTo)
         ? "Sender and receiver accounts can't match!"
         : null,
   },
@@ -41,29 +43,34 @@ const tableColumns = [
   { key: "description", label: "Опис" },
 ];
 
-const buildPayload = (transaction) => ({
-  id: transaction.id,
-  title: transaction.title,
-  amount: Number(transaction.amount),
-  accountFrom: Number(transaction.accountFrom),
-  accountTo: Number(transaction.accountTo),
-  currencyId: Number(transaction.currencyId),
-  categoryId: Number(transaction.categoryId),
-  date: new Date(String(transaction.date).split("T")[0]).toISOString(),
-  description: transaction.description || "",
-  type: 0,
+const buildPayload = (transfer) => ({
+  id: transfer.id,
+  title: transfer.title,
+  amount: Number(transfer.amount),
+  accountFrom: Number(transfer.accountFrom),
+  accountTo: Number(transfer.accountTo),
+  currencyId: Number(transfer.currencyId),
+  categoryId: Number(transfer.categoryId),
+  date: new Date(String(transfer.date).split("T")[0]).toISOString(),
+  description: transfer.description || "",
+  type: TRANSFER_TYPE,
 });
 
 const TransfersTable = ({ start, end }) => (
   <TransactionInlineTable
-    type={0}
+    type={TRANSFER_TYPE}
     start={start}
     end={end}
+    listEndpoint={API_ENDPOINTS.transfersByDate}
+    detailEndpoint={API_ENDPOINTS.transferById}
+    updateEndpoint={API_ENDPOINTS.updateTransfer}
+    deleteEndpoint={API_ENDPOINTS.deleteTransfer}
+    entityName="transfer"
     modalEndpoint={API_ENDPOINTS.transferModal}
     editableColumns={editableColumns}
     tableColumns={tableColumns}
     buildPayload={buildPayload}
-    deleteConfirmText="Delete?"
+    deleteConfirmText="Delete transfer?"
   />
 );
 

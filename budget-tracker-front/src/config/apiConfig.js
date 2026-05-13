@@ -8,6 +8,9 @@ export const BASE_URL = (
 const API_BASE_URL = `${BASE_URL}/api`;
 const AUTH_BASE_URL = `${BASE_URL}/auth`;
 
+const encodeDateParam = (value) =>
+  encodeURIComponent(value instanceof Date ? value.toISOString() : value);
+
 export const API_ENDPOINTS = {
   // Auth
   auth: {
@@ -71,6 +74,14 @@ export const API_ENDPOINTS = {
   adminDataTemplates: `${API_BASE_URL}/AdminData/templates`,
   adminDataTemplate: (templateId) => `${API_BASE_URL}/AdminData/templates/${templateId}`,
 
+  // Recurring payments
+  recurringPayments: `${API_BASE_URL}/RecurringPayments`,
+  recurringPaymentById: (id) => `${API_BASE_URL}/RecurringPayments/${id}`,
+  recurringPaymentOptions: `${API_BASE_URL}/RecurringPayments/options`,
+  recurringPaymentProjected: (start, end) =>
+    `${API_BASE_URL}/RecurringPayments/projected?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`,
+  generateRecurringPayments: `${API_BASE_URL}/RecurringPayments/generate-due`,
+
   // Financial goals
   financialGoals: `${API_BASE_URL}/FinancialGoals`,
   createFinancialGoal: `${API_BASE_URL}/FinancialGoals`,
@@ -84,12 +95,14 @@ export const API_ENDPOINTS = {
   // Expenses
   expenses: `${API_BASE_URL}/Expenses`,
   createExpense: `${API_BASE_URL}/Expenses`,
-  expensesByDate: (start, end) => `${API_BASE_URL}/Expenses/filter?start=${start}&end=${end}`,
+  expensesByDate: (start, end) =>
+    `${API_BASE_URL}/Expenses/filter?start=${encodeDateParam(start)}&end=${encodeDateParam(end)}`,
 
   // Incomes
   incomes: `${API_BASE_URL}/Income`,
   createIncome: `${API_BASE_URL}/Income`,
-  incomesByDate: (start, end) => `${API_BASE_URL}/Income/filter?start=${start}&end=${end}`,
+  incomesByDate: (start, end) =>
+    `${API_BASE_URL}/Income/filter?start=${encodeDateParam(start)}&end=${encodeDateParam(end)}`,
 
   // Transactions
   transactions: `${API_BASE_URL}/Transactions`,
@@ -128,8 +141,11 @@ export const API_ENDPOINTS = {
   // Transfers
   transfers: `${API_BASE_URL}/Transfers`,
   createTransfer: `${API_BASE_URL}/Transfers`,
+  updateTransfer: `${API_BASE_URL}/Transfers`,
+  transferById: (id) => `${API_BASE_URL}/Transfers/${id}`,
+  deleteTransfer: (id) => `${API_BASE_URL}/Transfers/${id}`,
   transfersByDate: (start, end) =>
-    `${API_BASE_URL}/Transfers/filter?start=${start}&end=${end}`,
+    `${API_BASE_URL}/Transfers/filter?start=${encodeDateParam(start)}&end=${encodeDateParam(end)}`,
 
   // Aggregated models for pages
   budgetPlanPage: (planId, includeEvents = false) =>
@@ -142,6 +158,7 @@ export const API_ENDPOINTS = {
   transfersTable: (month, year) =>
     `${API_BASE_URL}/pages/transfersByMonth/${month}?year=${year}`,
   dashboardPage: `${API_BASE_URL}/pages/dashboard`,
+  recommendationsPage: `${API_BASE_URL}/pages/recommendations`,
   monthlyReport: (month, year) =>
     `${API_BASE_URL}/pages/monthlyReport/${month}?year=${year}`,
 

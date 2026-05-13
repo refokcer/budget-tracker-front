@@ -3,7 +3,7 @@ import API_ENDPOINTS from "../../../config/apiConfig";
 import { apiFetch, apiJson, getApiErrorMessage } from "../../../services/apiClient";
 import styles from "./TransferModal.module.css";
 
-const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
+const TransferModal = ({ isOpen, onClose, transfer, onSaved }) => {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [currencyId, setCurrencyId] = useState("");
@@ -39,16 +39,16 @@ const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
     };
 
     fetchData();
-    if (transaction) {
-      setTitle(transaction.title || "");
-      setAmount(transaction.amount ? String(transaction.amount) : "");
-      setCurrencyId(transaction.currencyId ? String(transaction.currencyId) : "");
-      setAccountFrom(transaction.accountFrom ? String(transaction.accountFrom) : "");
-      setAccountTo(transaction.accountTo ? String(transaction.accountTo) : "");
-      setCategoryId(transaction.categoryId ? String(transaction.categoryId) : "");
-      setDescription(transaction.description || "");
+    if (transfer) {
+      setTitle(transfer.title || "");
+      setAmount(transfer.amount ? String(transfer.amount) : "");
+      setCurrencyId(transfer.currencyId ? String(transfer.currencyId) : "");
+      setAccountFrom(transfer.accountFrom ? String(transfer.accountFrom) : "");
+      setAccountTo(transfer.accountTo ? String(transfer.accountTo) : "");
+      setCategoryId(transfer.categoryId ? String(transfer.categoryId) : "");
+      setDescription(transfer.description || "");
       setDate(
-        transaction.date ? transaction.date.split("T")[0] : new Date().toISOString().split("T")[0]
+        transfer.date ? transfer.date.split("T")[0] : new Date().toISOString().split("T")[0]
       );
     } else {
       setTitle("");
@@ -66,10 +66,10 @@ const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen, onClose, transaction]);
+  }, [isOpen, onClose, transfer]);
 
   const handleSubmit = async () => {
-    if (!title || !amount || !currencyId || !accountFrom || !accountTo || !date) {
+    if (!title || !amount || !currencyId || !accountFrom || !accountTo || !categoryId || !date) {
       alert("Please fill in all fields!");
       return;
     }
@@ -90,22 +90,17 @@ const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
       categoryId: parseInt(categoryId),
       date: new Date(date).toISOString(),
       description,
-      id: transaction ? transaction.id : undefined,
+      id: transfer ? transfer.id : undefined,
     };
-
-    if (!payload.categoryId) {
-      alert("Please select a category!");
-      return;
-    }
 
     try {
       await apiFetch(
-        transaction ? API_ENDPOINTS.updateTransaction : API_ENDPOINTS.createTransfer,
+        transfer ? API_ENDPOINTS.updateTransfer : API_ENDPOINTS.createTransfer,
         {
-          method: transaction ? "PUT" : "POST",
+          method: transfer ? "PUT" : "POST",
           body: payload,
         },
-        transaction ? "Update failed" : "Create transfer failed"
+        transfer ? "Update failed" : "Create transfer failed"
       );
 
       onSaved && onSaved();
@@ -122,19 +117,19 @@ const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
   return (
     <div className={styles["modal-overlay"]}>
       <div className={styles["modal-content"]}>
-        <h3>{transaction ? "Редагувати переказ" : "Створити переказ"}</h3>
+        <h3>{transfer ? "Edit transfer" : "Create transfer"}</h3>
         {error && <p className={styles.error}>{error}</p>}
 
         <input
           type="text"
-          placeholder="Назва"
+          placeholder="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
 
         <input
           type="number"
-          placeholder="Сума"
+          placeholder="Amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
         />
@@ -143,10 +138,10 @@ const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
           value={currencyId}
           onChange={(e) => setCurrencyId(e.target.value)}
         >
-          <option value="">Оберіть валюту</option>
+          <option value="">Select currency</option>
           {currencies.map((c) => (
             <option key={c.id} value={c.id}>
-              {c.symbol} ({c.name})
+              {c.symbol} ({c.name || c.title || c.code})
             </option>
           ))}
         </select>
@@ -155,7 +150,7 @@ const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
           value={accountFrom}
           onChange={(e) => setAccountFrom(e.target.value)}
         >
-          <option value="">Оберіть рахунок відправника</option>
+          <option value="">Select sender account</option>
           {accounts.map((acc) => (
             <option key={acc.id} value={acc.id}>
               {acc.title}
@@ -167,7 +162,7 @@ const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
           value={accountTo}
           onChange={(e) => setAccountTo(e.target.value)}
         >
-          <option value="">Оберіть рахунок одержувача</option>
+          <option value="">Select receiver account</option>
           {accounts.map((acc) => (
             <option key={acc.id} value={acc.id}>
               {acc.title}
@@ -178,7 +173,7 @@ const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
         >
-          <option value="">Оберіть категорію</option>
+          <option value="">Select category</option>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.id}>
               {cat.title}
@@ -193,7 +188,7 @@ const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
         />
 
         <textarea
-          placeholder="Опис"
+          placeholder="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
@@ -204,15 +199,15 @@ const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
           className={styles["submit-button"]}
         >
           {loading
-            ? transaction
-              ? "Збереження..."
-              : "Створення..."
-            : transaction
-            ? "Зберегти"
-            : "Створити переказ"}
+            ? transfer
+              ? "Saving..."
+              : "Creating..."
+            : transfer
+            ? "Save"
+            : "Create transfer"}
         </button>
         <button onClick={onClose} className={styles["close-button"]}>
-          Скасувати
+          Cancel
         </button>
       </div>
     </div>
@@ -220,3 +215,4 @@ const TransferModal = ({ isOpen, onClose, transaction, onSaved }) => {
 };
 
 export default TransferModal;
+

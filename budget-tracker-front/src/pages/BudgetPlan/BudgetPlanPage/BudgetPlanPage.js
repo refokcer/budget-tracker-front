@@ -22,6 +22,7 @@ const BudgetPlanPage = () => {
   const [planItems, setPlanItems] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [events, setEvents] = useState([]);
+  const [monthEndForecast, setMonthEndForecast] = useState(null);
   const [includeEvents, setIncludeEvents] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -62,6 +63,7 @@ const fetchPlanData = useCallback(
       setPlanItems([]);
       setTransactions([]);
       setEvents([]);
+      setMonthEndForecast(null);
       return;
     }
     try {
@@ -77,6 +79,7 @@ const fetchPlanData = useCallback(
       setPlanItems(baseItems);
       setTransactions(data.transactions);
       setEvents(data.events || []);
+      setMonthEndForecast(data.monthEndForecast || null);
     } catch (e) {
       if (e.name !== "AbortError") setError(getApiErrorMessage(e));
     } finally {
@@ -103,6 +106,12 @@ const openGeneratedPlan = (result) => {
 
   window.location.href = `/budget-plans?planId=${planId}`;
 };
+
+const money = (value) =>
+  Number(value || 0).toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 
   const deletePlan = async () => {
     if (!selectedPlan) return;
@@ -149,6 +158,40 @@ const openGeneratedPlan = (result) => {
       {selectedPlan && (
         <div className={styles.content}>
           <PlanDetails plan={selectedPlan} />
+          {monthEndForecast && (
+            <section className={styles["forecast-card"]}>
+              <div>
+                <span className={styles["forecast-label"]}>Projected by month end</span>
+                <strong>{money(monthEndForecast.projectedTotalSpent)}</strong>
+              </div>
+              <div>
+                <span className={styles["forecast-label"]}>Budget limit</span>
+                <strong>{money(monthEndForecast.budgetLimit)}</strong>
+              </div>
+              <div>
+                <span className={styles["forecast-label"]}>Projected remaining</span>
+                <strong
+                  className={
+                    Number(monthEndForecast.projectedRemaining || 0) < 0
+                      ? styles["forecast-danger"]
+                      : styles["forecast-ok"]
+                  }
+                >
+                  {money(monthEndForecast.projectedRemaining)}
+                </strong>
+              </div>
+              <div>
+                <span className={styles["forecast-label"]}>Recurring left</span>
+                <strong>{money(monthEndForecast.futureRecurringSpending)}</strong>
+              </div>
+              <p>
+                Based on {monthEndForecast.elapsedDays} elapsed days and{" "}
+                {monthEndForecast.remainingDays} days left. Recurring expenses are added
+                separately, so subscriptions, utilities and similar scheduled payments do
+                not inflate the daily pace.
+              </p>
+            </section>
+          )}
           <PlanItemsTable items={planItems} onReload={reload} />
           <div className={styles["plan-actions"]}>
             <label className={styles["events-toggle"]}>

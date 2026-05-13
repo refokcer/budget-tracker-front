@@ -18,6 +18,7 @@
 
 .settings-card-wide {
   grid-column: 1 / -1;
+  order: 2;
 }
 
 .settings-card {
@@ -46,7 +47,8 @@
   font-size: 0.9rem;
 }
 
-.settings-field select {
+.settings-field select,
+.settings-field input {
   width: 100%;
   min-height: 40px;
   background: #242433;
@@ -55,6 +57,90 @@
   color: var(--color-white);
   padding: 8px 10px;
   font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.rules-limits {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.rules-block {
+  width: 100%;
+}
+
+.rules-block h4 {
+  margin: 6px 0 10px;
+  font-size: 1rem;
+}
+
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(96px, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+.month-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #242433;
+  border: 1px solid #45485a;
+  border-radius: 6px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.month-field span {
+  min-width: 30px;
+  color: #cbd5e1;
+  font-size: 0.85rem;
+}
+
+.month-field input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-white);
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.category-rule-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+  gap: 8px;
+  width: 100%;
+}
+
+.category-rule-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) auto auto;
+  gap: 12px;
+  align-items: center;
+  background: #242433;
+  border: 1px solid #45485a;
+  border-radius: 6px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.category-rule-row > span {
+  color: var(--color-white);
+  font-weight: 700;
+}
+
+.category-rule-row label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #cbd5e1;
+  font-size: 0.85rem;
+  white-space: nowrap;
 }
 
 .template-panel {
@@ -98,6 +184,8 @@
   cursor: pointer;
   width: 100%;
   text-align: left;
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
 .settings-btn:disabled {
@@ -166,6 +254,19 @@
   }
 
   .template-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .rules-limits,
+  .category-rule-list {
+    grid-template-columns: 1fr;
+  }
+
+  .month-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .category-rule-row {
     grid-template-columns: 1fr;
   }
 }

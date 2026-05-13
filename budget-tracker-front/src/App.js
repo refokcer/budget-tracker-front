@@ -7,7 +7,9 @@ import BudgetPlanPage from "./pages/BudgetPlan";
 import EventsPage from "./pages/Events";
 import TransfersPage from "./pages/Transfers";
 import SettingsPage from "./pages/Settings";
+import AutoPlanRulesPage from "./pages/Settings/AutoPlanRules/AutoPlanRulesPage";
 import MonthlyReport from "./pages/MonthlyReport/MonthlyReportPage/MonthlyReportPage";
+import RecommendationsPage from "./pages/Recommendations";
 import FinancialGoalsPage from "./pages/FinancialGoals";
 import ProfilePage from "./pages/Profile/ProfilePage/ProfilePage";
 import { LoginPage, RegisterPage } from "./pages/Auth";
@@ -28,7 +30,9 @@ const App = () => {
           <Route path="/events" element={<EventsPage />} />
           <Route path="/transfers" element={<TransfersPage />} />
           <Route path="/goals" element={<FinancialGoalsPage />} />
+          <Route path="/recommendations" element={<RecommendationsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/settings/auto-plan-rules" element={<AutoPlanRulesPage />} />
           <Route path="/report" element={<MonthlyReport />} />
           <Route path="/profile" element={<ProfilePage />} />
         </Route>

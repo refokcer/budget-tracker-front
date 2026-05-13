@@ -7,6 +7,7 @@ export const menuLinks = [
   { to: '/incomes', label: 'Incomes', icon: starIcon },
   { to: '/transfers', label: 'Transfers', icon: starIcon },
   { to: '/goals', label: 'Goals', icon: starIcon },
+  { to: '/recommendations', label: 'Recommendations', icon: starIcon },
   { to: '/budget-plans', label: 'Budget Plans', icon: starIcon },
   { to: '/events', label: 'Events', icon: starIcon },
   { to: '/report', label: 'Monthly Report', icon: starIcon },

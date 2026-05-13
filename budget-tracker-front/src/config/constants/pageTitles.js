@@ -7,7 +7,9 @@ export const pageTitles = {
   "/incomes": "Incomes",
   "/transfers": "Transfers",
   "/goals": "Goals",
+  "/recommendations": "Recommendations",
   "/settings": "Settings",
+  "/settings/auto-plan-rules": "Auto Plan Rules",
   "/report": "Monthly Report",
   "/profile": "Profile",
 };
