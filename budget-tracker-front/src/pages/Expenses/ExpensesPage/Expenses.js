@@ -12,12 +12,12 @@ const Expenses = () => {
     setMonthDate(d);
   };
 
-  const monthLabel = monthDate.toLocaleString("uk-UA", {
+  const monthLabel = monthDate.toLocaleString("en-US", {
     month: "long",
     year: "numeric",
   });
 
-  // вычисляем границы месяца на основе monthDate
+  // Calculate month boundaries from monthDate.
   const year = monthDate.getFullYear();
   const month = monthDate.getMonth();
 

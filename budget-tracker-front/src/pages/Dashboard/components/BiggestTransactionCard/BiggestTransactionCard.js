@@ -2,7 +2,7 @@ import styles from "../../DashboardPage/Dashboard.module.css";
 
 const BiggestTransactionCard = ({ transaction }) => (
   <div className={styles["db-card"]}>
-    <h3 className={styles["db-title"]}>Найбільша транзакція</h3>
+    <h3 className={styles["db-title"]}>Biggest Transaction</h3>
     {transaction ? (
       <>
         <p className={styles["db-big"]}>
@@ -15,7 +15,7 @@ const BiggestTransactionCard = ({ transaction }) => (
         </p>
       </>
     ) : (
-      <p className={styles["db-empty"]}>—</p>
+      <p className={styles["db-empty"]}>-</p>
     )}
   </div>
 );

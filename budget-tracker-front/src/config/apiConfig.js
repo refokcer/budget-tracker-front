@@ -126,12 +126,12 @@ export const API_ENDPOINTS = {
 
   prepareTransactions: `${API_BASE_URL}/Transactions/prepare`,
 
-// Пример использования:
-// Получить транзакции с типом 2:
+// Usage example:
+// Get transactions with type 2:
 // import API_ENDPOINTS from 'src/config/apiConfig';
 // const url = API_ENDPOINTS.transactionsByFilter({ type: 2 });
 
-// Пример использования с датами от начала текущего месяца до конца:
+// Usage example with dates from the start to the end of the current month:
 // import API_ENDPOINTS from 'src/config/apiConfig';
 // const now = new Date();
 // const start = new Date(now.getFullYear(), now.getMonth(), 1);

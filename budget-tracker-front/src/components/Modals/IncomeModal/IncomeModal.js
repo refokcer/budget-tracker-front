@@ -60,7 +60,7 @@ const IncomeModal = ({ isOpen, onClose, transaction, onSaved }) => {
 
     document.addEventListener("keydown", handleKeyDown);
 
-    // Видаляємо обробник при розмонтуванні/закритті
+    // Remove the handler when unmounting or closing.
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
@@ -110,19 +110,19 @@ const IncomeModal = ({ isOpen, onClose, transaction, onSaved }) => {
   return (
     <div className={styles["modal-overlay"]}>
       <div className={styles["modal-content"]}>
-        <h3>{transaction ? "Редагувати дохід" : "Додати дохід"}</h3>
+        <h3>{transaction ? "Edit income" : "Add income"}</h3>
         {error && <p className={styles.error}>{error}</p>}
 
         <input
           type="text"
-          placeholder="Назва"
+          placeholder="Name"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
 
         <input
           type="number"
-          placeholder="Сума"
+          placeholder="Amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
         />
@@ -131,7 +131,7 @@ const IncomeModal = ({ isOpen, onClose, transaction, onSaved }) => {
           value={currencyId}
           onChange={(e) => setCurrencyId(e.target.value)}
         >
-          <option value="">Оберіть валюту</option>
+          <option value="">Select currency</option>
           {currencies.map((c) => (
             <option key={c.id} value={c.id}>
               {c.symbol} ({c.name})
@@ -143,7 +143,7 @@ const IncomeModal = ({ isOpen, onClose, transaction, onSaved }) => {
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
         >
-          <option value="">Оберіть категорію</option>
+          <option value="">Select category</option>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.id}>
               {cat.title}
@@ -155,7 +155,7 @@ const IncomeModal = ({ isOpen, onClose, transaction, onSaved }) => {
           value={accountTo}
           onChange={(e) => setAccountTo(e.target.value)}
         >
-          <option value="">Оберіть рахунок</option>
+          <option value="">Select account</option>
           {accounts.map((acc) => (
             <option key={acc.id} value={acc.id}>
               {acc.title}
@@ -170,7 +170,7 @@ const IncomeModal = ({ isOpen, onClose, transaction, onSaved }) => {
         />
 
         <textarea
-          placeholder="Опис"
+          placeholder="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
@@ -182,14 +182,14 @@ const IncomeModal = ({ isOpen, onClose, transaction, onSaved }) => {
         >
           {loading
             ? transaction
-              ? "Збереження..."
-              : "Створення..."
+              ? "Saving..."
+              : "Creating..."
             : transaction
-            ? "Зберегти"
-            : "Створити транзакцію"}
+            ? "Save"
+            : "Create transaction"}
         </button>
         <button onClick={onClose} className={styles["close-button"]}>
-          Скасувати
+          Cancel
         </button>
       </div>
     </div>

@@ -12,4 +12,5 @@ export const pageTitles = {
   "/settings/auto-plan-rules": "Auto Plan Rules",
   "/report": "Monthly Report",
   "/profile": "Profile",
+  "/thesis-demo": "Testing",
 };

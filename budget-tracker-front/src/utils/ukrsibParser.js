@@ -19,7 +19,7 @@ const stripLeadingDigits = str =>
      .replace(/^\s*[№#]?\d+\s+/, "")
      .trim();
 
-// : ... ****1234 -> cardTail (вырезаем)
+// : ... ****1234 -> cardTail (cut out)
 function splitCardTail(str) {
   const m = /:\s*([^:]*\*{4}\d{4}.*)$/.exec(str);
   if (!m) return { text: str.trim(), cardTail: "" };
@@ -34,7 +34,7 @@ function findMaskedCards(str) {
 const splitByBackslashes = str =>
   str.split(/\\+/).map(s => s.trim()).filter(Boolean);
 
-// address: берём все блоки по 3 токена CODE\CC\CITY
+// address: take all blocks of 3 tokens CODE\CC\CITY
 function cutAddressTokens(str) {
   let tokens = splitByBackslashes(str);
   const addresses = [];
@@ -58,7 +58,7 @@ function cutAddressTokens(str) {
   };
 }
 
-// убираем "через MasterCard \ Visa"
+// remove "via MasterCard \ Visa"
 function stripMcVisa(str) {
   return str
     .replace(/через\s+master\s*card(?:\s*[\\/]+\s*|\/\s*)visa/gi, "")
@@ -66,7 +66,7 @@ function stripMcVisa(str) {
     .trim();
 }
 
-// убираем заголовки таблиц внутри name (если вдруг протиснулись)
+// remove table headers inside name if they slipped through
 function stripTableHeaderGarbage(str) {
   return str
     .replace(/Дата\s+Код\s+Опис\s+операції[\s\S]*?(?=\b\d{2}\.\d{2}\.\d{4}\b)/i, "")
@@ -75,7 +75,7 @@ function stripTableHeaderGarbage(str) {
     .trim();
 }
 
-// спец-фразы transfer/deposit
+// special transfer/deposit phrases
 function handleTransferDeposit(text) {
   const reTransfer = /^(Переказ\s+грошових\s+коштів\s+з\s+картки\s+на\s+картку)/i;
   const mTr = text.match(reTransfer);
@@ -109,12 +109,12 @@ function extractType(text) {
     w.every((word, idx) => (tokens[idx] || "").toLowerCase().startsWith(word.toLowerCase()));
 
   if (startsWithTokens("Оплата товарів", "послуг")) {
-    type = "Оплата товарів \\ послуг";
+    type = "Goods or services payment";
     out  = tokens.slice(2).join(" \\ ").trim();
     return { text: out, type, nameOverride };
   }
   if (startsWithTokens("Повернення коштів за товар", "послугу")) {
-    type = "Повернення коштів за товар \\ послугу";
+    type = "Goods or services refund";
     out  = tokens.slice(2).join(" \\ ").trim();
     return { text: out, type, nameOverride };
   }
@@ -137,19 +137,19 @@ function extractType(text) {
 
   const reCommission = /^Комісія\s+за\s+переказ\s+грошових\s+коштів/i;
   if (reCommission.test(out)) {
-    type = "Комісія за переказ";
+    type = "Transfer fee";
     return { text: out, type, nameOverride };
   }
 
   const rePayment = /^Платіж\s+за\s+тарифний\s+план/i;
   if (rePayment.test(out)) {
-    type = "Платіж";
+    type = "Payment";
     return { text: out, type, nameOverride };
   }
 
   const norm = out.replace(/\u00A0|\u202F/g, " ").replace(/\s+/g, " ").toLowerCase();
   if (norm.includes("перерахування на рахунок")) {
-    type = "Перерахування";
+    type = "Account transfer";
     return { text: out, type, nameOverride };
   }
 
@@ -171,7 +171,7 @@ function detectSection(lines, idx) {
   return null;
 }
 
-// skip table header rows like "Дата  Дата  Опис..."
+// skip table header rows like "Date Date Description..."
 function skipTableHeader(lines, idx) {
   let i = idx;
   while (
@@ -184,7 +184,7 @@ function skipTableHeader(lines, idx) {
   return i;
 }
 
-// --- глобально вырезаем шапки из текста до парсинга ---
+// --- cut headers from text globally before parsing ---
 function purgeTableHeaders(text) {
   return text
     .replace(/Дата[\s\n]+Код[\s\n]+Опис[\s\n]+операції[\s\S]*?(?=\b\d{2}\.\d{2}\.\d{4}\b)/gi, "")
@@ -193,10 +193,10 @@ function purgeTableHeaders(text) {
 
 // ---------------- MAIN ----------------
 export function parseAll(fullText) {
-  // 1. Удалим глобальные шапки
+  // 1. Remove global headers
   fullText = purgeTableHeaders(fullText);
 
-  // 2. Разобьём по строкам
+  // 2. Split into lines
   const lines = fullText
     .replace(/\u00A0|\u202F/g, " ")
     .replace(/\r/g, "")
@@ -226,19 +226,19 @@ export function parseAll(fullText) {
     }
 
     if (currentSection === "debt") {
-      if (detectSection(lines, i)) continue; // уже поймается в начале
+      if (detectSection(lines, i)) continue; // already caught at the beginning
       debtBuf.push(lines[i]);
       i++;
       continue;
     }
 
-    // --- операции ---
+    // --- operations ---
     if (!dateRe.test(lines[i])) { i++; continue; }
 
     const date = lines[i];
 
     let k = i + 1;
-    if (k < lines.length && dateRe.test(lines[k])) k++; // вторая дата
+    if (k < lines.length && dateRe.test(lines[k])) k++; // second date
 
     const descParts = [];
     while (k < lines.length && !currRe.test(lines[k])) {
@@ -292,7 +292,7 @@ export function parseAll(fullText) {
   if (debtBuf.length) {
     sections.debtInfo.raw = debtBuf.join(" ");
     if (/Заборгованість\s+відсутня/i.test(sections.debtInfo.raw)) {
-      sections.debtInfo.status = "Заборгованість відсутня.";
+      sections.debtInfo.status = "No debt.";
     }
   }
 

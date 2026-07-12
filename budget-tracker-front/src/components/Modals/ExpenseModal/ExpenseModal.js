@@ -140,19 +140,19 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
   return (
     <div className={styles["modal-overlay"]}>
       <div className={styles["modal-content"]}>
-        <h3>{transaction ? "Редагувати витрату" : "Добавить расход"}</h3>
+        <h3>{transaction ? "Edit expense" : "Add expense"}</h3>
         {error && <p className={styles.error}>{error}</p>}
 
         <input
           type="text"
-          placeholder="Назва"
+          placeholder="Name"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
 
         <input
           type="number"
-          placeholder="Сума"
+          placeholder="Amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
         />
@@ -161,7 +161,7 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
           value={currencyId}
           onChange={(e) => setCurrencyId(e.target.value)}
         >
-          <option value="">Оберіть валюту</option>
+          <option value="">Select currency</option>
           {currencies.map((c) => (
             <option key={c.id} value={c.id}>
               {c.symbol} ({c.name})
@@ -173,7 +173,7 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
         >
-          <option value="">Оберіть категорію</option>
+          <option value="">Select category</option>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.id}>
               {cat.title}
@@ -185,7 +185,7 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
           value={accountFrom}
           onChange={(e) => setAccountFrom(e.target.value)}
         >
-          <option value="">Оберіть рахунок</option>
+          <option value="">Select account</option>
           {accounts.map((acc) => (
             <option key={acc.id} value={acc.id}>
               {acc.title}
@@ -197,7 +197,7 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
           value={budgetPlanId}
           onChange={(e) => setBudgetPlanId(e.target.value)}
         >
-          <option value="">Оберіть план</option>
+          <option value="">Select plan</option>
           {plans.map((pl) => (
             <option key={pl.id} value={pl.id}>
               {pl.title}
@@ -212,7 +212,7 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
         />
 
         <textarea
-          placeholder="Опис"
+          placeholder="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
@@ -222,10 +222,10 @@ const ExpenseModal = ({ isOpen, onClose, transaction, onSaved }) => {
           disabled={loading}
           className={styles["submit-button"]}
         >
-          {loading ? (transaction ? "Збереження..." : "Creating...") : transaction ? "Зберегти" : "Створити транзакцію"}
+          {loading ? (transaction ? "Saving..." : "Creating...") : transaction ? "Save" : "Create transaction"}
         </button>
         <button onClick={onClose} className={styles["close-button"]}>
-          Відмінити
+          Cancel
         </button>
       </div>
     </div>

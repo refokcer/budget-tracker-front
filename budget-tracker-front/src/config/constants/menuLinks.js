@@ -11,4 +11,5 @@ export const menuLinks = [
   { to: '/budget-plans', label: 'Budget Plans', icon: starIcon },
   { to: '/events', label: 'Events', icon: starIcon },
   { to: '/report', label: 'Monthly Report', icon: starIcon },
+  { to: '/thesis-demo', label: 'Testing', icon: starIcon },
 ];

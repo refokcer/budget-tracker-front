@@ -6,8 +6,8 @@ const AccountsCard = ({ accounts, totalBalance }) => (
     <table className={styles["db-table"]}>
       <thead>
         <tr>
-          <th>Назва</th>
-          <th>Сума</th>
+          <th>Name</th>
+          <th>Amount</th>
         </tr>
       </thead>
       <tbody>

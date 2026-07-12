@@ -44,7 +44,7 @@ const Dashboard = () => {
       window.removeEventListener(DASHBOARD_CARDS_EVENT, handleCardsChange);
   }, []);
 
-  if (loading) return <p className={styles["db-loading"]}>Завантаження…</p>;
+  if (loading) return <p className={styles["db-loading"]}>Loading...</p>;
   if (error) return <p className={styles["db-error"]}>{error}</p>;
   if (!data) return null;
 

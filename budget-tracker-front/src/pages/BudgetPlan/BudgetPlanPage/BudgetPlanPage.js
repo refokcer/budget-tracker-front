@@ -115,7 +115,7 @@ const money = (value) =>
 
   const deletePlan = async () => {
     if (!selectedPlan) return;
-    if (!window.confirm("Удалить этот план?")) return;
+    if (!window.confirm("Delete this plan?")) return;
     try {
       setBusyDel(true);
       await apiFetch(API_ENDPOINTS.deleteBudgetPlan(selectedPlan.id), {
@@ -132,7 +132,7 @@ const money = (value) =>
     }
   };
 
-  if (loading) return <p className={styles.loading}>Загрузка...</p>;
+  if (loading) return <p className={styles.loading}>Loading...</p>;
   if (error) return <p className={styles.error}>{error}</p>;
 
   return (
@@ -143,7 +143,7 @@ const money = (value) =>
             className={styles["create-btn"]}
             onClick={() => setCreateOpen(true)}
           >
-            + новый план
+            + new plan
           </button>
           <button
             className={styles["auto-btn"]}
@@ -151,7 +151,7 @@ const money = (value) =>
           >
             Auto monthly
           </button>
-          <p className={styles["no-plan-text"]}>Планов пока нет…</p>
+          <p className={styles["no-plan-text"]}>No plans yet...</p>
         </>
       )}
 
@@ -200,26 +200,26 @@ const money = (value) =>
                 checked={includeEvents}
                 onChange={(e) => setIncludeEvents(e.target.checked)}
               />
-              <span>показывать события</span>
+              <span>show events</span>
             </label>
             <button
               className={styles["edit-btn"]}
               onClick={() => setEditOpen(true)}
             >
-              ✎ редактировать
+              Edit
             </button>
             <button
               className={styles["delete-btn"]}
               onClick={deletePlan}
               disabled={busyDel}
             >
-              {busyDel ? "…" : "✕ удалить"}
+              {busyDel ? "..." : "Delete"}
             </button>
             <button
               className={styles["create-btn"]}
               onClick={() => setCreateOpen(true)}
             >
-              + новый
+              + new
             </button>
             <button
               className={styles["auto-btn"]}
@@ -239,17 +239,17 @@ const money = (value) =>
         events.map((ev) => {
           const periodString = `${new Date(
             ev.plan.startDate
-          ).toLocaleDateString()} – ${new Date(
+          ).toLocaleDateString()} - ${new Date(
             ev.plan.endDate
           ).toLocaleDateString()}`;
           return (
             <div key={ev.plan.id} className={styles["event-block"]}>
               <div className={styles["event-details"]}>
                 <span className={styles["event-title"]}>
-                  <strong>Название:</strong> {ev.plan.title}
+                  <strong>Name:</strong> {ev.plan.title}
                 </span>
                 <span className={styles["event-period"]}>
-                  <strong>Период:</strong> {periodString}
+                  <strong>Period:</strong> {periodString}
                 </span>
               </div>
               <BudgetPlanExpensesTable

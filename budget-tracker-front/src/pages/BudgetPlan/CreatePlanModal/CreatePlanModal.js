@@ -25,7 +25,7 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
 
   const handleSubmit = async () => {
     if (!title || !startDate || !endDate) {
-      alert("Введіть назву та дати!");
+      alert("Enter a name and dates!");
       return;
     }
 
@@ -55,25 +55,25 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
   return (
     <div className={styles["modal-overlay"]}>
       <div className={styles["modal-content"]}>
-        <h3>Створити план</h3>
+        <h3>Create plan</h3>
 
         {error && <p className={styles.error}>{error}</p>}
 
         <input
           type="text"
-          placeholder="Назва"
+          placeholder="Name"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
 
-        <label>Дата початку:</label>
+        <label>Start date:</label>
         <input
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
         />
 
-        <label>Дата закінчення:</label>
+        <label>End date:</label>
         <input
           type="date"
           value={endDate}
@@ -81,7 +81,7 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
         />
 
         <textarea
-          placeholder="Опис"
+          placeholder="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
@@ -91,11 +91,11 @@ const CreatePlanModal = ({ isOpen, onClose, onCreated }) => {
           disabled={loading}
           className={styles["submit-button"]}
         >
-          {loading ? "Створення..." : "Створити план"}
+          {loading ? "Creating..." : "Create plan"}
         </button>
 
         <button onClick={onClose} className={styles["close-button"]}>
-          Скасувати
+          Cancel
         </button>
       </div>
     </div>

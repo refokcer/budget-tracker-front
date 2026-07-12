@@ -176,7 +176,7 @@ const PlanItemsTable = ({ items, onReload }) => {
     editorRef.current.focus();
   }, [editingCell]);
 
-  if (!items || items.length === 0) return <p>Нет позиций в этом плане.</p>;
+  if (!items || items.length === 0) return <p>No items in this plan.</p>;
 
   const cancelEditing = () => {
     setEditingCell(null);
@@ -434,22 +434,22 @@ const PlanItemsTable = ({ items, onReload }) => {
   const columns = [
     {
       key: "categoryTitle",
-      label: "Категория",
+      label: "Category",
       render: (_, row) => renderEditableCell("categoryTitle", row),
     },
     {
       key: "amount",
-      label: "Выделено",
+      label: "Allocated",
       render: (_, row) => renderEditableCell("amount", row),
     },
     {
       key: "spent",
-      label: "Потрачено",
+      label: "Spent",
       render: (_, row) => renderEditableCell("spent", row),
     },
     {
       key: "remaining",
-      label: "Осталось",
+      label: "Remaining",
       render: (_, row) => renderEditableCell("remaining", row),
     },
     {
@@ -459,7 +459,7 @@ const PlanItemsTable = ({ items, onReload }) => {
     },
     {
       key: "description",
-      label: "Описание",
+      label: "Description",
       render: (_, row) => renderEditableCell("description", row),
     },
   ];

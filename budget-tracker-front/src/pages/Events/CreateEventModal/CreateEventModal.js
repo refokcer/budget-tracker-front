@@ -43,7 +43,7 @@ const CreateEventModal = ({ isOpen, onClose, onCreated }) => {
 
   const handleSubmit = async () => {
     if (!title || !startDate || !endDate) {
-      alert("Введите название и даты!");
+      alert("Enter a name and dates!");
       return;
     }
     const newEvent = {
@@ -72,27 +72,27 @@ const CreateEventModal = ({ isOpen, onClose, onCreated }) => {
   return (
     <div className={styles["modal-overlay"]}>
       <div className={styles["modal-content"]}>
-        <h3>Створити подію</h3>
+        <h3>Create event</h3>
         {error && <p className={styles.error}>{error}</p>}
         <input
           type="text"
-          placeholder="Назва"
+          placeholder="Name"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-        <label>Дата початку:</label>
+        <label>Start date:</label>
         <input
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
         />
-        <label>Дата закінчення:</label>
+        <label>End date:</label>
         <input
           type="date"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
         />
-        <label>Місячний план:</label>
+        <label>Monthly plan:</label>
         <select value={parentId} onChange={(e) => setParentId(e.target.value)}>
           <option value="">-</option>
           {months.map((m) => (
@@ -102,7 +102,7 @@ const CreateEventModal = ({ isOpen, onClose, onCreated }) => {
           ))}
         </select>
         <textarea
-          placeholder="Опис"
+          placeholder="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
@@ -111,10 +111,10 @@ const CreateEventModal = ({ isOpen, onClose, onCreated }) => {
           disabled={loading}
           className={styles["submit-button"]}
         >
-          {loading ? "Створення..." : "Створити"}
+          {loading ? "Creating..." : "Create"}
         </button>
         <button onClick={onClose} className={styles["close-button"]}>
-          Скасувати
+          Cancel
         </button>
       </div>
     </div>

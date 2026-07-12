@@ -4,13 +4,13 @@ const TopIncomesCard = ({ items }) => (
   <div className={styles["db-card"]}>
     <h3 className={styles["db-title"]}>Top 10 Incomes</h3>
     {items.length === 0 ? (
-      <p className={styles["db-empty"]}>Немає даних</p>
+      <p className={styles["db-empty"]}>No data</p>
     ) : (
       <table className={styles["db-small-table"]}>
         <thead>
           <tr>
-            <th>Категорія</th>
-            <th>Сума</th>
+            <th>Category</th>
+            <th>Amount</th>
             <th>%</th>
           </tr>
         </thead>

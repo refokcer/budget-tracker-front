@@ -52,7 +52,7 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
   }, [isOpen]);
 
   const addAccount = async () => {
-    if (!title || !amount) return alert("Введіть назву та суму");
+    if (!title || !amount) return alert("Enter a name and amount");
     try {
       setLoading(true);
       setError(null);
@@ -80,7 +80,7 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
   };
 
   const del = async (id) => {
-    if (!window.confirm("Видалити акаунт?")) return;
+    if (!window.confirm("Delete account?")) return;
     try {
       setBusyId(id);
       await apiFetch(API_ENDPOINTS.deleteAccount(id), {
@@ -102,7 +102,7 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
         <h3>Manage accounts</h3>
 
         {error && <p className={styles.error}>{error}</p>}
-        {loading && <p>Завантаження...</p>}
+        {loading && <p>Loading...</p>}
 
         {!loading && (
           <>
@@ -110,9 +110,9 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
               <table className={styles["acc-table"]}>
                 <thead>
                   <tr>
-                    <th>Назва</th>
-                    <th>Сума</th>
-                    <th>Опис</th>
+                    <th>Name</th>
+                    <th>Amount</th>
+                    <th>Description</th>
                     <th>Type</th>
                     <th></th>
                   </tr>
@@ -130,7 +130,7 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
                           disabled={busyId === a.id}
                           onClick={() => del(a.id)}
                         >
-                          {busyId === a.id ? "…" : "✕"}
+                          {busyId === a.id ? "..." : "x"}
                         </button>
                       </td>
                     </tr>
@@ -141,13 +141,13 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
 
             <div className={styles["add-form"]}>
               <input
-                placeholder="Назва"
+                placeholder="Name"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
               <input
                 type="number"
-                placeholder="Сума"
+                placeholder="Amount"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
@@ -159,7 +159,7 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
                 ))}
               </select>
               <input
-                placeholder="Опис"
+                placeholder="Description"
                 value={descr}
                 onChange={(e) => setDescr(e.target.value)}
               />
@@ -167,14 +167,14 @@ const ManageAccounts = ({ isOpen, onClose, onSaved }) => {
                 className={`${styles["submit-button"]} ${styles["submit-button-acc"]}`}
                 onClick={addAccount}
               >
-                Додати
+                Add
               </button>
             </div>
           </>
         )}
 
         <button className={styles["close-button"]} onClick={onClose}>
-          Закрити
+          Close
         </button>
       </div>
     </div>

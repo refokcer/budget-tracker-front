@@ -22,7 +22,9 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAuth();
-  const currentPageTitle = pageTitles[location.pathname] || "My App";
+  const currentPageTitle = location.pathname.startsWith("/thesis-demo")
+    ? "Testing"
+    : pageTitles[location.pathname] || "My App";
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isIncomeModalOpen, setIsIncomeModalOpen] = useState(false);
@@ -122,11 +124,11 @@ const Header = () => {
       <div className={styles["page-selector-slot"]}>
         {plansError && <p className={styles.error}>{plansError}</p>}
         <div className={styles["plans-dropdown"]}>
-          <label htmlFor="planSelect">План</label>
+          <label htmlFor="planSelect">Plan</label>
           <details className={styles["header-select"]} id="planSelect">
             <summary className={styles["header-select-trigger"]}>
-              <span>{selectedPlan?.title || "Выбрать план"}</span>
-              <span className={styles["header-select-icon"]}>▾</span>
+              <span>{selectedPlan?.title || "Select plan"}</span>
+              <span className={styles["header-select-icon"]}>v</span>
             </summary>
             <div className={styles["header-select-menu"]}>
               {plans.map((plan) => (
@@ -155,11 +157,11 @@ const Header = () => {
       <div className={styles["page-selector-slot"]}>
         {eventsError && <p className={styles.error}>{eventsError}</p>}
         <div className={styles["plans-dropdown"]}>
-          <label htmlFor="eventSelect">Событие</label>
+          <label htmlFor="eventSelect">Event</label>
           <details className={styles["header-select"]} id="eventSelect">
             <summary className={styles["header-select-trigger"]}>
-              <span>{selectedEvent?.title || "Выбрать событие"}</span>
-              <span className={styles["header-select-icon"]}>▾</span>
+              <span>{selectedEvent?.title || "Select event"}</span>
+              <span className={styles["header-select-icon"]}>v</span>
             </summary>
             <div className={styles["header-select-menu"]}>
               {events.map((item) => (

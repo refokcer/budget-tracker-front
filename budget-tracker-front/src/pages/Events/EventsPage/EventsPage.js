@@ -82,7 +82,7 @@ const EventsPage = () => {
 
   const deleteEvent = async () => {
     if (!selectedEvent) return;
-    if (!window.confirm("Удалить это событие?")) return;
+    if (!window.confirm("Delete this event?")) return;
     try {
       setBusyDel(true);
       await apiFetch(API_ENDPOINTS.deleteBudgetPlan(selectedEvent.id), {
@@ -100,7 +100,7 @@ const EventsPage = () => {
     }
   };
 
-  if (loading) return <p className={styles.loading}>Загрузка...</p>;
+  if (loading) return <p className={styles.loading}>Loading...</p>;
   if (error) return <p className={styles.error}>{error}</p>;
 
   return (
@@ -111,9 +111,9 @@ const EventsPage = () => {
             className={styles["create-btn"]}
             onClick={() => setCreateOpen(true)}
           >
-            + новое событие
+            + new event
           </button>
-          <p className={styles["no-plan-text"]}>Событий пока нет…</p>
+          <p className={styles["no-plan-text"]}>No events yet...</p>
         </>
       )}
 
@@ -126,20 +126,20 @@ const EventsPage = () => {
               className={styles["edit-btn"]}
               onClick={() => setEditOpen(true)}
             >
-              ✎ редактировать
+              Edit
             </button>
             <button
               className={styles["delete-btn"]}
               onClick={deleteEvent}
               disabled={busyDel}
             >
-              {busyDel ? "…" : "✕ удалить"}
+              {busyDel ? "..." : "Delete"}
             </button>
             <button
               className={styles["create-btn"]}
               onClick={() => setCreateOpen(true)}
             >
-              + новое
+              + new
             </button>
           </div>
         </div>

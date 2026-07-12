@@ -35,12 +35,12 @@ const editableColumns = {
 };
 
 const tableColumns = [
-  { key: "title", label: "Назва", sortable: true },
-  { key: "amount", label: "Сума", sortable: true },
-  { key: "accountFromTitle", label: "З рахунку", sortable: true },
-  { key: "accountToTitle", label: "На рахунок", sortable: true },
-  { key: "date", label: "Дата", sortable: true },
-  { key: "description", label: "Опис" },
+  { key: "title", label: "Name", sortable: true },
+  { key: "amount", label: "Amount", sortable: true },
+  { key: "accountFromTitle", label: "From account", sortable: true },
+  { key: "accountToTitle", label: "To account", sortable: true },
+  { key: "date", label: "Date", sortable: true },
+  { key: "description", label: "Description" },
 ];
 
 const buildPayload = (transfer) => ({

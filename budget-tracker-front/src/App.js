@@ -12,6 +12,7 @@ import MonthlyReport from "./pages/MonthlyReport/MonthlyReportPage/MonthlyReport
 import RecommendationsPage from "./pages/Recommendations";
 import FinancialGoalsPage from "./pages/FinancialGoals";
 import ProfilePage from "./pages/Profile/ProfilePage/ProfilePage";
+import ThesisDemoPage from "./pages/ThesisDemo";
 import { LoginPage, RegisterPage } from "./pages/Auth";
 import ProtectedLayout from "./components/ProtectedLayout/ProtectedLayout";
 
@@ -35,6 +36,8 @@ const App = () => {
           <Route path="/settings/auto-plan-rules" element={<AutoPlanRulesPage />} />
           <Route path="/report" element={<MonthlyReport />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/thesis-demo" element={<ThesisDemoPage />} />
+          <Route path="/thesis-demo/:scenarioId" element={<ThesisDemoPage />} />
         </Route>
       </Routes>
     </Router>

@@ -16,7 +16,7 @@ const CreateBudgetPlanModal = ({ isOpen, onClose, onPlanCreated }) => {
 
   const handleSubmit = async () => {
     if (!title || !startDate || !endDate) {
-      alert("Заполните все обязательные поля!");
+      alert("Fill in all required fields!");
       return;
     }
 
@@ -37,8 +37,8 @@ const CreateBudgetPlanModal = ({ isOpen, onClose, onPlanCreated }) => {
         body: newPlan,
       }, "Failed to create budget plan");
 
-      alert("План бюджета успешно создан!");
-      // Сообщаем родителю, что план создан
+      alert("Budget plan created successfully!");
+      // Notify the parent that the plan was created.
       onPlanCreated();
     } catch (err) {
       setError(getApiErrorMessage(err));
@@ -50,37 +50,37 @@ const CreateBudgetPlanModal = ({ isOpen, onClose, onPlanCreated }) => {
   return (
     <div className={styles["modal-overlay"]}>
       <div className={styles["modal-content"]}>
-        <h3>Создать новый план</h3>
+        <h3>Create new plan</h3>
         {error && <p className={styles.error}>{error}</p>}
 
-        <label>Название плана:</label>
+        <label>Plan name:</label>
         <input
           type="text"
-          placeholder="Мой план"
+          placeholder="My plan"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
 
-        <label>Дата начала:</label>
+        <label>Start date:</label>
         <input
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
         />
 
-        <label>Дата окончания:</label>
+        <label>End date:</label>
         <input
           type="date"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
         />
 
-        <label>Тип плана:</label>
+        <label>Plan type:</label>
         <select value={type} onChange={(e) => setType(e.target.value)}></select>
 
-        <label>Описание:</label>
+        <label>Description:</label>
         <textarea
-          placeholder="Опционально"
+          placeholder="Optional"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
@@ -91,10 +91,10 @@ const CreateBudgetPlanModal = ({ isOpen, onClose, onPlanCreated }) => {
             disabled={loading}
             className={styles["create-button"]}
           >
-            {loading ? "Создание..." : "Создать"}
+            {loading ? "Creating..." : "Create"}
           </button>
           <button onClick={onClose} className={styles["close-button"]}>
-            Отмена
+            Cancel
           </button>
         </div>
       </div>

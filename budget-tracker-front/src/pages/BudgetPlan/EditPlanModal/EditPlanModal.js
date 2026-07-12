@@ -158,27 +158,27 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
   return (
     <div className={styles["modal-overlay"]}>
       <div className={`${styles["modal-content"]} ${styles.large}`}>
-        <h3>Редагувати план</h3>
+        <h3>Edit plan</h3>
         {error && <p className={styles.error}>{error}</p>}
         <input
-          placeholder="Назва"
+          placeholder="Name"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-        <label>Дата початку:</label>
+        <label>Start date:</label>
         <input
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
         />
-        <label>Дата завершення:</label>
+        <label>End date:</label>
         <input
           type="date"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
         />
         <textarea
-          placeholder="Опис"
+          placeholder="Description"
           value={description}
           onChange={(e) => setDesc(e.target.value)}
         />
@@ -186,10 +186,10 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
           <table className={styles["edit-table"]}>
             <thead>
               <tr>
-                <th>Категорія</th>
-                <th>Сума</th>
-                <th>Валюта</th>
-                <th>Опис</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Currency</th>
+                <th>Description</th>
                 <th></th>
               </tr>
             </thead>
@@ -250,7 +250,7 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
                         className={styles["del-row"]}
                         onClick={() => deleteRow(idx)}
                       >
-                        ✕
+                        x
                       </button>
                     </td>
                   </tr>
@@ -259,17 +259,17 @@ const EditPlanModal = ({ isOpen, onClose, plan, items, onSaved }) => {
           </table>
         </div>
         <button className={styles["add-row"]} onClick={addRow}>
-          + рядок
+          + row
         </button>
         <button
           onClick={handleSave}
           disabled={loading}
           className={styles["submit-button"]}
         >
-          {loading ? "Збереження…" : "Зберегти"}
+          {loading ? "Saving..." : "Save"}
         </button>
         <button onClick={onClose} className={styles["close-button"]}>
-          Скасувати
+          Cancel
         </button>
       </div>
     </div>

@@ -33,13 +33,13 @@ const editableColumns = {
 };
 
 const tableColumns = [
-  { key: "title", label: "Назва", sortable: true },
-  { key: "amount", label: "Сума", sortable: true },
-  { key: "categoryTitle", label: "Категорія", sortable: true },
-  { key: "budetPlanTitle", label: "План", sortable: true },
-  { key: "accountFromTitle", label: "Рахунок", sortable: true },
-  { key: "date", label: "Дата", sortable: true },
-  { key: "description", label: "Опис" },
+  { key: "title", label: "Name", sortable: true },
+  { key: "amount", label: "Amount", sortable: true },
+  { key: "categoryTitle", label: "Category", sortable: true },
+  { key: "budetPlanTitle", label: "Plan", sortable: true },
+  { key: "accountFromTitle", label: "Account", sortable: true },
+  { key: "date", label: "Date", sortable: true },
+  { key: "description", label: "Description" },
 ];
 
 const buildPayload = (transaction) => ({
